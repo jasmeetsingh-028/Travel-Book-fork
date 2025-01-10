@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-scroll';
 import logo from '../../assets/images/logo.png';
 import preview from '../../assets/images/preview.png';
-import HowItWorks from './howitworks';
+import HowItWorks from './HowItWorks';
 import Stats from './Stats';
 import About from './About';
 import Footer from './Footer';
