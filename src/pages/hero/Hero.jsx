@@ -80,14 +80,14 @@ const Hero = () => {
 
                         {/* Navbar items - Mobile */}
                         <div className="hidden lg:flex lg:ml-auto lg:items-center lg:space-x-8 xl:space-x-10">
-                            <Link
-                                to="/signin"
-                                className=" cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
+                            <a
+                                href="https://travel-book-opal.vercel.app/login"  // Updated link to the login page
+                                className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
                                 Sign in
-                            </Link>
-
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </header>
@@ -109,7 +109,7 @@ const Hero = () => {
                                     <div className="relative group sm:rounded-xl">
                                         <div className="mt-4  sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2">
                                             <a
-                                                href="" //SIGN UP LINK HERE
+                                                href="https://travel-book-opal.vercel.app/signUp" //SIGN UP LINK HERE
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
@@ -192,12 +192,12 @@ const Hero = () => {
             </section>
 
             <span className="relative flex justify-center">
-  <div
-    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-  ></div>
+                <div
+                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
+                ></div>
 
-  <span className="relative z-10 bg-white px-6">How have you been?</span>
-</span>
+                <span className="relative z-10 bg-white px-6">How have you been?</span>
+            </span>
 
 
             <section id="services">
@@ -256,24 +256,24 @@ const Hero = () => {
             </section>
 
             <span className="relative flex justify-center">
-  <div
-    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-  ></div>
+                <div
+                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
+                ></div>
 
-  <span className="relative z-10 bg-white px-6">Oh, So do you like the design?</span>
-</span>
+                <span className="relative z-10 bg-white px-6">Oh, So do you like the design?</span>
+            </span>
 
             <section id="stats">
                 <Stats />
             </section>
 
             <span className="relative flex justify-center">
-  <div
-    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-  ></div>
+                <div
+                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
+                ></div>
 
-  <span className="relative z-10 bg-white px-6">Well, If yes, then you can contact the developer and appreciate him.</span>
-</span>
+                <span className="relative z-10 bg-white px-6">Well, If yes, then you can contact the developer and appreciate him.</span>
+            </span>
 
             <section id="footer">
                 <Footer />
