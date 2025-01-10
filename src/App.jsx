@@ -2,10 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import React from 'react';
 
 import Login from './pages/Auth/login.jsx';
-import SignUp from './pages/Auth/SignUp';
-import Home from './pages/home/Home';
-import Hero from './../src/pages/hero/Hero';
+import SignUp from './pages/Auth/SignUp.jsx';
+import Home from './pages/home/Home.jsx';
+import Hero from './../src/pages/hero/Hero.jsx';
 import Mistake from './pages/mistake.jsx'; 
+
 
 const App = () => {
   return (
