@@ -17,10 +17,10 @@ export default {
         secondary:"#EF863E",
       },
       // BELOW IMPORTED THE SIGN IN AND SIGN UP IMAGES;
-      backgroundImage:{
-        'login-bg-img':"url('./src/assets/images/bg-image.png')",
-        'signup-bg-img':"url('./src/assets/images/sign-up.png')",
-      }
+      backgroundImage: {
+        'login-bg-img': "url('/assets/images/bg-image.png')",
+        'signup-bg-img': "url('/assets/images/sign-up.png')",
+      }      
     },
   },
   plugins: [],
