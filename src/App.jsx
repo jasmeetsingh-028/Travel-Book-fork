@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import React from 'react';
 
-import Login from './pages/Auth/Login';
+import Login from './pages/Auth/login.jsx';
 import SignUp from './pages/Auth/SignUp';
 import Home from './pages/home/Home';
 import Hero from './../src/pages/hero/Hero';
