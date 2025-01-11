@@ -10,11 +10,11 @@ const ViewTravelStory = ({storyInfo ,onClose, onEditClick, onDeleteClick }) => {
                 <div>
                     <div className="flex items-center gap-3 bg-cyan-50/50 p-2 rounded-lg">
                         <button className="btn-small" onClick={onEditClick}>
-                            <MdUpdate className="text-lg" /> UPDATE STORY
+                            <MdUpdate className="text-lg" /> Update This Story
                         </button>
 
                         <button className="btn-small btn-delete" onClick={onDeleteClick}>
-                            <MdDeleteOutline className="text-lg" /> Delete
+                            <MdDeleteOutline className="text-lg" /> Delete This Story
                         </button>
 
                         <button className="" onClick={onClose}>
