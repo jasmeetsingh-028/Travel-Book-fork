@@ -200,7 +200,7 @@ const Home = () => {
 <div className='container mx-auto py-10 px-4 sm:px-6'> {/* Added padding for mobile */}
   <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
 
-  <div className='flex flex-col gap-7'> {/* Removed sm:flex-row to stack on mobile */}
+  <div className='flex flex-col gap-7 md:grid md:grid-cols-2 md:gap-4'> {/* Removed sm:flex-row to stack on mobile */}
     <div className='flex-1'>
       {allStories.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Changed sm: to md: for larger breakpoint */}
@@ -224,7 +224,7 @@ const Home = () => {
     </div>
 
     {/* Calendar section */}
-    <div className='w-full md:w-[320px]'> {/* Changed sm: to md: */}
+    <div className='w-full md:w-[320px] md:ml-8 mt-6 md:mt-0'> {/* Changed sm: to md: */}
       <div className='bg-white border border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg'>
         <div className='p-3 overflow-x-auto'> {/* Added overflow handling */}
           <DayPicker 
