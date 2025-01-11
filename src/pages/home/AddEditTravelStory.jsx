@@ -171,7 +171,7 @@ const AddEditTravelStory = ({
                 <div>
                     <div className='flex items-center gap-3 bg-cyan-50/50 p-2 rounded-lg'>
                         {type === 'add' ? (<button className='btn-small' onClick={handleAddOrUpdateClick}>
-                            <MdAdd className='text-lg' /> ADD NEW STORY TO YOUR MEMORIES
+                            <MdAdd className='text-lg' /> Add this story to your memories
                         </button>) : (<>
                             <button className='btn-small' onClick={handleAddOrUpdateClick}>
                                 <MdUpdate className='text-lg' />UPDATE YOUR EXISTING STORY IN OUR MEMORIES
