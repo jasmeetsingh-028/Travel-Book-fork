@@ -62,7 +62,7 @@ const StoryBox = styled.div`
   width: 100%;
   margin: 20px;
   height: auto;  /* Auto adjusts the height to fit content */
-  background-image: url('/assets/images/bg-share.png');  /* Set the background image */
+  background-image: url('src/assets/images/bg-share.png');  /* Set the background image */
   background-size: cover;  /* Make sure the image covers the entire area */
   background-position: center;  /* Center the background image */
   background-repeat: no-repeat;  /* Prevent repeating the image */
