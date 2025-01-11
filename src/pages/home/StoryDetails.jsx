@@ -54,7 +54,7 @@ const StoryContainer = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background-color: #f4f4f4;
+  background-color: #262626;
   min-height: 100vh;
 `;
 
