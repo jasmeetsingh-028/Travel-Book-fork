@@ -86,7 +86,7 @@ const SignUp = () => {
 
             <input
               type="text"
-              placeholder="Please Enter Your Full Name"
+              placeholder="Please enter your full name"
               className="input-box"
               value={name}
               onChange={({ target }) => {
@@ -96,7 +96,7 @@ const SignUp = () => {
 
             <input
               type="text"
-              placeholder="Please Enter Your Email Address"
+              placeholder="Please enter your email address"
               className="input-box"
               value={email}
               onChange={({ target }) => {
