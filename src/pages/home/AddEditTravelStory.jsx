@@ -165,7 +165,7 @@ const AddEditTravelStory = ({
         <div className='relative'>
             <div className='flex items-center justify-between'>
                 <h5 className='text-xl font-medium text-slate-700'>
-                    {type === "add" ? "Add Story" : "Update Story"}
+                    {type === "add" ? "Add New Story" : "Update This Story"}
                 </h5>
 
                 <div>
@@ -194,7 +194,7 @@ const AddEditTravelStory = ({
 
             <div>
                 <div className='flex-1 flex flex-col gap-2 pt-4'>
-                    <label className='input-label'>TITLE</label>
+                    <label className='input-label'>TITLE OF THE MEMORY</label>
                     <input type="text" className='text-2xl text-slate-950 outline-none' placeholder='A Good day at the Manali' value={title} onChange={({ target }) => setTitle(target.value)} />
 
                     <div className='my-3'>
@@ -204,8 +204,8 @@ const AddEditTravelStory = ({
                     <ImageSelector image={storyImg} setImage={setStoryImg} handleDeleteImg={handleDeleteStoryImg} />
 
                     <div className='flex flex-col gap-2 mt-4'>
-                        <label className='input-label'>STORY</label>
-                        <textarea type="text" className='text-sm text-slate-950 outline-none bg-slate-50 p-2' placeholder='Write Your Story here.' rows={10} value={story} onChange={({ target }) => setStory(target.value)} />
+                        <label className='input-label'>YOUR MEMORABLE STORY</label>
+                        <textarea type="text" className='text-sm text-slate-950 outline-none bg-slate-50 p-2' placeholder='Write your memorable story here to store in our Travel-Book.' rows={10} value={story} onChange={({ target }) => setStory(target.value)} />
                     </div>
 
                     <div className='pt-3'>
