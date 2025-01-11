@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { MdAdd, MdClose, MdDeleteOutline, MdUpdate } from 'react-icons/md'
+import { MdAdd, MdClose, MdDeleteOutline, MdUpdate, MdShare } from 'react-icons/md'
 import DataSelector from '../../components/Input/DataSelector';
 import ImageSelector from '../../components/Input/ImageSelector';
 import TagInput from '../../components/Input/TagInput';
@@ -161,6 +161,20 @@ const AddEditTravelStory = ({
             setStoryImg(null);
         }
     }
+
+    // Share 
+    function handleShare(storyId) {
+        const shareUrl = `${window.location.origin}/story/${storyId}`;
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+                alert('Link copied to clipboard!');
+            })
+            .catch(() => {
+                alert('Failed to copy the link. Please try again.');
+            });
+    }
+
+
     return (
         <div className='relative'>
             <div className='flex items-center justify-between'>
@@ -176,6 +190,14 @@ const AddEditTravelStory = ({
                             <button className='btn-small' onClick={handleAddOrUpdateClick}>
                                 <MdUpdate className='text-lg' />Update this existing story in our book
                             </button>
+
+                            {/* SHARE BUTTON */}
+                            <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
+                                <MdShare className='text-lg' /> Share this story
+                            </button>
+
+
+
                         </>
                         )}
 

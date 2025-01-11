@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import React from 'react';
-
 import Login from './pages/Auth/login.jsx';
 import SignUp from './pages/Auth/SignUp.jsx';
 import Home from './pages/home/Home.jsx';
 import Hero from './../src/pages/hero/Hero.jsx';
 import Mistake from './pages/mistake.jsx'; 
+import StoryDetails from './../src/pages/home/StoryDetails.jsx';
 
 
 const App = () => {
@@ -18,6 +18,7 @@ const App = () => {
           <Route path="/login" exact element={<Login />} />
           <Route path="/signup" exact element={<SignUp />} />
           <Route path="*" exact element={<Mistake />} /> {/* 404 not found page */}
+          <Route path="/story/:id" element={<StoryDetails />} />
         </Routes>
       </Router>
     </div>
