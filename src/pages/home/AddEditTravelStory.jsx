@@ -195,7 +195,7 @@ const AddEditTravelStory = ({
             <div>
                 <div className='flex-1 flex flex-col gap-2 pt-4'>
                     <label className='input-label'>TITLE OF THE MEMORY</label>
-                    <input type="text" className='text-2xl text-slate-950 outline-none' placeholder='A Good day at the Manali' value={title} onChange={({ target }) => setTitle(target.value)} />
+                    <input type="text" className='text-2xl text-slate-950 outline-none' placeholder='A Good day at Manali' value={title} onChange={({ target }) => setTitle(target.value)} />
 
                     <div className='my-3'>
                         <DataSelector date={visitedDate} setDate={setVisitedDate} />
