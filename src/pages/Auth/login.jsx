@@ -74,7 +74,7 @@ const Login = () => {
 
             <input
               type="text"
-              placeholder="Email"
+              placeholder="Kindly enter your registered mail address"
               className="input-box w-full"
               value={email}
               onChange={({ target }) => {
