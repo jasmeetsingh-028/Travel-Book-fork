@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';  // Import styled-components
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components"; // Import styled-components
+import backgroundImage from "../../../src/assets/images/bg-share.png";
 
 function StoryDetails() {
-  const { id } = useParams();  // Get the ID from the URL
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
 
   useEffect(() => {
     fetch(`https://travel-book-backend.onrender.com/api/story/${id}`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
       .then((data) => setStory(data))
       .catch((error) => {
-        console.error('Error fetching story details:', error);
-        alert('Error fetching story details.');
+        console.error("Error fetching story details:", error);
+        alert("Error fetching story details.");
       });
   }, [id]);
 
@@ -57,47 +58,47 @@ const StoryBox = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 12px;  /* Reduced padding to make box more compact */
+  padding: 12px; /* Reduced padding to make box more compact */
   max-width: 700px;
   width: 100%;
   margin: 20px;
-  height: auto;  /* Auto adjusts the height to fit content */
-  background-image: url('src/assets/images/bg-share.png');  /* Set the background image */
-  background-size: cover;  /* Make sure the image covers the entire area */
-  background-position: center;  /* Center the background image */
-  background-repeat: no-repeat;  /* Prevent repeating the image */
+  height: auto; /* Auto adjusts the height to fit content */
+  background-image: url(${backgroundImage});
+  background-size: cover; /* Make sure the image covers the entire area */
+  background-position: center; /* Center the background image */
+  background-repeat: no-repeat; /* Prevent repeating the image */
 `;
 
 const StoryTitle = styled.h1`
   font-size: 1.8rem;
   font-weight: bold;
   color: #333;
-  margin-bottom: 8px;  /* Reduced bottom margin */
+  margin-bottom: 8px; /* Reduced bottom margin */
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
   color: #888;
-  margin-bottom: 12px;  /* Reduced bottom margin */
+  margin-bottom: 12px; /* Reduced bottom margin */
 `;
 
 const StoryImage = styled.img`
   width: 100%;
   border-radius: 8px;
-  margin-bottom: 15px;  /* Reduced margin below image */
+  margin-bottom: 15px; /* Reduced margin below image */
 `;
 
 const StoryContent = styled.p`
   font-size: 1.1rem;
   color: #444;
-  line-height: 1.5;  /* Reduced line-height for compact text */
-  margin-bottom: 15px;  /* Reduced bottom margin */
+  line-height: 1.5; /* Reduced line-height for compact text */
+  margin-bottom: 15px; /* Reduced bottom margin */
 `;
 
 const VisitedLocations = styled.p`
   font-size: 1.1rem;
   color: #333;
-  margin-top: 12px;  /* Reduced margin-top */
+  margin-top: 12px; /* Reduced margin-top */
 `;
 
 const Loading = styled.div`
