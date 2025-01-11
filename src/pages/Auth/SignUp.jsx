@@ -32,7 +32,6 @@ const SignUp = () => {
 
     setError("");
 
-    // SIGNUP API CALL WILL BE THERE.
     try {
       const response = await axiosInstance.post("/create-account", {
         fullName: name,
@@ -68,7 +67,9 @@ const SignUp = () => {
       <div className="login-ui-box bg-cyan-200 bottom-0 right-0 absolute" />
 
       <div className="container h-screen flex items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
-        <div className="w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-signup-bg-img bg-cover bg-center rounded-lg p-10 z-50">
+        
+        {/* Image section with a class to hide it on mobile */}
+        <div className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-signup-bg-img bg-cover bg-center rounded-lg p-10 z-50">
           <div>
             <h4 className="text-3xl sm:text-4xl lg:text-5xl text-black font-bold leading-[58px]">
               Join The <br /> Adventure
@@ -119,7 +120,7 @@ const SignUp = () => {
             <p className="text-xs text-slate-500 text-center my-4">Or</p>
 
             <button
-              type="submit"
+              type="button"
               className="btn-primary btn-light"
               onClick={() => {
                 navigate("/login");
@@ -130,6 +131,18 @@ const SignUp = () => {
           </form>
         </div>
       </div>
+
+      {/* CSS for responsive design */}
+      <style jsx>{`
+        @media (max-width: 600px) {
+          .image-section {
+            display: none;
+          }
+          .container {
+            flex-direction: column;
+          }
+        }
+      `}</style>
     </div>
   );
 };
