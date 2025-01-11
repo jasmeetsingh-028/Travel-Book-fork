@@ -174,7 +174,7 @@ const AddEditTravelStory = ({
                             <MdAdd className='text-lg' /> Add this story to your memories
                         </button>) : (<>
                             <button className='btn-small' onClick={handleAddOrUpdateClick}>
-                                <MdUpdate className='text-lg' />UPDATE YOUR EXISTING STORY IN OUR MEMORIES
+                                <MdUpdate className='text-lg' />Update this existing story in our book
                             </button>
                         </>
                         )}
