@@ -82,7 +82,7 @@ const SignUp = () => {
 
         <div className="w-full sm:w-2/4 lg:w-2/4 h-[75vh] bg-white rounded-r-lg relative p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
           <form onSubmit={handleSignUp}>
-            <h4 className="text-2xl font-semibold mb-7">SignUp</h4>
+            <h4 className="text-2xl font-semibold mb-7">Register Now to Document Your Travels</h4>
 
             <input
               type="text"
