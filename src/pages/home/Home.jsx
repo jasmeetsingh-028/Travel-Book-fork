@@ -197,7 +197,6 @@ const Home = () => {
     <>
       <Navbar userInfo={userInfo} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
 
-      // Change this section
 <div className='container mx-auto py-10 px-4 sm:px-6'> {/* Added padding for mobile */}
   <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
 
