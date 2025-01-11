@@ -22,9 +22,13 @@ function StoryDetails() {
       });
   }, [id]);
 
-  if (!story) {
-    return <Loading>Loading...</Loading>;
-  }
+ if (!story) {
+  return (
+    <Loading>
+      <span className="loading loading-dots loading-xs"></span>
+    </Loading>
+  );
+}
 
   return (
     <StoryContainer>
@@ -102,8 +106,9 @@ const VisitedLocations = styled.p`
 `;
 
 const Loading = styled.div`
-  font-size: 1.5rem;
-  color: #555;
-  text-align: center;
-  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; // To center the spinner in the viewport
 `;
+
