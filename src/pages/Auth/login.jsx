@@ -70,7 +70,7 @@ const Login = () => {
 
         <div className="w-full sm:w-2/4 lg:w-2/4 bg-white rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
           <form onSubmit={handleLogin}>
-            <h4 className="text-2xl font-semibold mb-7 text-center">Sign In to Continue</h4>
+            <h4 className="text-2xl font-semibold mb-7 text-center">Sign In and Continue Your Travel Log</h4>
 
             <input
               type="text"
