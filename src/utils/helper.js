@@ -31,7 +31,7 @@ export const getEmptyCardMessage = (filterType) =>{
             return `Sorry Traveller! No stories found in the given data range.`;    
         
         default:
-            return `Start creating your first travel Story, Click the 'Add' button and write down your thoughts, ideas and memories!`;
+            return `Click the "Add" button in the bottom right corner to start your first travel story. Write down your thoughts, ideas, and memories!`;
     }
 }
 
