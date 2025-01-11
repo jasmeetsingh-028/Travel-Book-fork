@@ -197,53 +197,67 @@ const Home = () => {
     <>
       <Navbar userInfo={userInfo} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
 
-      <div className='container mx-auto py-10'>
+      // Change this section
+<div className='container mx-auto py-10 px-4 sm:px-6'> {/* Added padding for mobile */}
+  <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
 
-        <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
+  <div className='flex flex-col gap-7'> {/* Removed sm:flex-row to stack on mobile */}
+    <div className='flex-1'>
+      {allStories.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Changed sm: to md: for larger breakpoint */}
+          {allStories.map((item) => (
+            <TravelStoryCard
+              key={item._id}
+              imgUrl={item.imageUrl}
+              title={item.title}
+              story={item.story}
+              date={item.visitedDate}
+              visitedLocation={item.visitedLocation}
+              isFavourite={item.isFavourite}
+              onClick={() => handleViewStory(item)}
+              onFavouriteClick={() => updateIsFavourite(item)}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyCard imgSrc={getEmptyImg(filterType)} message={getEmptyCardMessage(filterType)} />
+      )}
+    </div>
 
-        <div className='flex flex-col sm:flex-row gap-7'>
-          <div className='flex-1'>
-            {allStories.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {allStories.map((item) => (
-                  <TravelStoryCard
-                    key={item._id}
-                    imgUrl={item.imageUrl}
-                    title={item.title}
-                    story={item.story}
-                    date={item.visitedDate}
-                    visitedLocation={item.visitedLocation}
-                    isFavourite={item.isFavourite}
-                    onClick={() => handleViewStory(item)}
-                    onFavouriteClick={() => updateIsFavourite(item)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <EmptyCard imgSrc={getEmptyImg(filterType)} message={getEmptyCardMessage(filterType)} />
-            )}
-          </div>
-
-          <div className='w-full sm:w-[320px]'>
-            <div className='bg-white border border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg'>
-              <div className='p-3'>
-                <DayPicker captionLayout='dropdown-buttons' mode="range" selected={dataRange} onSelect={handleDayClick} pagedNavigation />
-              </div>
-            </div>
-          </div>
+    {/* Calendar section */}
+    <div className='w-full md:w-[320px]'> {/* Changed sm: to md: */}
+      <div className='bg-white border border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg'>
+        <div className='p-3 overflow-x-auto'> {/* Added overflow handling */}
+          <DayPicker 
+            captionLayout='dropdown-buttons' 
+            mode="range" 
+            selected={dataRange} 
+            onSelect={handleDayClick} 
+            pagedNavigation 
+          />
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
 
       {/* Add and edit travel story */}
-      <Modal isOpen={openAddEditModal.isShown}
-        onRequestClose={() => {}}
-        style={{
-          overlay: {
-            backgroundColor: "rgba(0,0,0,0.2)",
-            zIndex: 999,
-          },
-        }}
-        appElement={document.getElementById("root")}
+      <Modal 
+  isOpen={openAddEditModal.isShown}
+  onRequestClose={() => {}}
+  style={{
+    overlay: {
+      backgroundColor: "rgba(0,0,0,0.2)",
+      zIndex: 999,
+    },
+    content: {
+      width: '90%', // Set width for mobile
+      height: '90vh',
+      margin: 'auto',
+      borderRadius: '8px',
+    }
+  }} className="model-box overflow-y-auto p-4" appElement={document.getElementById("root")}
         className="model-box">
         <AddEditTravelStory type={openAddEditModal.type}
           storyInfo={openAddEditModal.data}
@@ -277,11 +291,11 @@ const Home = () => {
         />
       </Modal>
 
-      <button className='w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10'>
-        <MdAdd className="text-[32px] text-white" onClick={() => {
-          setOpenAddEditModal({ isShown: true, type: "add", data: null })
-        }} />
-      </button>
+      <button className='w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-4 bottom-4 md:right-10 md:bottom-10'> {/* Adjusted size and position */}
+  <MdAdd className="text-2xl md:text-[32px] text-white" onClick={() => {
+    setOpenAddEditModal({ isShown: true, type: "add", data: null })
+  }} />
+</button>
 
       <ToastContainer />
     </>
