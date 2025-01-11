@@ -8,7 +8,6 @@ function StoryDetails() {
 
   useEffect(() => {
     fetch(`https://travel-book-backend.onrender.com/api/story/${id}`)
-    // https://travel-book-backend.onrender.com
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -45,7 +44,6 @@ export default StoryDetails;
 
 // Styled-components for styling inside the file
 
-
 const StoryContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -64,6 +62,10 @@ const StoryBox = styled.div`
   width: 100%;
   margin: 20px;
   height: auto;  /* Auto adjusts the height to fit content */
+  background-image: url('/assets/images/bg-share.png');  /* Set the background image */
+  background-size: cover;  /* Make sure the image covers the entire area */
+  background-position: center;  /* Center the background image */
+  background-repeat: no-repeat;  /* Prevent repeating the image */
 `;
 
 const StoryTitle = styled.h1`
