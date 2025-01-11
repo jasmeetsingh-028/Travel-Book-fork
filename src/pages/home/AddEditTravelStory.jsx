@@ -6,6 +6,7 @@ import TagInput from '../../components/Input/TagInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import uploadImage from '../../utils/uploadImage';
 
 const AddEditTravelStory = ({
@@ -167,10 +168,10 @@ const AddEditTravelStory = ({
         const shareUrl = `${window.location.origin}/story/${storyId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
-                alert('Link copied to clipboard!');
+                toast.success('Link copied to clipboard!');
             })
             .catch(() => {
-                alert('Failed to copy the link. Please try again.');
+                toast.error('Failed to copy the link. Please try again.');
             });
     }
 
