@@ -22,13 +22,9 @@ function StoryDetails() {
       });
   }, [id]);
 
- if (!story) {
-  return (
-    <Loading>
-      <span className="loading loading-dots loading-xs"></span>
-    </Loading>
-  );
-}
+  if (!story) {
+    return <Loading>Loading...</Loading>;
+  }
 
   return (
     <StoryContainer>
@@ -54,7 +50,7 @@ const StoryContainer = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background-color: #262626;
+  background-color: #f4f4f4;
   min-height: 100vh;
 `;
 
@@ -106,9 +102,8 @@ const VisitedLocations = styled.p`
 `;
 
 const Loading = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; // To center the spinner in the viewport
+  font-size: 1.5rem;
+  color: #555;
+  text-align: center;
+  margin-top: 20px;
 `;
-
