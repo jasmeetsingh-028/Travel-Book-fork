@@ -128,6 +128,11 @@ const SignUp = () => {
             >
               LOGIN
             </button>
+
+            <p className="text-sm text-center text-gray-600 mt-4">
+            Kindly remember your password!
+          </p>
+            
           </form>
         </div>
       </div>
