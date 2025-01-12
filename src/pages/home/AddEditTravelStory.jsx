@@ -168,7 +168,7 @@ const AddEditTravelStory = ({
         const shareUrl = `${window.location.origin}/story/${storyId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
-                toast.success('Link copied to clipboard!');
+                toast.success('Link copied to your clipboard! 🎉 Now you can share it with your friends! 😎✨!');
             })
             .catch(() => {
                 toast.error('Failed to copy the link. Please try again.');
