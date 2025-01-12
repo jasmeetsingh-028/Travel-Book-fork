@@ -117,6 +117,22 @@ const Hero = () => {
                                                 Create Free Account
                                             </a>
                                         </div>
+
+                                        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter">
+                                            <span className='mx-2'>OR</span>
+                                        </div>
+
+                                        <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36">
+                                            <a
+                                                href="https://travelbook.sahilportfolio.me/login" // Log in link
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                            >
+                                                Log In
+                                            </a>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
