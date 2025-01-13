@@ -49,8 +49,9 @@ function StoryDetails() {
     <StoryContainer>
       <StoryBox>
         <TitleText>{story.title}</TitleText>
+        <StoryDate>{new Date(story.date).toLocaleDateString()}</StoryDate> {/* Display the date */}
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story.substring(0, 100)}...</StoryText> {/* Display first 100 characters */}
+        <StoryText>{story.story}</StoryText>
         <VisitedText>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedText>
@@ -62,6 +63,7 @@ function StoryDetails() {
 
 export default StoryDetails;
 
+// Styled-components for styling inside the file
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -86,6 +88,12 @@ const StoryBox = styled.div`
 const TitleText = styled.h1`
   font-size: 2rem;
   margin-bottom: 10px;
+`;
+
+const StoryDate = styled.p`
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
 `;
 
 const StoryImage = styled.img`
@@ -113,11 +121,9 @@ const DownloadButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
-  position: absolute;
-  bottom: 20px; /* Positioned outside the box */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%; /* Make the button more prominent */
+  width: 100%;  /* Button width matches the box size */
+  max-width: 600px; /* Max width matches box */
+  margin-top: 20px;
 
   &:hover {
     background-color: #45a049;
