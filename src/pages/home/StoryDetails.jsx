@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import html2canvas from "html2canvas";
-import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -66,7 +65,7 @@ function StoryDetails() {
             footerText.style.bottom = "10px";
             footerText.style.left = "10px";
             footerText.style.fontSize = "14px";
-            footerText.style.color = "black"; // Text color black
+            footerText.style.color = "white"; // Text color white
             footerText.style.fontWeight = "bold"; // Make text bold
             footerText.style.zIndex = "999"; // Ensure text is on top of other elements
             document.body.appendChild(footerText);
@@ -97,7 +96,7 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox ref={storyRef} bgImage={backgroundImage}>
+      <StoryBox ref={storyRef} bgImage={"black"}> {/* Background set to black */}
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
@@ -128,17 +127,14 @@ const StoryContainer = styled.div`
 `;
 
 const StoryBox = styled.div`
-  background-color: #fff;
+  background-color: black;  /* Background set to black */
+  color: white;  /* Text color set to white */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 100%; /* Ensure width is fully responsive */
   max-width: 1080px; /* Set a max-width */
   height: auto;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: center; /* Centering content vertically */
@@ -161,7 +157,7 @@ const StoryBox = styled.div`
 const StoryTitle = styled.h1`
   font-size: 2rem;
   font-weight: bold;
-  color: #000; /* Change text color to black */
+  color: white;  /* Text color set to white */
   margin-bottom: 8px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Add shadow for better text readability */
   margin-top: 10px;
@@ -169,7 +165,7 @@ const StoryTitle = styled.h1`
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #000; /* Change text color to black */
+  color: white;  /* Text color set to white */
   margin-bottom: 12px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
@@ -186,7 +182,7 @@ const StoryImage = styled.img`
 
 const StoryContent = styled.p`
   font-size: 1.1rem;
-  color: #000; /* Change text color to black */
+  color: white;  /* Text color set to white */
   line-height: 1.5;
   margin-bottom: 15px;
   max-width: 90%; /* Prevent the text from overflowing */
@@ -195,7 +191,7 @@ const StoryContent = styled.p`
 
 const VisitedLocations = styled.p`
   font-size: 1.1rem;
-  color: #000; /* Change text color to black */
+  color: white;  /* Text color set to white */
   max-width: 90%;
   word-wrap: break-word;
 `;
