@@ -101,8 +101,8 @@ const StoryBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
-  width: 1080px; /* Set width to 1080px */
-  height: 1920px; /* Set height to 1920px for Instagram story */
+  width: 1080px; /* Fixed width for canvas rendering */
+  height: 1920px; /* Fixed height for canvas rendering */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
@@ -114,6 +114,20 @@ const StoryBox = styled.div`
   align-items: center; /* Centering content horizontally */
   text-align: center; /* Center the text */
   padding: 0 20px;
+
+  /* Responsive Content Styling for smaller devices */
+  @media (max-width: 1080px) {
+    width: 90%;
+    height: auto; /* Allow the height to adjust based on content */
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 15px;
+  }
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 10px;
+  }
 `;
 
 const StoryTitle = styled.h1`
@@ -181,31 +195,3 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
-
-// Media Queries for Responsiveness
-
-const media = {
-  small: `(max-width: 1080px)`,
-  tablet: `(max-width: 768px)`,
-  mobile: `(max-width: 480px)`,
-};
-
-const StoryBoxResponsive = styled(StoryBox)`
-  @media ${media.small} {
-    width: 90%;
-    height: auto; /* Let it adjust height according to content */
-  }
-
-  @media ${media.tablet} {
-    width: 100%;
-    height: auto;
-    padding: 15px;
-  }
-
-  @media ${media.mobile} {
-    width: 100%;
-    height: auto;
-    padding: 10px;
-  }
-`;
-
