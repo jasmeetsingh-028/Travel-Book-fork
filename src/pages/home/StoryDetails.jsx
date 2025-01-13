@@ -61,15 +61,14 @@ function StoryDetails() {
   return (
     <StoryContainer>
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
-        <StoryTitle>{story.title}</StoryTitle>
-        <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
+        <TitleText>{story.title}</TitleText>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryContent>{story.story}</StoryContent>
-        <VisitedLocations>
+        <StoryText>{story.story}</StoryText>
+        <VisitedText>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedLocations>
+        </VisitedText>
       </StoryBox>
-      <DownloadButton onClick={handleDownload}>Download as PNG (Instagram Style)</DownloadButton>
+      <DownloadButton onClick={handleDownload}>Download as PNG for Instagram Story</DownloadButton>
     </StoryContainer>
   );
 }
@@ -88,13 +87,13 @@ const StoryContainer = styled.div`
 `;
 
 const StoryBox = styled.div`
-  background-color: white; /* Set background color to white for the story box */
+  background-color: white;
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   width: 100%;
   max-width: 1080px;
-  height: auto;
+  height: 100%;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
   background-position: center;
@@ -104,9 +103,13 @@ const StoryBox = styled.div`
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  color: black; /* Change text color to black */
+  color: white; /* Text color for better visibility on dark backgrounds */
   padding: 40px;
-
+  height: 100vh; /* Full screen height for Instagram story feel */
+  position: relative;
+  max-height: 1920px;
+  aspect-ratio: 9 / 16; /* Set aspect ratio for Instagram story */
+  
   @media (max-width: 768px) {
     padding: 20px;
     width: 100%;
@@ -117,43 +120,40 @@ const StoryBox = styled.div`
   }
 `;
 
-const StoryTitle = styled.h1`
-  font-size: 2.5rem;
+const TitleText = styled.h1`
+  font-size: 3rem;
   font-weight: bold;
   color: black; /* Text color black */
   margin-bottom: 16px;
-`;
-
-const StoryDate = styled.p`
-  font-size: 1.2rem;
-  color: black; /* Text color black */
-  margin-bottom: 20px;
+  z-index: 1;
 `;
 
 const StoryImage = styled.img`
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   height: auto;
   margin-bottom: 20px;
   border-radius: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   object-fit: cover;
+  max-height: 60%; /* Make sure image doesn't dominate too much */
+  z-index: 1;
 `;
 
-const StoryContent = styled.p`
-  font-size: 1.2rem;
+const StoryText = styled.p`
+  font-size: 1.5rem;
   color: black; /* Text color black */
   line-height: 1.6;
   margin-bottom: 20px;
+  z-index: 1;
   max-width: 90%;
-  word-wrap: break-word;
 `;
 
-const VisitedLocations = styled.p`
+const VisitedText = styled.p`
   font-size: 1.2rem;
   color: black; /* Text color black */
+  margin-top: auto;
   max-width: 90%;
-  word-wrap: break-word;
+  z-index: 1;
 `;
 
 const DownloadButton = styled.button`
