@@ -38,7 +38,7 @@ function StoryDetails() {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
           width: 1080, // Set width to 1080px for the Instagram story size
-          height: 1920, // Set height to 1920px for the Instagram story size
+          height: 1500, // Reduced height to 1500px
           scale: 2, // Optional: Set higher scale for better image quality
         });
 
@@ -102,7 +102,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px; /* Set width to 1080px */
-  height: 1920px; /* Set height to 1920px */
+  height: 1500px; /* Reduced height to 1500px */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
@@ -127,8 +127,8 @@ const StoryDate = styled.p`
 `;
 
 const StoryImage = styled.img`
-  width: 100%;
-  max-width: 500px;
+  width: 80%; /* Reduced the width of the image to make it smaller */
+  max-width: 800px;
   height: auto;
   margin-bottom: 15px;
   border-radius: 8px;
