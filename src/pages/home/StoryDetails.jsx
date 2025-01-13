@@ -2,13 +2,15 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import html2canvas from "html2canvas";
+import backgroundImage from "../../../src/assets/images/InstaCanva.png";
+import travelBookLogo from "../../../src/assets/images/logo.png"; // Assuming logo is provided
 
 function StoryDetails() {
-  const { id } = useParams(); // Get the ID from the URL
+  const { id } = useParams();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef(); // Create a ref for the story box
+  const storyRef = useRef();
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -30,55 +32,14 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  const handleDownload = async () => {
-    try {
-      if (storyRef.current) {
-        const isMobile = window.innerWidth <= 768; // Check if the device is mobile
-
-        // Get the size of the element for proper scaling
-        const elementWidth = storyRef.current.offsetWidth;
-        const elementHeight = storyRef.current.offsetHeight;
-
-        const canvas = await html2canvas(storyRef.current, {
-          allowTaint: true, // Allow cross-origin images to be captured
-          useCORS: true, // Use CORS for loading images
-          width: elementWidth, // Match the width of the content container
-          height: elementHeight, // Match the height of the content container
-          scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile to prevent pixelation
-          x: 0,
-          y: 0,
-          scrollX: 0,
-          scrollY: 0,
-          onclone: (document) => {
-            // Remove unwanted elements from the cloned document
-            const storyContent = document.querySelector(".story-content");
-            const visitedLocations = document.querySelector(".visited-locations");
-            const fullStoryText = document.querySelector(".full-story");
-            if (storyContent) storyContent.remove();
-            if (visitedLocations) visitedLocations.remove();
-            if (fullStoryText) fullStoryText.remove();
-
-            // Create the text to add at the bottom of the image
-            const footerText = document.createElement("div");
-            footerText.innerHTML = "Create your own card like this from https://travelbook.sahilportfolio.me";
-            footerText.style.position = "absolute";
-            footerText.style.bottom = "10px";
-            footerText.style.left = "10px";
-            footerText.style.fontSize = "14px";
-            footerText.style.color = "white"; // Text color white
-            footerText.style.fontWeight = "bold"; // Make text bold
-            footerText.style.zIndex = "999"; // Ensure text is on top of other elements
-            document.body.appendChild(footerText);
-          }
-        });
-
+  const handleDownload = () => {
+    if (storyRef.current) {
+      html2canvas(storyRef.current).then((canvas) => {
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
-      }
-    } catch (error) {
-      console.error("Error generating canvas:", error);
+      });
     }
   };
 
@@ -95,127 +56,122 @@ function StoryDetails() {
   }
 
   return (
-    <StoryContainer>
-      <StoryBox ref={storyRef} bgImage={"black"}> {/* Background set to black */}
-        <StoryTitle>{story.title}</StoryTitle>
-        <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryContent className="full-story">{story.story}</StoryContent>
-        <VisitedLocations className="visited-locations">
-          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedLocations>
-      </StoryBox>
-      <DownloadButton onClick={handleDownload}>
-        Click here to download image as PNG
-      </DownloadButton>
+    <StoryContainer ref={storyRef}>
+      <Logo src={travelBookLogo} alt="Travel Book Logo" />
+      <Title>{story.title}</Title>
+      <Date>{new Date(story.createdOn).toLocaleDateString()}</Date>
+      <Image src={story.imageUrl} alt={`Image for ${story.title}`} />
+      <Description>{`${story.story.substring(0, 150)}...`}</Description>
+      <VisitedLocations>
+        Visited Locations: {story.visitedLocation.join(", ")}
+      </VisitedLocations>
+      <Footer>CREATE YOUR OWN STORY VIA https://travelbook.sahilportfolio.me/</Footer>
+      <DownloadButton onClick={handleDownload}>Download Story</DownloadButton>
     </StoryContainer>
   );
 }
 
 export default StoryDetails;
 
-// Styled-components for styling inside the file
+// Styled-components
 
 const StoryContainer = styled.div`
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  background-image: url(${backgroundImage});
+  background-size: cover;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 20px;
-  background-color: #f4f4f4;
-  min-height: 100vh;
 `;
 
-const StoryBox = styled.div`
-  background-color: black;  /* Background set to black */
-  color: white;  /* Text color set to white */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 12px;
-  width: 100%; /* Ensure width is fully responsive */
-  max-width: 1080px; /* Set a max-width */
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Centering content vertically */
-  align-items: center; /* Centering content horizontally */
-  text-align: center; /* Center the text */
-  padding: 0 20px;
-
-  /* Responsive Content Styling for smaller devices */
-  @media (max-width: 768px) {
-    padding: 15px;
-    width: 100%;
-  }
-
-  /* Remove white background overflow */
-  @media (max-width: 480px) {
-    padding: 10px;
-  }
+const Logo = styled.img`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 150px;
 `;
 
-const StoryTitle = styled.h1`
-  font-size: 2rem;
+const Title = styled.h1`
+  font-family: "Oswald", sans-serif;
+  font-size: 48px;
   font-weight: bold;
-  color: white;  /* Text color set to white */
-  margin-bottom: 8px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Add shadow for better text readability */
+  color: #333;
+  margin-top: 150px;
+`;
+
+const Date = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
+  color: #555;
   margin-top: 10px;
 `;
 
-const StoryDate = styled.p`
-  font-size: 1rem;
-  color: white;  /* Text color set to white */
-  margin-bottom: 12px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
-`;
-
-const StoryImage = styled.img`
-  width: 80%; /* Reduced the width of the image */
-  max-width: 800px;
+const Image = styled.img`
+  width: 80%;
   height: auto;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
-  object-fit: contain; /* Ensure the image stays within bounds */
+  margin-top: 20px;
+  border-radius: 12px;
 `;
 
-const StoryContent = styled.p`
-  font-size: 1.1rem;
-  color: white;  /* Text color set to white */
-  line-height: 1.5;
-  margin-bottom: 15px;
-  max-width: 90%; /* Prevent the text from overflowing */
-  word-wrap: break-word;
+const Description = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 22px;
+  color: #333;
+  margin-top: 20px;
+  text-align: center;
+  max-width: 80%;
 `;
 
 const VisitedLocations = styled.p`
-  font-size: 1.1rem;
-  color: white;  /* Text color set to white */
-  max-width: 90%;
-  word-wrap: break-word;
+  font-family: "Oswald", sans-serif;
+  font-size: 22px;
+  color: #333;
+  margin-top: 20px;
+  text-align: center;
+  max-width: 80%;
+`;
+
+const Footer = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 18px;
+  color: #555;
+  position: absolute;
+  bottom: 50px;
+  text-align: center;
+  width: 100%;
 `;
 
 const DownloadButton = styled.button`
-  background-color: #4caf50;
+  position: absolute;
+  bottom: 20px;
+  background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  font-size: 18px;
   cursor: pointer;
-  margin-top: 20px;
+  text-transform: uppercase;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
   }
 `;
 
 const Loading = styled.div`
-  font-size: 1.5rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
   color: #333;
 `;
 
 const ErrorMessage = styled.div`
-  font-size: 1.5rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
   color: red;
 `;
+
+
