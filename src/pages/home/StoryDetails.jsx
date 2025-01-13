@@ -59,7 +59,7 @@ function StoryDetails() {
             if (visitedLocations) visitedLocations.remove();
             if (fullStoryText) fullStoryText.remove();
 
-            // Create the dynamic story URL based on the ID
+            // Add only the title, date, image, and dynamic link to the image
             const storyLink = document.createElement("div");
             const storyURL = `https://travelbook.sahilportfolio.me/story/${story._id}`; // Dynamic URL based on story ID
             storyLink.innerHTML = `<a href="${storyURL}" target="_blank">${storyURL}</a>`;
