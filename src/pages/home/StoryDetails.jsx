@@ -49,7 +49,7 @@ function StoryDetails() {
     <StoryContainer>
       <StoryBox>
         <TitleText>{story.title}</TitleText>
-        <StoryDate>{new Date(story.date).toLocaleDateString()}</StoryDate> {/* Display the date */}
+        <StoryDate>{new Date(story.date).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
         <StoryText>{story.story}</StoryText>
         <VisitedText>
@@ -78,15 +78,16 @@ const StoryBox = styled.div`
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 15px;
   text-align: center;
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;  /* Reduced width */
   position: relative;
+  margin-bottom: 20px;
 `;
 
 const TitleText = styled.h1`
-  font-size: 2rem;
+  font-size: 1.5rem; /* Reduced font size */
   margin-bottom: 10px;
 `;
 
@@ -103,13 +104,13 @@ const StoryImage = styled.img`
 `;
 
 const StoryText = styled.p`
-  font-size: 1.2rem;
+  font-size: 1rem;  /* Reduced font size */
   margin-bottom: 10px;
 `;
 
 const VisitedText = styled.p`
-  font-size: 1rem;
-  margin-top: 20px;
+  font-size: 0.9rem;  /* Reduced font size */
+  margin-top: 10px;
 `;
 
 const DownloadButton = styled.button`
@@ -121,8 +122,8 @@ const DownloadButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
-  width: 100%;  /* Button width matches the box size */
-  max-width: 600px; /* Max width matches box */
+  width: 100%;
+  max-width: 500px;  /* Same width as the box */
   margin-top: 20px;
 
   &:hover {
