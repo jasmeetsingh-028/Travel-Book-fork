@@ -119,14 +119,15 @@ const StoryBox = styled.div`
 const StoryTitle = styled.h1`
   font-size: 2rem;
   font-weight: bold;
-  color: #fff;
+  color: #000; /* Change text color to black */
   margin-bottom: 8px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Add shadow for better text readability */
+  margin-top: 10px;
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #fff;
+  color: #000; /* Change text color to black */
   margin-bottom: 12px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
@@ -143,7 +144,7 @@ const StoryImage = styled.img`
 
 const StoryContent = styled.p`
   font-size: 1.1rem;
-  color: #fff;
+  color: #000; /* Change text color to black */
   line-height: 1.5;
   margin-bottom: 15px;
   max-width: 90%; /* Prevent the text from overflowing */
@@ -152,7 +153,7 @@ const StoryContent = styled.p`
 
 const VisitedLocations = styled.p`
   font-size: 1.1rem;
-  color: #fff;
+  color: #000; /* Change text color to black */
   max-width: 90%;
   word-wrap: break-word;
 `;
