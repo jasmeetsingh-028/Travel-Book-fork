@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components"; // Import styled-components
 import html2canvas from "html2canvas"; // Import html2canvas
+import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -36,6 +37,9 @@ function StoryDetails() {
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
+          width: 1080, // Set width to 1080px for the Instagram story size
+          height: 1920, // Set height to 1920px for the Instagram story size
+          scale: 2, // Optional: Set higher scale for better image quality
         });
 
         const link = document.createElement("a");
@@ -62,7 +66,7 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox ref={storyRef}>
+      <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
@@ -97,11 +101,10 @@ const StoryBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
-  max-width: 700px;
-  width: 100%;
+  width: 1080px; /* Set width to 1080px */
+  height: 1920px; /* Set height to 1920px */
   margin: 20px;
-  height: auto;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Background Image */
+  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -111,7 +114,7 @@ const StoryBox = styled.div`
 `;
 
 const StoryTitle = styled.h1`
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #333;
   margin-bottom: 8px;
