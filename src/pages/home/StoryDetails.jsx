@@ -52,10 +52,14 @@ function StoryDetails() {
           scrollY: 0,
           onclone: (document) => {
             // Remove unwanted elements from the cloned document
-            const contentToRemove = document.querySelectorAll('.content');
-            contentToRemove.forEach((el) => el.remove()); // Remove everything except title, date, image, and link
+            const storyContent = document.querySelector(".story-content");
+            const visitedLocations = document.querySelector(".visited-locations");
+            const fullStoryText = document.querySelector(".full-story");
+            if (storyContent) storyContent.remove();
+            if (visitedLocations) visitedLocations.remove();
+            if (fullStoryText) fullStoryText.remove();
 
-            // Add the story URL link to the canvas
+            // Add only the title, date, image, and dynamic link to the image
             const storyLink = document.createElement("div");
             const storyURL = `https://travelbook.sahilportfolio.me/story/${story._id}`; // Dynamic URL based on story ID
             storyLink.innerHTML = `<a href="${storyURL}" target="_blank">${storyURL}</a>`;
@@ -97,7 +101,10 @@ function StoryDetails() {
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        {/* We don't display the content on the page, just on the downloadable image */}
+        <StoryContent className="full-story">{story.story}</StoryContent>
+        <VisitedLocations className="visited-locations">
+          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
+        </VisitedLocations>
       </StoryBox>
       <DownloadButton onClick={handleDownload}>
         Click here to download image as PNG
@@ -175,6 +182,22 @@ const StoryImage = styled.img`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
   object-fit: contain; /* Ensure the image stays within bounds */
+`;
+
+const StoryContent = styled.p`
+  font-size: 1.1rem;
+  color: #000; /* Change text color to black */
+  line-height: 1.5;
+  margin-bottom: 15px;
+  max-width: 90%; /* Prevent the text from overflowing */
+  word-wrap: break-word;
+`;
+
+const VisitedLocations = styled.p`
+  font-size: 1.1rem;
+  color: #000; /* Change text color to black */
+  max-width: 90%;
+  word-wrap: break-word;
 `;
 
 const DownloadButton = styled.button`
