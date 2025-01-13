@@ -1,15 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components"; // Import styled-components
-import html2canvas from "html2canvas"; // Import html2canvas
-import backgroundImage from "../../../src/assets/images/bg-share.png"; // Correct path based on your project structure
+import styled from "styled-components";
+import html2canvas from "html2canvas";
 
 function StoryDetails() {
-  const { id } = useParams(); // Get the ID from the URL
+  const { id } = useParams();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef(); // Create a ref for the story box
+  const storyRef = useRef();
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -34,7 +33,14 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        const canvas = await html2canvas(storyRef.current);
+        const canvas = await html2canvas(storyRef.current, {
+          width: 1080, // set the width of the canvas
+          height: 1920, // set the height of the canvas
+          x: 0,
+          y: 0,
+          scale: 2, // optional: higher scale for better resolution
+        });
+
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
@@ -59,7 +65,7 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox ref={storyRef}>
+      <StoryBox ref={storyRef} bgImage={story.imageUrl}>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
@@ -77,8 +83,7 @@ function StoryDetails() {
 
 export default StoryDetails;
 
-// Styled-components for styling inside the file
-
+// Styled-components
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -98,7 +103,7 @@ const StoryBox = styled.div`
   width: 100%;
   margin: 20px;
   height: auto;
-  background-image: url(${backgroundImage});
+  background-image: url(${(props) => props.bgImage || "defaultBackground.png"});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
