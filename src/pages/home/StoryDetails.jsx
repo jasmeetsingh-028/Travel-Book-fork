@@ -37,8 +37,8 @@ function StoryDetails() {
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
-          width: 1080, // Set width to 1080px for the Instagram story size
-          height: 1200, // Reduced height to 1200px
+          width: 1080, // Set width to 1080px for Instagram story size
+          height: 1920, // Set height to 1920px for Instagram story size
           scale: 2, // Optional: Set higher scale for better image quality
         });
 
@@ -102,7 +102,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px; /* Set width to 1080px */
-  height: 1200px; /* Reduced height to 1200px */
+  height: 1920px; /* Set height to 1920px for Instagram story */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
@@ -110,42 +110,51 @@ const StoryBox = styled.div`
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center; /* Centering content vertically */
+  align-items: center; /* Centering content horizontally */
+  text-align: center; /* Center the text */
+  padding: 0 20px;
 `;
 
 const StoryTitle = styled.h1`
   font-size: 2rem;
   font-weight: bold;
-  color: #333;
+  color: #fff;
   margin-bottom: 8px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Add shadow for better text readability */
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #888;
+  color: #fff;
   margin-bottom: 12px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryImage = styled.img`
-  width: 80%; /* Reduced the width of the image to make it smaller */
+  width: 80%; /* Reduced the width of the image */
   max-width: 800px;
   height: auto;
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
-  object-fit: cover; /* Ensure the image is centered and scaled correctly */
+  object-fit: contain; /* Ensure the image stays within bounds */
 `;
 
 const StoryContent = styled.p`
   font-size: 1.1rem;
-  color: #444;
+  color: #fff;
   line-height: 1.5;
   margin-bottom: 15px;
+  max-width: 90%; /* Prevent the text from overflowing */
+  word-wrap: break-word;
 `;
 
 const VisitedLocations = styled.p`
   font-size: 1.1rem;
-  color: #333;
+  color: #fff;
+  max-width: 90%;
+  word-wrap: break-word;
 `;
 
 const DownloadButton = styled.button`
@@ -170,4 +179,31 @@ const Loading = styled.div`
 const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
+`;
+
+// Media Queries for Responsiveness
+
+const media = {
+  small: `(max-width: 1080px)`,
+  tablet: `(max-width: 768px)`,
+  mobile: `(max-width: 480px)`,
+};
+
+const StoryBoxResponsive = styled(StoryBox)`
+  @media ${media.small} {
+    width: 90%;
+    height: auto; /* Let it adjust height according to content */
+  }
+
+  @media ${media.tablet} {
+    width: 100%;
+    height: auto;
+    padding: 15px;
+  }
+
+  @media ${media.mobile} {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
 `;
