@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components"; // Import styled-components
 import html2canvas from "html2canvas"; // Import html2canvas
-import backgroundImage from "../../../src/assets/images/bg-share.png"; // Correct path based on your project structure
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -34,11 +33,29 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        const canvas = await html2canvas(storyRef.current);
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = `${story.title}.png`;
-        link.click();
+        // Set canvas options for Instagram story size
+        const canvas = await html2canvas(storyRef.current, {
+          width: 1080,
+          height: 1920,
+          scale: 2, // Higher scale for better quality
+          x: 0,
+          y: 0,
+        });
+
+        // Add background image (Cloudinary URL)
+        const img = new Image();
+        img.src = story.imageUrl; // Cloudinary URL
+
+        img.onload = () => {
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, 1080, 1920); // Draw the image on the canvas
+
+          // Download the canvas as PNG
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = `${story.title}.png`;
+          link.click();
+        };
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
@@ -98,10 +115,6 @@ const StoryBox = styled.div`
   width: 100%;
   margin: 20px;
   height: auto;
-  background-image: url(${backgroundImage});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 `;
 
 const StoryTitle = styled.h1`
