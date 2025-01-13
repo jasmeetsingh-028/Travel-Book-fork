@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import moment from "moment";
 import html2canvas from "html2canvas";
-import backgroundImage from "../../../src/assets/images/bg-share.png";
 
 function StoryDetails() {
   const { id } = useParams();
@@ -33,10 +32,10 @@ function StoryDetails() {
   }, [id]);
 
   const handleDownloadClick = () => {
-    const storyElement = document.getElementById("story-container");
+    const storyElement = document.getElementById("story-box");
 
     if (storyElement) {
-      html2canvas(storyElement).then((canvas) => {
+      html2canvas(storyElement, { width: 1080, height: 1920 }).then((canvas) => {
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `story_${id}.png`;
@@ -60,8 +59,8 @@ function StoryDetails() {
   const formattedDate = moment(story.date).format('MMM DD, YYYY');
 
   return (
-    <StoryContainer id="story-container">
-      <StoryBox>
+    <StoryContainer>
+      <StoryBox id="story-box">
         <TitleText>{story.title}</TitleText>
         <StoryDate>{formattedDate}</StoryDate>
         {story.imageUrl && <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />}
@@ -83,10 +82,8 @@ const StoryContainer = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background-image: url(${backgroundImage}); /* Add your background image here */
-  background-size: cover;
-  background-position: center;
   min-height: 100vh;
+  background-color: #f0f0f0;
 `;
 
 const StoryBox = styled.div`
@@ -94,8 +91,8 @@ const StoryBox = styled.div`
   border-radius: 16px;
   padding: 20px;
   text-align: center;
-  width: 100%;
-  max-width: 600px;
+  width: 1080px;
+  height: 1920px;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
