@@ -1,14 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
-import html2canvas from "html2canvas";
+import styled from "styled-components"; // Import styled-components
+import html2canvas from "html2canvas"; // Import html2canvas
+import backgroundImage from "../../../src/assets/images/bg-share.png"; // Correct path based on your project structure
 
 function StoryDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef();
+  const storyRef = useRef(); // Create a ref for the story box
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -33,19 +34,7 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Capture the image with html2canvas in Instagram story aspect ratio (9:16)
-        const canvas = await html2canvas(storyRef.current, {
-          allowTaint: true,
-          useCORS: true,
-          width: 1080, // Instagram story width
-          height: 1920, // Instagram story height
-          scale: 2, // Double resolution for high-quality image
-          x: 0,
-          y: 0,
-          backgroundColor: null, // Transparent background
-        });
-
-        // Create a link to download the captured canvas as an image
+        const canvas = await html2canvas(storyRef.current);
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
@@ -80,7 +69,7 @@ function StoryDetails() {
         </VisitedLocations>
       </StoryBox>
       <DownloadButton onClick={handleDownload}>
-        Click here to download image as PNG
+        Click here to share it on Instagram story via downloading it
       </DownloadButton>
     </StoryContainer>
   );
@@ -88,14 +77,14 @@ function StoryDetails() {
 
 export default StoryDetails;
 
-// Styled-components for styling
+// Styled-components for styling inside the file
 
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 20px;
   background-color: #f4f4f4;
   min-height: 100vh;
 `;
@@ -104,72 +93,46 @@ const StoryBox = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  max-width: 700px;
   width: 100%;
-  max-width: 1080px;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  position: relative; /* To maintain a good positioning for capturing */
-
-  @media (max-width: 768px) {
-    padding: 15px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-  }
+  margin: 20px;
+  height: auto;
+  background-image: url(${backgroundImage});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const StoryTitle = styled.h1`
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  color: #000;
+  color: #333;
   margin-bottom: 8px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #000;
+  color: #888;
   margin-bottom: 12px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryImage = styled.img`
   width: 100%;
-  height: auto;
-  margin-bottom: 15px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: cover; /* This makes sure the image fills the width and maintains aspect ratio */
-
-  @media (max-width: 480px) {
-    width: 100%;
-    height: auto;
-  }
+  margin-bottom: 15px;
 `;
 
 const StoryContent = styled.p`
-  font-size: 1rem;
-  color: #000;
+  font-size: 1.1rem;
+  color: #444;
   line-height: 1.5;
   margin-bottom: 15px;
-  max-width: 90%;
-  word-wrap: break-word;
-
-  @media (max-width: 480px) {
-    font-size: 0.9rem;
-  }
 `;
 
 const VisitedLocations = styled.p`
-  font-size: 1rem;
-  color: #000;
-  max-width: 90%;
-  word-wrap: break-word;
+  font-size: 1.1rem;
+  color: #333;
 `;
 
 const DownloadButton = styled.button`
