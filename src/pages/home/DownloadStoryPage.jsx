@@ -1,15 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import domtoimage from "dom-to-image";
-import backgroundImage from "../../../src/assets/images/bg-share.png";
+import domtoimage from "dom-to-image"; // Import dom-to-image for capturing the DOM as an image
+import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
 function DownloadStoryPage() {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef();
+  const storyRef = useRef(); // Reference for the story box
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -62,7 +62,10 @@ function DownloadStoryPage() {
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <TitleText>{story.title}</TitleText>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story.substring(0, 100)}...</StoryText>
+        <StoryText>{story.story}</StoryText>
+        <VisitedText>
+          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
+        </VisitedText>
       </StoryBox>
       <DownloadButton onClick={handleDownload}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
@@ -71,6 +74,7 @@ function DownloadStoryPage() {
 
 export default DownloadStoryPage;
 
+// Styled-components for styling inside the file
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -89,12 +93,13 @@ const StoryBox = styled.div`
   text-align: center;
   width: 100%;
   max-width: 600px;
+  position: relative;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   height: 90vh;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 9 / 16;  /* Ensuring aspect ratio for Instagram story */
 `;
 
 const TitleText = styled.h1`
@@ -113,6 +118,11 @@ const StoryText = styled.p`
   margin-bottom: 10px;
 `;
 
+const VisitedText = styled.p`
+  font-size: 1rem;
+  margin-bottom: 20px;
+`;
+
 const DownloadButton = styled.button`
   background-color: #4caf50;
   color: white;
@@ -122,9 +132,11 @@ const DownloadButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
-  width: 100%;
-  max-width: 600px;
-  margin-top: 20px;
+  position: absolute;
+  bottom: 20px;  /* Ensures the button is placed at the bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;  /* Make the button more prominent */
 
   &:hover {
     background-color: #45a049;

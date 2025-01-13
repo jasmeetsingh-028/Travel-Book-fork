@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";  // useNavigate instead of useHistory
 import styled from "styled-components";
 
 function StoryDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook to redirect to another page
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -30,7 +30,8 @@ function StoryDetails() {
   }, [id]);
 
   const handleDownloadClick = () => {
-    navigate(`/download-story/${id}`);
+    // Redirect to download page
+    navigate(`/download-story/${id}`);  // Using navigate instead of history.push
   };
 
   if (loading) {
@@ -50,18 +51,19 @@ function StoryDetails() {
       <StoryBox>
         <TitleText>{story.title}</TitleText>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story.substring(0, 100)}...</StoryText> {/* Display first 100 characters */}
+        <StoryText>{story.story}</StoryText>
         <VisitedText>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedText>
+        <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
       </StoryBox>
-      <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
   );
 }
 
 export default StoryDetails;
 
+// Styled-components for styling inside the file
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -101,7 +103,7 @@ const StoryText = styled.p`
 
 const VisitedText = styled.p`
   font-size: 1rem;
-  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const DownloadButton = styled.button`
@@ -114,10 +116,10 @@ const DownloadButton = styled.button`
   font-size: 1rem;
   transition: all 0.3s ease;
   position: absolute;
-  bottom: 20px; /* Positioned outside the box */
+  bottom: 20px;  /* Ensures the button is placed at the bottom */
   left: 50%;
   transform: translateX(-50%);
-  width: 80%; /* Make the button more prominent */
+  width: 80%;  /* Make the button more prominent */
 
   &:hover {
     background-color: #45a049;
