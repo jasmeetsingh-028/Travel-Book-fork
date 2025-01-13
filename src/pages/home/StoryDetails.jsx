@@ -33,12 +33,12 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Capture the image with html2canvas in 9:16 aspect ratio
+        // Capture the image with html2canvas in Instagram story aspect ratio (9:16)
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true,
           useCORS: true,
           width: 1080, // Instagram story width
-          height: 1920, // Instagram story height (9:16 ratio)
+          height: 1920, // Instagram story height
           scale: 2, // Double resolution for high-quality image
           x: 0,
           y: 0,
@@ -93,7 +93,7 @@ export default StoryDetails;
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 10px;
   background-color: #f4f4f4;
@@ -106,15 +106,13 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 1080px;
-  height: 1920px; /* Set to Instagram story height (9:16 aspect ratio) */
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center; /* Center elements inside the story box */
+  align-items: center;
   text-align: center;
   padding: 20px;
-  position: relative; /* To maintain good positioning for capturing */
+  position: relative; /* To maintain a good positioning for capturing */
 
   @media (max-width: 768px) {
     padding: 15px;
@@ -141,15 +139,16 @@ const StoryDate = styled.p`
 `;
 
 const StoryImage = styled.img`
-  width: 80%; /* Adjust width to maintain proportions */
+  width: 100%;
   height: auto;
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: contain; /* Ensures the image is not stretched */
+  object-fit: cover; /* This makes sure the image fills the width and maintains aspect ratio */
 
   @media (max-width: 480px) {
-    width: 90%; /* Adjust width for smaller screens */
+    width: 100%;
+    height: auto;
   }
 `;
 
@@ -196,4 +195,3 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
-
