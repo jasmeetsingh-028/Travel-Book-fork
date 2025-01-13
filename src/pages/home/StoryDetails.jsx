@@ -55,8 +55,8 @@ function StoryDetails() {
         <VisitedText>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedText>
+        <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
       </StoryBox>
-      <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
   );
 }
@@ -82,6 +82,7 @@ const StoryBox = styled.div`
   text-align: center;
   width: 100%;
   max-width: 600px;
+  position: relative;
 `;
 
 const TitleText = styled.h1`
@@ -102,6 +103,7 @@ const StoryText = styled.p`
 
 const VisitedText = styled.p`
   font-size: 1rem;
+  margin-bottom: 20px;
 `;
 
 const DownloadButton = styled.button`
@@ -113,6 +115,11 @@ const DownloadButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
+  position: absolute;
+  bottom: 20px;  /* Ensures the button is placed at the bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;  /* Make the button more prominent */
 
   &:hover {
     background-color: #45a049;

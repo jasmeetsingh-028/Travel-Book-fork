@@ -93,12 +93,13 @@ const StoryBox = styled.div`
   text-align: center;
   width: 100%;
   max-width: 600px;
+  position: relative;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   height: 90vh;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 9 / 16;  /* Ensuring aspect ratio for Instagram story */
 `;
 
 const TitleText = styled.h1`
@@ -119,6 +120,7 @@ const StoryText = styled.p`
 
 const VisitedText = styled.p`
   font-size: 1rem;
+  margin-bottom: 20px;
 `;
 
 const DownloadButton = styled.button`
@@ -130,6 +132,11 @@ const DownloadButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
+  position: absolute;
+  bottom: 20px;  /* Ensures the button is placed at the bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;  /* Make the button more prominent */
 
   &:hover {
     background-color: #45a049;
