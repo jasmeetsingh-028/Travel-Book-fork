@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import domtoimage from "dom-to-image"; // Import dom-to-image for capturing the DOM as an image
+import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
-function StoryDetails() {
-  const { id } = useParams();
+function DownloadStoryPage() {
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const storyRef = useRef(); // Reference for the story box
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -29,8 +31,18 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  const handleDownloadClick = () => {
-    navigate(`/download-story/${id}`);
+  const handleDownload = () => {
+    const node = storyRef.current;
+    domtoimage.toPng(node)
+      .then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = `${story.title}-instagram-story.png`;
+        link.click();
+      })
+      .catch(function (error) {
+        console.error("Error capturing image:", error);
+      });
   };
 
   if (loading) {
@@ -47,21 +59,22 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox>
+      <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <TitleText>{story.title}</TitleText>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story.substring(0, 100)}...</StoryText> {/* Display first 100 characters */}
+        <StoryText>{story.story}</StoryText>
         <VisitedText>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedText>
       </StoryBox>
-      <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
+      <DownloadButton onClick={handleDownload}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
   );
 }
 
-export default StoryDetails;
+export default DownloadStoryPage;
 
+// Styled-components for styling inside the file
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -81,6 +94,12 @@ const StoryBox = styled.div`
   width: 100%;
   max-width: 600px;
   position: relative;
+  background-image: url(${(props) => props.bgImage || "default_bg.png"});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 90vh;
+  aspect-ratio: 9 / 16;  /* Ensuring aspect ratio for Instagram story */
 `;
 
 const TitleText = styled.h1`
@@ -101,7 +120,7 @@ const StoryText = styled.p`
 
 const VisitedText = styled.p`
   font-size: 1rem;
-  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const DownloadButton = styled.button`
@@ -114,10 +133,10 @@ const DownloadButton = styled.button`
   font-size: 1rem;
   transition: all 0.3s ease;
   position: absolute;
-  bottom: 20px; /* Positioned outside the box */
+  bottom: 20px;  /* Ensures the button is placed at the bottom */
   left: 50%;
   transform: translateX(-50%);
-  width: 80%; /* Make the button more prominent */
+  width: 80%;  /* Make the button more prominent */
 
   &:hover {
     background-color: #45a049;
