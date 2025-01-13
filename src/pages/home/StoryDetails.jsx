@@ -34,33 +34,37 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Set canvas options for Instagram story size
+        // Creating canvas of Instagram story size (1080x1920)
         const canvas = await html2canvas(storyRef.current, {
           width: 1080,
           height: 1920,
-          scale: 2, // Higher scale for better quality
+          scale: 2, // Scale to improve image quality
           x: 0,
           y: 0,
+          backgroundColor: "transparent", // Set transparent background
         });
 
-        // Add background image (Cloudinary URL)
+        // Draw image to ensure it's centered within the canvas
+        const context = canvas.getContext("2d");
         const img = new Image();
-        img.src = story.imageUrl; // Cloudinary URL
-        img.crossOrigin = "anonymous"; // Enable CORS for the image
+        img.src = story.imageUrl; // Cloudinary image URL
 
         img.onload = () => {
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, 1080, 1920); // Draw the image on the canvas
+          const imgWidth = img.width;
+          const imgHeight = img.height;
 
-          // Download the canvas as PNG
+          // Calculate the image position to center it
+          const xOffset = (1080 - imgWidth) / 2;
+          const yOffset = (1920 - imgHeight) / 2;
+
+          // Draw the image in the center
+          context.drawImage(img, xOffset, yOffset, imgWidth, imgHeight);
+
+          // Create the download link
           const link = document.createElement("a");
           link.href = canvas.toDataURL("image/png");
           link.download = `${story.title}.png`;
           link.click();
-        };
-
-        img.onerror = () => {
-          console.error("Image failed to load or CORS issue occurred");
         };
       }
     } catch (error) {
