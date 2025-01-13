@@ -38,7 +38,7 @@ function StoryDetails() {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
           width: 1080, // Set width to 1080px for the Instagram story size
-          height: 1500, // Reduced height to 1500px
+          height: 1200, // Reduced height to 1200px
           scale: 2, // Optional: Set higher scale for better image quality
         });
 
@@ -102,7 +102,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px; /* Set width to 1080px */
-  height: 1500px; /* Reduced height to 1500px */
+  height: 1200px; /* Reduced height to 1200px */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
