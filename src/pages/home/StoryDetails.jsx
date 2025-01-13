@@ -34,14 +34,19 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
+        // Capture the image with html2canvas
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true,
           useCORS: true,
-          width: 1080,
-          height: 1920,
           scale: 2,
+          x: 0, // To start at the top-left corner of the element
+          y: 0,
+          width: storyRef.current.offsetWidth, // Ensure the width is captured
+          height: storyRef.current.offsetHeight, // Ensure the height is captured
+          backgroundColor: null, // Ensure transparent background
         });
-
+  
+        // Create a link to download the captured canvas as an image
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
@@ -51,18 +56,7 @@ function StoryDetails() {
       console.error("Error generating canvas:", error);
     }
   };
-
-  if (loading) {
-    return <Loading>Loading...</Loading>;
-  }
-
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
-
-  if (!story) {
-    return <ErrorMessage>No story found.</ErrorMessage>;
-  }
+  
 
   return (
     <StoryContainer>
