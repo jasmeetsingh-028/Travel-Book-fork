@@ -87,7 +87,7 @@ const StoryContainer = styled.div`
 `;
 
 const StoryBox = styled.div`
-  background-color: white;
+  background-color: #e6f7f7;
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -95,32 +95,40 @@ const StoryBox = styled.div`
   height: 1920px;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: #333;
 `;
 
 const TitleText = styled.h1`
-  font-size: 2rem;
-  margin-bottom: 10px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-top: 20px;
 `;
 
 const StoryDate = styled.p`
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #555;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 `;
 
 const StoryImage = styled.img`
-  width: 100%;
+  width: 90%;
   height: auto;
+  border-radius: 16px;
   margin: 20px 0;
 `;
 
 const StoryText = styled.p`
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+  font-size: 1.4rem;
+  margin: 20px;
+  line-height: 1.6;
 `;
 
 const VisitedText = styled.p`
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin-top: 20px;
 `;
 
