@@ -90,9 +90,7 @@ const StoryBox = styled.div`
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
   width: 100%;
-  max-width: 1080px;
   height: 100%;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -100,14 +98,15 @@ const StoryBox = styled.div`
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between; /* Ensure space is distributed evenly */
   align-items: center;
   text-align: center;
-  color: white; /* Text color for better visibility on dark backgrounds */
-  padding: 40px;
-  height: 100vh; /* Full screen height for Instagram story feel */
+  color: black;
+  padding: 40px 20px;
+  height: 90vh; /* Limit the height to prevent overflow */
   position: relative;
-  max-height: 1920px;
+  max-width: 1080px;
+  width: 100%;
   aspect-ratio: 9 / 16; /* Set aspect ratio for Instagram story */
   
   @media (max-width: 768px) {
@@ -123,9 +122,10 @@ const StoryBox = styled.div`
 const TitleText = styled.h1`
   font-size: 3rem;
   font-weight: bold;
-  color: black; /* Text color black */
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   z-index: 1;
+  line-height: 1.2;
+  padding: 0 20px;
 `;
 
 const StoryImage = styled.img`
@@ -135,13 +135,13 @@ const StoryImage = styled.img`
   margin-bottom: 20px;
   border-radius: 16px;
   object-fit: cover;
-  max-height: 60%; /* Make sure image doesn't dominate too much */
+  max-height: 50%;
   z-index: 1;
 `;
 
 const StoryText = styled.p`
   font-size: 1.5rem;
-  color: black; /* Text color black */
+  color: black;
   line-height: 1.6;
   margin-bottom: 20px;
   z-index: 1;
@@ -150,10 +150,11 @@ const StoryText = styled.p`
 
 const VisitedText = styled.p`
   font-size: 1.2rem;
-  color: black; /* Text color black */
+  color: black;
   margin-top: auto;
   max-width: 90%;
   z-index: 1;
+  padding-bottom: 20px;
 `;
 
 const DownloadButton = styled.button`
