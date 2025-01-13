@@ -45,6 +45,14 @@ function DownloadStoryPage() {
       });
   };
 
+  // Function to add the URL to the story text
+  const getUpdatedStoryText = (storyText, storyId) => {
+    const firstSentenceEnd = storyText.indexOf('.') + 1;
+    const firstPart = storyText.substring(0, firstSentenceEnd);
+    const link = `to read more, go to https://travelbook.sahilportfolio.me/story/${storyId}`;
+    return firstPart + " " + link;
+  };
+
   if (loading) {
     return <Loading>Loading...</Loading>;
   }
@@ -57,12 +65,14 @@ function DownloadStoryPage() {
     return <ErrorMessage>No story found.</ErrorMessage>;
   }
 
+  const updatedStoryText = getUpdatedStoryText(story.story, story._id);
+
   return (
     <StoryContainer>
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <TitleText>{story.title}</TitleText>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story.substring(0, 100)}...</StoryText>
+        <StoryText>{updatedStoryText}</StoryText>
       </StoryBox>
       <DownloadButton onClick={handleDownload}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
