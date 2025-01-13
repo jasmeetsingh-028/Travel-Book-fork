@@ -91,48 +91,47 @@ const StoryContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px; /* Reduced padding */
+  padding: 20px;
   background-color: #f4f4f4;
   min-height: 100vh;
 `;
-
 
 const StoryBox = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 8px; /* Reduced padding */
-  width: 540px; /* Reduced width for less zoomed-in effect */
-  height: auto; /* Adjust height based on content */
+  padding: 12px;
+  width: 1080px; /* Fixed width for canvas rendering */
+  height: 1920px; /* Fixed height for canvas rendering */
   margin: 20px;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"});
+  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0 10px;
+  justify-content: center; /* Centering content vertically */
+  align-items: center; /* Centering content horizontally */
+  text-align: center; /* Center the text */
+  padding: 0 20px;
 
   /* Responsive Content Styling for smaller devices */
   @media (max-width: 1080px) {
     width: 90%;
-    height: auto;
+    height: auto; /* Allow the height to adjust based on content */
   }
   @media (max-width: 768px) {
     width: 100%;
-    padding: 8px;
+    padding: 15px;
   }
   @media (max-width: 480px) {
     width: 100%;
-    padding: 5px;
+    padding: 10px;
   }
 `;
 
 const StoryTitle = styled.h1`
-  font-size: 2rem; /* Reduced font size */
+  font-size: 3rem; /* Increased font size */
   font-weight: bold;
   color: #000;
   margin-bottom: 8px;
@@ -141,35 +140,35 @@ const StoryTitle = styled.h1`
 `;
 
 const StoryDate = styled.p`
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1.5rem; /* Increased font size */
   font-weight: bold;
   color: #000;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryImage = styled.img`
-  width: 70%; /* Reduced the width of the image */
-  max-width: 600px;
+  width: 80%; /* Reduced the width of the image */
+  max-width: 800px;
   height: auto;
-  margin-bottom: 12px;
-  border-radius: 16px; /* Increased border radius */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: contain;
+  margin-bottom: 15px;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
+  object-fit: contain; /* Ensure the image stays within bounds */
 `;
 
 const StoryContent = styled.p`
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1.3rem; /* Increased font size */
   font-weight: bold;
   color: #000;
   line-height: 1.5;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
   max-width: 90%;
   word-wrap: break-word;
 `;
 
 const VisitedLocations = styled.p`
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1.3rem; /* Increased font size */
   font-weight: bold;
   color: #000;
   max-width: 90%;
