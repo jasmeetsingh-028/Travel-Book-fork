@@ -34,16 +34,40 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        const canvas = await html2canvas(storyRef.current, {
-          allowTaint: true, // Allow cross-origin images to be captured
-          useCORS: true, // Use CORS for loading images
-          width: 1080, // Set width to 1080px for Instagram story size
-          height: 1920, // Set height to 1920px for Instagram story size
-          scale: 2, // Optional: Set higher scale for better image quality
+        const originalCanvas = await html2canvas(storyRef.current, {
+          allowTaint: true,
+          useCORS: true,
+          width: 1080,
+          height: 1920,
+          scale: 2,
         });
-
+  
+        // Create a new canvas with additional height for the text
+        const extraHeight = 100; // Adjust the height for the text
+        const newCanvas = document.createElement("canvas");
+        newCanvas.width = originalCanvas.width;
+        newCanvas.height = originalCanvas.height + extraHeight;
+  
+        const ctx = newCanvas.getContext("2d");
+  
+        // Draw the original image onto the new canvas
+        ctx.drawImage(originalCanvas, 0, 0);
+  
+        // Set the text style
+        ctx.font = "bold 24px Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+  
+        // Add the text at the bottom of the new canvas
+        const text = "Create your own story via https://travelbook.sahilportfolio.me/";
+        const textX = newCanvas.width / 2;
+        const textY = originalCanvas.height + (extraHeight / 2) + 10; // Center the text in the extra height
+  
+        ctx.fillText(text, textX, textY);
+  
+        // Create the download link
         const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
+        link.href = newCanvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
       }
@@ -51,18 +75,7 @@ function StoryDetails() {
       console.error("Error generating canvas:", error);
     }
   };
-
-  if (loading) {
-    return <Loading>Loading...</Loading>;
-  }
-
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
-
-  if (!story) {
-    return <ErrorMessage>No story found.</ErrorMessage>;
-  }
+  
 
   return (
     <StoryContainer>
