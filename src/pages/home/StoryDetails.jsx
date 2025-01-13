@@ -10,6 +10,7 @@ function StoryDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const storyRef = useRef(); // Create a ref for the story box
+  const visitedLocationRef = useRef(); // Create a ref for the visited location section
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -34,6 +35,11 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
+        // Temporarily hide the visited location section before generating the canvas
+        if (visitedLocationRef.current) {
+          visitedLocationRef.current.style.display = "none";
+        }
+
         const isMobile = window.innerWidth <= 768; // Check if the device is mobile
 
         // Get the size of the element for proper scaling
@@ -56,6 +62,11 @@ function StoryDetails() {
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
+
+        // Reset visibility of the visited location section after download
+        if (visitedLocationRef.current) {
+          visitedLocationRef.current.style.display = "block";
+        }
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
@@ -81,7 +92,7 @@ function StoryDetails() {
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
         <StoryContent>{story.story}</StoryContent>
-        <VisitedLocations>
+        <VisitedLocations ref={visitedLocationRef}>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedLocations>
       </StoryBox>
