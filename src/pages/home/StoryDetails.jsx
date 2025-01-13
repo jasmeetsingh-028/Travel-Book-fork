@@ -51,9 +51,9 @@ function StoryDetails() {
           scrollX: 0,
           scrollY: 0,
           onclone: (document) => {
-            // Remove unwanted elements from the cloned document (like the visited locations)
-            const visitedLocations = document.querySelectorAll('.visited-locations');
-            visitedLocations.forEach((el) => el.remove());
+            // Remove unwanted elements from the cloned document
+            const contentToRemove = document.querySelectorAll('.content');
+            contentToRemove.forEach((el) => el.remove()); // Remove everything except title, date, image, and link
 
             // Add the story URL link to the canvas
             const storyLink = document.createElement("div");
@@ -97,10 +97,7 @@ function StoryDetails() {
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryContent>{story.story}</StoryContent>
-        <VisitedLocations>
-          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedLocations>
+        {/* We don't display the content on the page, just on the downloadable image */}
       </StoryBox>
       <DownloadButton onClick={handleDownload}>
         Click here to download image as PNG
@@ -178,22 +175,6 @@ const StoryImage = styled.img`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
   object-fit: contain; /* Ensure the image stays within bounds */
-`;
-
-const StoryContent = styled.p`
-  font-size: 1.1rem;
-  color: #000; /* Change text color to black */
-  line-height: 1.5;
-  margin-bottom: 15px;
-  max-width: 90%; /* Prevent the text from overflowing */
-  word-wrap: break-word;
-`;
-
-const VisitedLocations = styled.p`
-  font-size: 1.1rem;
-  color: #000; /* Change text color to black */
-  max-width: 90%;
-  word-wrap: break-word;
 `;
 
 const DownloadButton = styled.button`
