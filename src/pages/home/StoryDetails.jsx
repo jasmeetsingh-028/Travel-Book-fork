@@ -34,26 +34,30 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Fixed size for the image (Instagram story size)
-        const storyWidth = 1080; // Fixed width for laptop and all devices
-        const storyHeight = (storyWidth * 16) / 9; // Height based on 9:16 aspect ratio
+        const isMobile = window.innerWidth <= 768; // Check if the device is mobile
 
+        // Get the size of the element for proper scaling
+        const elementWidth = storyRef.current.offsetWidth;
+        const elementHeight = storyRef.current.offsetHeight;
+
+        // Generate canvas based on device type
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
-          width: storyWidth, // Fixed width for consistency
-          height: storyHeight, // Fixed height to maintain aspect ratio
-          scale: 2, // Scale for higher quality
+          width: elementWidth, // Match the width of the content container
+          height: elementHeight, // Match the height of the content container
+          scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile (lower scale for smaller screen)
           x: 0,
           y: 0,
           scrollX: 0,
           scrollY: 0,
         });
 
+        // Prepare the image download link
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
-        link.download = `${story.title}.png`;
-        link.click();
+        link.download = `${story.title}.png`; // Dynamic file name based on story title
+        link.click(); // Trigger the download
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
@@ -200,3 +204,4 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
+
