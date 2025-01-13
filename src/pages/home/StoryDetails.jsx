@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components"; // Import styled-components
 import html2canvas from "html2canvas"; // Import html2canvas
-import backgroundImage from "../../../src/assets/images/bg-share.png"; // Correct path based on your project structure
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -34,7 +33,11 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        const canvas = await html2canvas(storyRef.current);
+        const canvas = await html2canvas(storyRef.current, {
+          allowTaint: true, // Allow cross-origin images to be captured
+          useCORS: true, // Use CORS for loading images
+        });
+
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
@@ -43,28 +46,6 @@ function StoryDetails() {
     } catch (error) {
       console.error("Error generating canvas:", error);
     }
-  };
-
-  const downloadImage = (imageUrl) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.crossOrigin = "anonymous"; // Ensure CORS is handled
-    
-    img.onload = function() {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-
-      // Export the image as PNG
-      const dataURL = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = dataURL;
-      link.download = `${story.title}.png`;
-      link.click();
-    };
-    
-    img.src = imageUrl; // Dynamic image URL passed to the function
   };
 
   if (loading) {
@@ -90,7 +71,7 @@ function StoryDetails() {
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedLocations>
       </StoryBox>
-      <DownloadButton onClick={() => downloadImage(story.imageUrl)}>
+      <DownloadButton onClick={handleDownload}>
         Click here to download image as PNG
       </DownloadButton>
     </StoryContainer>
@@ -120,10 +101,13 @@ const StoryBox = styled.div`
   width: 100%;
   margin: 20px;
   height: auto;
-  background-image: url(${backgroundImage});
+  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Background Image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const StoryTitle = styled.h1`
@@ -141,8 +125,12 @@ const StoryDate = styled.p`
 
 const StoryImage = styled.img`
   width: 100%;
-  border-radius: 8px;
+  max-width: 500px;
+  height: auto;
   margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
+  object-fit: cover; /* Ensure the image is centered and scaled correctly */
 `;
 
 const StoryContent = styled.p`
