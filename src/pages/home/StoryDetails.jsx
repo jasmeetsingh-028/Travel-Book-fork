@@ -40,11 +40,15 @@ function StoryDetails() {
         const elementWidth = storyRef.current.offsetWidth;
         const elementHeight = storyRef.current.offsetHeight;
 
+        // Fixed aspect ratio for Instagram Story (9:16)
+        const storyWidth = isMobile ? 900 : 1080; // Adjusted width
+        const storyHeight = (storyWidth * 16) / 9; // Calculating height based on the 9:16 aspect ratio
+
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
-          width: elementWidth, // Match the width of the content container
-          height: elementHeight, // Match the height of the content container
+          width: storyWidth, // Set fixed width for Instagram story
+          height: storyHeight, // Set fixed height based on the aspect ratio
           scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile to prevent pixelation
           x: 0,
           y: 0,
