@@ -1,15 +1,25 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components"; // Import styled-components
-import html2canvas from "html2canvas"; // Import html2canvas
-import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
+import styled from "styled-components";
+import html2canvas from "html2canvas";
+import backgroundImage from "../../../src/assets/images/bg-share.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function StoryDetails() {
-  const { id } = useParams(); // Get the ID from the URL
+  const { id } = useParams();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef(); // Create a ref for the story box
+  const storyRef = useRef();
+
+  useEffect(() => {
+    document.body.style.zoom = "33%"; // Set the zoom level to 33%
+
+    return () => {
+      document.body.style.zoom = "100%"; // Reset the zoom level when the component unmounts
+    };
+  }, []);
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -37,18 +47,22 @@ function StoryDetails() {
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true,
           useCORS: true,
-          width: 1080,
-          height: 1920,
-          scale: 2,
+          width: storyRef.current.offsetWidth,
+          height: storyRef.current.offsetHeight,
+          scale: window.devicePixelRatio,
         });
 
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
+
+        // Show success toast
+        toast.success("Image downloaded successfully!");
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
+      toast.error("Failed to download image.");
     }
   };
 
@@ -66,6 +80,7 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
+      <ToastContainer />
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
@@ -78,6 +93,7 @@ function StoryDetails() {
           Create your own travel story from <a href="https://travelbook.sahilportfolio.me/">https://travelbook.sahilportfolio.me/</a>
         </CreateStoryMessage>
       </StoryBox>
+      <Description>{story.description}</Description>
       <DownloadButton onClick={handleDownload}>
         Click here to download image as PNG
       </DownloadButton>
@@ -117,7 +133,6 @@ const StoryBox = styled.div`
   align-items: center;
   text-align: center;
   padding: 0 20px;
-  position: relative;
 
   @media (max-width: 1080px) {
     width: 90%;
@@ -131,19 +146,6 @@ const StoryBox = styled.div`
     width: 100%;
     padding: 10px;
   }
-`;
-
-const CreateStoryMessage = styled.p`
-  font-size: 1rem;
-  font-weight: bold;
-  color: #555;
-  margin-top: 10px;
-  position: absolute;
-  bottom: 20px;
-  text-align: center;
-  width: 100%;
-  opacity: 0.8;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 `;
 
 const StoryTitle = styled.h1`
@@ -189,6 +191,34 @@ const VisitedLocations = styled.p`
   color: #000;
   max-width: 90%;
   word-wrap: break-word;
+`;
+
+const CreateStoryMessage = styled.p`
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-top: 20px;
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const Description = styled.p`
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #000;
+  line-height: 1.5;
+  max-width: 90%;
+  word-wrap: break-word;
+  margin-top: 20px;
+  text-align: center;
 `;
 
 const DownloadButton = styled.button`
