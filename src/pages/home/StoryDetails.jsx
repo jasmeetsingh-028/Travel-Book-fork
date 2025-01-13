@@ -1,15 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components"; // Import styled-components
-import html2canvas from "html2canvas"; // Import html2canvas
-import backgroundImage from "../../../src/assets/images/bg-share.png"; // Correct path based on your project structure
+import styled from "styled-components";
+import html2canvas from "html2canvas";
+import backgroundImage from "../../../src/assets/images/InstaCanva.png";
+import travelBookLogo from "../../../src/assets/images/logo.png"; // Assuming logo is provided
 
 function StoryDetails() {
-  const { id } = useParams(); // Get the ID from the URL
+  const { id } = useParams(); 
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef(); // Create a ref for the story box
+  const storyRef = useRef();
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -31,17 +32,14 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  const handleDownload = async () => {
-    try {
-      if (storyRef.current) {
-        const canvas = await html2canvas(storyRef.current);
+  const handleDownload = () => {
+    if (storyRef.current) {
+      html2canvas(storyRef.current).then((canvas) => {
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
-      }
-    } catch (error) {
-      console.error("Error generating canvas:", error);
+      });
     }
   };
 
@@ -58,103 +56,120 @@ function StoryDetails() {
   }
 
   return (
-    <StoryContainer>
-      <StoryBox ref={storyRef}>
-        <StoryTitle>{story.title}</StoryTitle>
-        <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryContent>{story.story}</StoryContent>
-        <VisitedLocations>
-          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedLocations>
-      </StoryBox>
-      <DownloadButton onClick={handleDownload}>
-        Click here to share it on Instagram story via downloading it
-      </DownloadButton>
+    <StoryContainer ref={storyRef}>
+      <Logo src={travelBookLogo} alt="Travel Book Logo" />
+      <Title>{story.title}</Title>
+      <Date>{new Date(story.createdOn).toLocaleDateString()}</Date>
+      <Image src={story.imageUrl} alt={`Image for ${story.title}`} />
+      <Description>{`${story.story.substring(0, 150)}...`}</Description>
+      <VisitedLocations>
+        Visited Locations: {story.visitedLocation.join(", ")}
+      </VisitedLocations>
+      <Footer>CREATE YOUR OWN STORY VIA https://travelbook.sahilportfolio.me/</Footer>
+      <DownloadButton onClick={handleDownload}>Download Story</DownloadButton>
     </StoryContainer>
   );
 }
 
 export default StoryDetails;
 
-// Styled-components for styling inside the file
+// Styled-components
 
 const StoryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background-color: #f4f4f4;
-  min-height: 100vh;
-`;
-
-const StoryBox = styled.div`
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 12px;
-  max-width: 700px;
-  width: 100%;
-  margin: 20px;
-  height: auto;
+  position: relative;
+  width: 1080px;
+  height: 1920px;
   background-image: url(${backgroundImage});
   background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
 `;
 
-const StoryTitle = styled.h1`
-  font-size: 1.8rem;
+const Logo = styled.img`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 150px;
+`;
+
+const Title = styled.h1`
+  font-family: "Oswald", sans-serif;
+  font-size: 48px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 8px;
+  margin-top: 150px;
 `;
 
-const StoryDate = styled.p`
-  font-size: 1rem;
-  color: #888;
-  margin-bottom: 12px;
+const Date = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
+  color: #555;
+  margin-top: 10px;
 `;
 
-const StoryImage = styled.img`
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 15px;
+const Image = styled.img`
+  width: 80%;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 12px;
 `;
 
-const StoryContent = styled.p`
-  font-size: 1.1rem;
-  color: #444;
-  line-height: 1.5;
-  margin-bottom: 15px;
+const Description = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 22px;
+  color: #333;
+  margin-top: 20px;
+  text-align: center;
+  max-width: 80%;
 `;
 
 const VisitedLocations = styled.p`
-  font-size: 1.1rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 22px;
   color: #333;
+  margin-top: 20px;
+  text-align: center;
+  max-width: 80%;
+`;
+
+const Footer = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 18px;
+  color: #555;
+  position: absolute;
+  bottom: 50px;
+  text-align: center;
+  width: 100%;
 `;
 
 const DownloadButton = styled.button`
-  background-color: #4caf50;
+  position: absolute;
+  bottom: 20px;
+  background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  font-size: 18px;
   cursor: pointer;
-  margin-top: 20px;
+  text-transform: uppercase;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
   }
 `;
 
 const Loading = styled.div`
-  font-size: 1.5rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
   color: #333;
 `;
 
 const ErrorMessage = styled.div`
-  font-size: 1.5rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
   color: red;
 `;
