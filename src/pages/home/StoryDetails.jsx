@@ -66,7 +66,7 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox ref={storyRef} bgImage={backgroundImage}>
+      <StoryBox>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
@@ -100,33 +100,20 @@ const StoryBox = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 1080px;
-  height: 1920px;
-  margin: 10px 0;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  width: 90%;
+  max-width: 1080px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 20px;
-
-  @media (max-width: 1080px) {
-    width: 90%;
-    height: auto;
-  }
+  padding: 20px;
 
   @media (max-width: 768px) {
-    width: 100%;
-    height: auto;
     padding: 15px;
   }
 
   @media (max-width: 480px) {
-    width: 100%;
-    height: auto;
     padding: 10px;
   }
 `;
@@ -137,7 +124,6 @@ const StoryTitle = styled.h1`
   color: #000;
   margin-bottom: 8px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
-  margin-top: 10px;
 `;
 
 const StoryDate = styled.p`
