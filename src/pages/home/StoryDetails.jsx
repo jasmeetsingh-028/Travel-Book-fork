@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import moment from "moment";
+import html2canvas from "html2canvas"; // Import html2canvas
 
 function StoryDetails() {
   const { id } = useParams();
@@ -31,7 +32,19 @@ function StoryDetails() {
   }, [id]);
 
   const handleDownloadClick = () => {
-    navigate(`/download-story/${id}`);
+    // Find the container of the story to capture
+    const storyElement = document.getElementById("story-container");
+
+    if (storyElement) {
+      // Use html2canvas to capture the story element as an image
+      html2canvas(storyElement).then((canvas) => {
+        // Create a download link
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = `story_${id}.png`;
+        link.click(); // Trigger the download
+      });
+    }
   };
 
   if (loading) {
@@ -49,7 +62,7 @@ function StoryDetails() {
   const formattedDate = moment(story.date).format('MMM DD, YYYY');
 
   return (
-    <StoryContainer>
+    <StoryContainer id="story-container"> {/* Add an id to the container for html2canvas */}
       <StoryBox>
         <TitleText>{story.title}</TitleText>
         <StoryDate>{formattedDate}</StoryDate> {/* Display the formatted date */}
