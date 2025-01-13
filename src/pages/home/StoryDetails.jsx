@@ -59,17 +59,16 @@ function StoryDetails() {
             if (visitedLocations) visitedLocations.remove();
             if (fullStoryText) fullStoryText.remove();
 
-            // Add only the title, date, image, and dynamic link to the image
-            const storyLink = document.createElement("div");
-            const storyURL = `https://travelbook.sahilportfolio.me/story/${story._id}`; // Dynamic URL based on story ID
-            storyLink.innerHTML = `<a href="${storyURL}" target="_blank">${storyURL}</a>`;
-            storyLink.style.position = "absolute";
-            storyLink.style.bottom = "10px";
-            storyLink.style.left = "10px";
-            storyLink.style.fontSize = "12px";
-            storyLink.style.color = "black";
-            storyLink.style.textDecoration = "underline";
-            document.body.appendChild(storyLink);
+            // Create the text to add at the bottom of the image
+            const footerText = document.createElement("div");
+            footerText.innerHTML = "Create your own card like this from https://travelbook.sahilportfolio.me";
+            footerText.style.position = "absolute";
+            footerText.style.bottom = "10px";
+            footerText.style.left = "10px";
+            footerText.style.fontSize = "14px";
+            footerText.style.color = "black"; // Text color black
+            footerText.style.fontWeight = "bold"; // Make text bold
+            document.body.appendChild(footerText);
           }
         });
 
