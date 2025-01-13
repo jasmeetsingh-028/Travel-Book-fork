@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import moment from "moment";
 
 function StoryDetails() {
   const { id } = useParams();
@@ -45,11 +46,13 @@ function StoryDetails() {
     return <ErrorMessage>No story found.</ErrorMessage>;
   }
 
+  const formattedDate = moment(story.date).format('MMM DD, YYYY');
+
   return (
     <StoryContainer>
       <StoryBox>
         <TitleText>{story.title}</TitleText>
-        <StoryDate>{new Date(story.date).toLocaleDateString()}</StoryDate> {/* Display the date */}
+        <StoryDate>{formattedDate}</StoryDate> {/* Display the formatted date */}
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
         <StoryText>{story.story}</StoryText>
         <VisitedText>
