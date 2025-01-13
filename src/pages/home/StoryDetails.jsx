@@ -66,7 +66,7 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox ref={storyRef} bgImage={backgroundImage}>
+      <StoryBox ref={storyRef}>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
@@ -89,9 +89,9 @@ export default StoryDetails;
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   background-color: #f4f4f4;
   min-height: 100vh;
 `;
@@ -100,19 +100,14 @@ const StoryBox = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 90%;
+  width: 100%;
   max-width: 1080px;
   margin-top: 20px;
-  padding: 20px;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
+  padding: 20px;
 
   @media (max-width: 768px) {
     padding: 15px;
@@ -126,48 +121,48 @@ const StoryBox = styled.div`
 const StoryTitle = styled.h1`
   font-size: 2rem;
   font-weight: bold;
-  color: #fff; /* White text for better contrast against the background */
+  color: #000;
   margin-bottom: 8px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #fff;
+  color: #000;
   margin-bottom: 12px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryImage = styled.img`
-  width: 70%;
-  max-width: 800px;
+  width: 100%;
   height: auto;
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: contain;
-
+  object-fit: cover; /* This makes sure the image fills the width and maintains aspect ratio */
+  
   @media (max-width: 480px) {
     width: 100%;
+    height: auto;
   }
 `;
 
 const StoryContent = styled.p`
-  font-size: 1.1rem;
-  color: #fff;
+  font-size: 1rem;
+  color: #000;
   line-height: 1.5;
   margin-bottom: 15px;
   max-width: 90%;
   word-wrap: break-word;
 
   @media (max-width: 480px) {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 `;
 
 const VisitedLocations = styled.p`
-  font-size: 1.1rem;
-  color: #fff;
+  font-size: 1rem;
+  color: #000;
   max-width: 90%;
   word-wrap: break-word;
 `;
