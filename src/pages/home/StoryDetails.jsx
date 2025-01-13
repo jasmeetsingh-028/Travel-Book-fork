@@ -10,7 +10,6 @@ function StoryDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const storyRef = useRef(); // Create a ref for the story box
-  const visitedLocationRef = useRef(); // Create a ref for the visited location section
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -35,11 +34,6 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Temporarily hide the visited location section before generating the canvas
-        if (visitedLocationRef.current) {
-          visitedLocationRef.current.style.display = "none";
-        }
-
         const isMobile = window.innerWidth <= 768; // Check if the device is mobile
 
         // Get the size of the element for proper scaling
@@ -56,17 +50,28 @@ function StoryDetails() {
           y: 0,
           scrollX: 0,
           scrollY: 0,
+          onclone: (document) => {
+            // Remove unwanted elements from the cloned document (like the visited locations)
+            const visitedLocations = document.querySelectorAll('.visited-locations');
+            visitedLocations.forEach((el) => el.remove());
+
+            // Add the story URL link to the canvas
+            const storyLink = document.createElement("div");
+            storyLink.innerHTML = `<a href="https://travelbook.sahilportfolio.me/story/${story._id}" target="_blank">View full story</a>`;
+            storyLink.style.position = "absolute";
+            storyLink.style.bottom = "10px";
+            storyLink.style.left = "10px";
+            storyLink.style.fontSize = "12px";
+            storyLink.style.color = "blue";
+            storyLink.style.textDecoration = "underline";
+            document.body.appendChild(storyLink);
+          }
         });
 
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
-
-        // Reset visibility of the visited location section after download
-        if (visitedLocationRef.current) {
-          visitedLocationRef.current.style.display = "block";
-        }
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
@@ -92,7 +97,7 @@ function StoryDetails() {
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
         <StoryContent>{story.story}</StoryContent>
-        <VisitedLocations ref={visitedLocationRef}>
+        <VisitedLocations>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedLocations>
       </StoryBox>
@@ -213,3 +218,4 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
+
