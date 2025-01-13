@@ -45,14 +45,6 @@ function DownloadStoryPage() {
       });
   };
 
-  // Function to add the URL to the story text
-  const getUpdatedStoryText = (storyText, storyId) => {
-    const firstSentenceEnd = storyText.indexOf('.') + 1;
-    const firstPart = storyText.substring(0, firstSentenceEnd);
-    const link = `to read more, go to https://travelbook.sahilportfolio.me/story/${storyId}`;
-    return firstPart + " " + link;
-  };
-
   if (loading) {
     return <Loading>Loading...</Loading>;
   }
@@ -65,16 +57,12 @@ function DownloadStoryPage() {
     return <ErrorMessage>No story found.</ErrorMessage>;
   }
 
-  const updatedStoryText = getUpdatedStoryText(story.story, story._id);
-
   return (
     <StoryContainer>
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <TitleText>{story.title}</TitleText>
-        <StoryImageWrapper>
-          <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        </StoryImageWrapper>
-        <StoryText>{updatedStoryText}</StoryText>
+        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
+        <StoryText>{story.story.substring(0, 100)}...</StoryText>
       </StoryBox>
       <DownloadButton onClick={handleDownload}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
@@ -105,13 +93,8 @@ const StoryBox = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: auto;
-  max-height: 90vh; /* Ensuring box does not exceed viewport height */
+  height: 90vh;
   aspect-ratio: 9 / 16;
-  overflow: hidden; /* Preventing overflow */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 `;
 
 const TitleText = styled.h1`
@@ -119,28 +102,15 @@ const TitleText = styled.h1`
   margin-bottom: 10px;
 `;
 
-const StoryImageWrapper = styled.div`
-  width: 100%;
-  height: 300px; /* Fixed height for image */
-  margin: 20px 0;
-  overflow: hidden;
-  position: relative;
-`;
-
 const StoryImage = styled.img`
   width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ensures image fills container and maintains aspect ratio */
-  object-position: center; /* Keeps the focal point in the center */
+  height: auto;
+  margin: 20px 0;
 `;
 
 const StoryText = styled.p`
   font-size: 1.2rem;
   margin-bottom: 10px;
-  white-space: pre-wrap; /* Handles new lines and word breaks */
-  overflow-wrap: break-word; /* Ensures long words break to the next line */
-  max-height: 50%; /* Limit text block height */
-  text-align: justify; /* Ensures text aligns properly */
 `;
 
 const DownloadButton = styled.button`
