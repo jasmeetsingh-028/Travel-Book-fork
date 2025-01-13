@@ -57,7 +57,8 @@ function StoryDetails() {
 
             // Add the story URL link to the canvas
             const storyLink = document.createElement("div");
-            storyLink.innerHTML = `<a href="https://travelbook.sahilportfolio.me/story/${story._id}" target="_blank">View full story</a>`;
+            const storyURL = `https://travelbook.sahilportfolio.me/story/${story._id}`; // Dynamic URL based on story ID
+            storyLink.innerHTML = `<a href="${storyURL}" target="_blank">${storyURL}</a>`;
             storyLink.style.position = "absolute";
             storyLink.style.bottom = "10px";
             storyLink.style.left = "10px";
@@ -218,4 +219,3 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
-
