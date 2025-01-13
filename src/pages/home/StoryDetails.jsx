@@ -32,17 +32,21 @@ function StoryDetails() {
   }, [id]);
 
   const handleDownload = async () => {
+    if (!story) {
+      console.error("Story data is not available.");
+      return;
+    }
+  
     try {
       if (storyRef.current) {
         console.log("Generating canvas...");
   
-        // Configuring html2canvas options
         const canvas = await html2canvas(storyRef.current, {
           useCORS: true,
           allowTaint: true,
           width: storyRef.current.offsetWidth,
           height: storyRef.current.offsetHeight,
-          scale: window.devicePixelRatio, // Use the device pixel ratio for better resolution
+          scale: window.devicePixelRatio,
         });
   
         if (canvas) {
@@ -59,6 +63,7 @@ function StoryDetails() {
       console.error("Error generating canvas:", error);
     }
   };
+  
   
   return (
     <StoryContainer>
