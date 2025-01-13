@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import html2canvas from "html2canvas";
-import backgroundImage from "../../../src/assets/images/bg-share.png";
 
 function StoryDetails() {
   const { id } = useParams();
@@ -38,14 +37,14 @@ function StoryDetails() {
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true,
           useCORS: true,
+          width: storyRef.current.offsetWidth, // Use actual element width
+          height: storyRef.current.offsetHeight, // Use actual element height
           scale: 2,
-          x: 0, // To start at the top-left corner of the element
+          x: 0,
           y: 0,
-          width: storyRef.current.offsetWidth, // Ensure the width is captured
-          height: storyRef.current.offsetHeight, // Ensure the height is captured
-          backgroundColor: null, // Ensure transparent background
+          backgroundColor: null, // Transparent background
         });
-  
+
         // Create a link to download the captured canvas as an image
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
@@ -56,7 +55,18 @@ function StoryDetails() {
       console.error("Error generating canvas:", error);
     }
   };
-  
+
+  if (loading) {
+    return <Loading>Loading...</Loading>;
+  }
+
+  if (error) {
+    return <ErrorMessage>{error}</ErrorMessage>;
+  }
+
+  if (!story) {
+    return <ErrorMessage>No story found.</ErrorMessage>;
+  }
 
   return (
     <StoryContainer>
@@ -102,7 +112,8 @@ const StoryBox = styled.div`
   align-items: center;
   text-align: center;
   padding: 20px;
-
+  position: relative; /* To maintain a good positioning for capturing */
+  
   @media (max-width: 768px) {
     padding: 15px;
   }
@@ -184,3 +195,4 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
+
