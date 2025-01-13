@@ -67,7 +67,7 @@ function StoryDetails() {
             storyLink.style.bottom = "10px";
             storyLink.style.left = "10px";
             storyLink.style.fontSize = "12px";
-            storyLink.style.color = "blue";
+            storyLink.style.color = "black";
             storyLink.style.textDecoration = "underline";
             document.body.appendChild(storyLink);
           }
