@@ -34,36 +34,32 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
+        console.log("Generating canvas...");
+  
+        // Configuring html2canvas options
         const canvas = await html2canvas(storyRef.current, {
-          allowTaint: true,
           useCORS: true,
-          width: 1080,
-          height: 1920,
-          scale: 2,
+          allowTaint: true,
+          width: storyRef.current.offsetWidth,
+          height: storyRef.current.offsetHeight,
+          scale: window.devicePixelRatio, // Use the device pixel ratio for better resolution
         });
-
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = `${story.title}.png`;
-        link.click();
+  
+        if (canvas) {
+          console.log("Canvas generated successfully.");
+          const link = document.createElement("a");
+          link.href = canvas.toDataURL("image/png");
+          link.download = `${story.title.replace(/ /g, "_")}.png`;
+          link.click();
+        } else {
+          console.error("Failed to generate canvas.");
+        }
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
     }
   };
-
-  if (loading) {
-    return <Loading>Loading...</Loading>;
-  }
-
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
-
-  if (!story) {
-    return <ErrorMessage>No story found.</ErrorMessage>;
-  }
-
+  
   return (
     <StoryContainer>
       <StoryBox>
