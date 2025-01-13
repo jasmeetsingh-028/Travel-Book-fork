@@ -34,11 +34,13 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
+        const isMobile = window.innerWidth <= 768; // Check if the device is mobile
+
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
-          width: 1080, // Set width to 1080px for Instagram story size
-          height: 1920, // Set height to 1920px for Instagram story size
+          width: isMobile ? window.innerWidth : 1080, // Set width based on device screen
+          height: isMobile ? (window.innerWidth * 1920) / 1080 : 1920, // Maintain aspect ratio for mobile
           scale: 2, // Optional: Set higher scale for better image quality
         });
 
