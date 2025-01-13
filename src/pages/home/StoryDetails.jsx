@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";  // useNavigate instead of useHistory
 import styled from "styled-components";
 
 function StoryDetails() {
@@ -7,7 +7,7 @@ function StoryDetails() {
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const history = useHistory(); // Hook to redirect to another page
+  const navigate = useNavigate(); // Hook to redirect to another page
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -31,7 +31,7 @@ function StoryDetails() {
 
   const handleDownloadClick = () => {
     // Redirect to download page
-    history.push(`/download-story/${id}`);
+    navigate(`/download-story/${id}`);  // Using navigate instead of history.push
   };
 
   if (loading) {
