@@ -35,11 +35,11 @@ function StoryDetails() {
     try {
       if (storyRef.current) {
         const isMobile = window.innerWidth <= 768; // Check if the device is mobile
-  
+
         // Get the size of the element for proper scaling
         const elementWidth = storyRef.current.offsetWidth;
         const elementHeight = storyRef.current.offsetHeight;
-  
+
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
@@ -58,7 +58,7 @@ function StoryDetails() {
             if (storyContent) storyContent.remove();
             if (visitedLocations) visitedLocations.remove();
             if (fullStoryText) fullStoryText.remove();
-  
+
             // Create the text to add at the bottom of the image
             const footerText = document.createElement("div");
             footerText.innerHTML = "Create your own card like this from https://travelbook.sahilportfolio.me";
@@ -72,7 +72,7 @@ function StoryDetails() {
             document.body.appendChild(footerText);
           }
         });
-  
+
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
@@ -82,7 +82,18 @@ function StoryDetails() {
       console.error("Error generating canvas:", error);
     }
   };
-  
+
+  if (loading) {
+    return <Loading>Loading...</Loading>;
+  }
+
+  if (error) {
+    return <ErrorMessage>{error}</ErrorMessage>;
+  }
+
+  if (!story) {
+    return <ErrorMessage>No story found.</ErrorMessage>;
+  }
 
   return (
     <StoryContainer>
