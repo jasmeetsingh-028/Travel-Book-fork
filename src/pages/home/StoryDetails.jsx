@@ -34,42 +34,37 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Creating canvas of Instagram story size (1080x1920)
-        const canvas = await html2canvas(storyRef.current, {
-          width: 1080,
-          height: 1920,
-          scale: 2, // Scale to improve image quality
-          x: 0,
-          y: 0,
-          backgroundColor: "transparent", // Set transparent background
-        });
-
-        // Draw image to ensure it's centered within the canvas
-        const context = canvas.getContext("2d");
-        const img = new Image();
-        img.src = story.imageUrl; // Cloudinary image URL
-
-        img.onload = () => {
-          const imgWidth = img.width;
-          const imgHeight = img.height;
-
-          // Calculate the image position to center it
-          const xOffset = (1080 - imgWidth) / 2;
-          const yOffset = (1920 - imgHeight) / 2;
-
-          // Draw the image in the center
-          context.drawImage(img, xOffset, yOffset, imgWidth, imgHeight);
-
-          // Create the download link
-          const link = document.createElement("a");
-          link.href = canvas.toDataURL("image/png");
-          link.download = `${story.title}.png`;
-          link.click();
-        };
+        const canvas = await html2canvas(storyRef.current);
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = `${story.title}.png`;
+        link.click();
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
     }
+  };
+
+  const downloadImage = (imageUrl) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Ensure CORS is handled
+    
+    img.onload = function() {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+
+      // Export the image as PNG
+      const dataURL = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = `${story.title}.png`;
+      link.click();
+    };
+    
+    img.src = imageUrl; // Dynamic image URL passed to the function
   };
 
   if (loading) {
@@ -95,8 +90,8 @@ function StoryDetails() {
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
         </VisitedLocations>
       </StoryBox>
-      <DownloadButton onClick={handleDownload}>
-        Click here to share it on Instagram story via downloading it
+      <DownloadButton onClick={() => downloadImage(story.imageUrl)}>
+        Click here to download image as PNG
       </DownloadButton>
     </StoryContainer>
   );
