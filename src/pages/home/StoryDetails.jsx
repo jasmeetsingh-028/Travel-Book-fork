@@ -34,22 +34,16 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        const isMobile = window.innerWidth <= 768; // Check if the device is mobile
-
-        // Get the size of the element for proper scaling
-        const elementWidth = storyRef.current.offsetWidth;
-        const elementHeight = storyRef.current.offsetHeight;
-
-        // Fixed aspect ratio for Instagram Story (9:16)
-        const storyWidth = isMobile ? 900 : 1080; // Adjusted width
-        const storyHeight = (storyWidth * 16) / 9; // Calculating height based on the 9:16 aspect ratio
+        // Fixed size for the image (Instagram story size)
+        const storyWidth = 1080; // Fixed width for laptop and all devices
+        const storyHeight = (storyWidth * 16) / 9; // Height based on 9:16 aspect ratio
 
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
-          width: storyWidth, // Set fixed width for Instagram story
-          height: storyHeight, // Set fixed height based on the aspect ratio
-          scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile to prevent pixelation
+          width: storyWidth, // Fixed width for consistency
+          height: storyHeight, // Fixed height to maintain aspect ratio
+          scale: 2, // Scale for higher quality
           x: 0,
           y: 0,
           scrollX: 0,
