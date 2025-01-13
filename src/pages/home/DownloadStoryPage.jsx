@@ -103,8 +103,13 @@ const StoryBox = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 90vh;
+  height: auto;
+  max-height: 90vh; /* Ensuring box does not exceed viewport height */
   aspect-ratio: 9 / 16;
+  overflow: hidden; /* Preventing overflow */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const TitleText = styled.h1`
@@ -121,6 +126,10 @@ const StoryImage = styled.img`
 const StoryText = styled.p`
   font-size: 1.2rem;
   margin-bottom: 10px;
+  white-space: pre-wrap; /* Handles new lines and word breaks */
+  overflow-wrap: break-word; /* Ensures long words break to the next line */
+  max-height: 50%; /* Limit text block height */
+  text-align: justify; /* Ensures text aligns properly */
 `;
 
 const DownloadButton = styled.button`
