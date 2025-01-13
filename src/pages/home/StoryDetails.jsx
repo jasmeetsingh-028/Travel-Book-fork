@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components"; // Import styled-components
-import html2canvas from "html2canvas"; // Import html2canvas
+import styled from "styled-components";
+import html2canvas from "html2canvas";
 import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
 function StoryDetails() {
@@ -35,13 +35,16 @@ function StoryDetails() {
     try {
       if (storyRef.current) {
         const isMobile = window.innerWidth <= 768; // Check if the device is mobile
-
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
           width: isMobile ? window.innerWidth : 1080, // Set width based on device screen
           height: isMobile ? (window.innerWidth * 1920) / 1080 : 1920, // Maintain aspect ratio for mobile
-          scale: 2, // Optional: Set higher scale for better image quality
+          scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile to prevent pixelation
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
         });
 
         const link = document.createElement("a");
