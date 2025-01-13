@@ -93,7 +93,7 @@ export default StoryDetails;
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   padding: 10px;
   background-color: #f4f4f4;
@@ -106,10 +106,12 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 1080px;
+  height: 1920px; /* Set to Instagram story height */
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  align-items: center; /* Center elements inside the story box */
   text-align: center;
   padding: 20px;
   position: relative; /* To maintain a good positioning for capturing */
@@ -139,16 +141,15 @@ const StoryDate = styled.p`
 `;
 
 const StoryImage = styled.img`
-  width: 100%;
+  width: 80%; /* Adjust width to maintain proportions */
   height: auto;
   margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: cover; /* This makes sure the image fills the width and maintains aspect ratio */
+  object-fit: contain; /* Makes sure the image is not stretched */
 
   @media (max-width: 480px) {
-    width: 100%;
-    height: auto;
+    width: 90%; /* Adjust width for smaller screens */
   }
 `;
 
