@@ -1,26 +1,28 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import domtoimage from 'dom-to-image';
+import backgroundImage from "../../../src/assets/images/bg-share.png";
 
 function StoryDetails() {
   const { id } = useParams();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const storyRef = useRef();
 
   useEffect(() => {
     const fetchStory = async () => {
       try {
         const response = await fetch(`https://travel-book-backend.onrender.com/api/story/${id}`);
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error('Network response was not ok');
         }
         const data = await response.json();
         setStory(data);
       } catch (error) {
-        console.error("Error fetching story details:", error);
-        setError("Error fetching story details.");
+        console.error('Error fetching story details:', error);
+        setError('Error fetching story details.');
       } finally {
         setLoading(false);
       }
@@ -29,8 +31,18 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  const handleDownloadClick = () => {
-    navigate(`/download-story/${id}`);
+  const handleDownload = () => {
+    const node = storyRef.current;
+    domtoimage.toPng(node)
+      .then(function (dataUrl) {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = `${story.title}-instagram-story.png`;
+        link.click();
+      })
+      .catch(function (error) {
+        console.error('Error capturing image:', error);
+      });
   };
 
   if (loading) {
@@ -47,15 +59,18 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <StoryBox>
+      {/* Story Box */}
+      <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <TitleText>{story.title}</TitleText>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story.substring(0, 100)}...</StoryText> {/* Display first 100 characters */}
-        <VisitedText>
-          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedText>
+        <StoryText>{story.story}</StoryText>
+        <VisitedLocationBox>
+          <LocationText>Visited Location: {story.visitedLocation}</LocationText>
+        </VisitedLocationBox>
       </StoryBox>
-      <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
+
+      {/* Download Button */}
+      <DownloadButton onClick={handleDownload}>Download as Instagram Story</DownloadButton>
     </StoryContainer>
   );
 }
@@ -80,7 +95,12 @@ const StoryBox = styled.div`
   text-align: center;
   width: 100%;
   max-width: 600px;
-  position: relative;
+  background-image: url(${(props) => props.bgImage || 'default_bg.png'});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 90vh;
+  aspect-ratio: 9 / 16;
 `;
 
 const TitleText = styled.h1`
@@ -90,7 +110,8 @@ const TitleText = styled.h1`
 
 const StoryImage = styled.img`
   width: 100%;
-  height: auto;
+  height: 300px;
+  object-fit: cover;
   margin: 20px 0;
 `;
 
@@ -99,9 +120,16 @@ const StoryText = styled.p`
   margin-bottom: 10px;
 `;
 
-const VisitedText = styled.p`
-  font-size: 1rem;
+const VisitedLocationBox = styled.div`
+  background-color: #eeeeee;
+  padding: 10px;
+  border-radius: 8px;
   margin-top: 20px;
+`;
+
+const LocationText = styled.p`
+  font-size: 1.2rem;
+  color: #333;
 `;
 
 const DownloadButton = styled.button`
@@ -113,11 +141,9 @@ const DownloadButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
-  position: absolute;
-  bottom: 20px; /* Positioned outside the box */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%; /* Make the button more prominent */
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
 
   &:hover {
     background-color: #45a049;
