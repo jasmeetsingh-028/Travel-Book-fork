@@ -5,7 +5,7 @@ import html2canvas from "html2canvas"; // Import html2canvas
 import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
 function StoryDetails() {
-  const { id } = useParams(); // Get the ID from the URL?
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,11 +35,11 @@ function StoryDetails() {
     try {
       if (storyRef.current) {
         const canvas = await html2canvas(storyRef.current, {
-          allowTaint: true,
-          useCORS: true,
-          width: 1080,
-          height: 1920,
-          scale: 2,
+          allowTaint: true, // Allow cross-origin images to be captured
+          useCORS: true, // Use CORS for loading images
+          width: 1080, // Set width to 1080px for Instagram story size
+          height: 1920, // Set height to 1920px for Instagram story size
+          scale: 2, // Optional: Set higher scale for better image quality
         });
 
         const link = document.createElement("a");
@@ -66,17 +66,15 @@ function StoryDetails() {
 
   return (
     <StoryContainer>
-      <ScaledStoryBox>
-        <StoryBox ref={storyRef} bgImage={backgroundImage}>
-          <StoryTitle>{story.title}</StoryTitle>
-          <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-          <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-          <StoryContent>{story.story}</StoryContent>
-          <VisitedLocations>
-            <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-          </VisitedLocations>
-        </StoryBox>
-      </ScaledStoryBox>
+      <StoryBox ref={storyRef} bgImage={backgroundImage}>
+        <StoryTitle>{story.title}</StoryTitle>
+        <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
+        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
+        <StoryContent>{story.story}</StoryContent>
+        <VisitedLocations>
+          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
+        </VisitedLocations>
+      </StoryBox>
       <DownloadButton onClick={handleDownload}>
         Click here to download image as PNG
       </DownloadButton>
@@ -102,73 +100,60 @@ const StoryBox = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 1080px; 
-  height: 1920px; 
+  padding: 12px;
+  width: 1080px; /* Set width to 1080px */
+  height: 1920px; /* Set height to 1920px for Instagram story */
   margin: 20px;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"});
+  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  justify-content: center; /* Centering content vertically */
+  align-items: center; /* Centering content horizontally */
+  text-align: center; /* Center the text */
   padding: 0 20px;
-`;
-
-const ScaledStoryBox = styled.div`
-  width: 90vw;
-  max-width: 400px;
-  transform: scale(0.35);
-  transform-origin: top left;
-  overflow: hidden;
-  height: calc(90vw * 1.7777777778); /* Maintain aspect ratio */
-  @media (min-width: 768px) {
-    transform: scale(0.5);
-    max-width: 540px;
-    height: calc(540px * 1.7777777778);
-  }
 `;
 
 const StoryTitle = styled.h1`
   font-size: 2rem;
   font-weight: bold;
-  color: #000;
+  color: #000; /* Change text color to black */
   margin-bottom: 8px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Add shadow for better text readability */
   margin-top: 10px;
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #000;
+  color: #000; /* Change text color to black */
   margin-bottom: 12px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryImage = styled.img`
-  width: 80%;
+  width: 80%; /* Reduced the width of the image */
   max-width: 800px;
   height: auto;
   margin-bottom: 15px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: contain;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
+  object-fit: contain; /* Ensure the image stays within bounds */
 `;
 
 const StoryContent = styled.p`
   font-size: 1.1rem;
-  color: #000;
+  color: #000; /* Change text color to black */
   line-height: 1.5;
   margin-bottom: 15px;
-  max-width: 90%;
+  max-width: 90%; /* Prevent the text from overflowing */
   word-wrap: break-word;
 `;
 
 const VisitedLocations = styled.p`
   font-size: 1.1rem;
-  color: #000;
+  color: #000; /* Change text color to black */
   max-width: 90%;
   word-wrap: break-word;
 `;
@@ -196,3 +181,31 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
+
+// Media Queries for Responsiveness
+
+const media = {
+  small: `(max-width: 1080px)`,
+  tablet: `(max-width: 768px)`,
+  mobile: `(max-width: 480px)`,
+};
+
+const StoryBoxResponsive = styled(StoryBox)`
+  @media ${media.small} {
+    width: 90%;
+    height: auto; /* Let it adjust height according to content */
+  }
+
+  @media ${media.tablet} {
+    width: 100%;
+    height: auto;
+    padding: 15px;
+  }
+
+  @media ${media.mobile} {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+`;
+
