@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import moment from "moment";
-import html2canvas from "html2canvas"; // Import html2canvas
+import html2canvas from "html2canvas";
+import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 
 function StoryDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the ID from the URL
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const storyRef = useRef(); // Create a ref for the story box
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -31,19 +31,38 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  const handleDownloadClick = () => {
-    // Find the container of the story to capture
-    const storyElement = document.getElementById("story-container");
+  const handleDownload = async () => {
+    try {
+      if (storyRef.current) {
+        const isMobile = window.innerWidth <= 768; // Check if the device is mobile
 
-    if (storyElement) {
-      // Use html2canvas to capture the story element as an image
-      html2canvas(storyElement).then((canvas) => {
-        // Create a download link
+        // Get the size of the element for proper scaling
+        const elementWidth = storyRef.current.offsetWidth;
+        const elementHeight = storyRef.current.offsetHeight;
+
+        // Fixed aspect ratio for Instagram Story (9:16)
+        const storyWidth = isMobile ? 900 : 1080; // Adjusted width
+        const storyHeight = (storyWidth * 16) / 9; // Calculating height based on the 9:16 aspect ratio
+
+        const canvas = await html2canvas(storyRef.current, {
+          allowTaint: true, // Allow cross-origin images to be captured
+          useCORS: true, // Use CORS for loading images
+          width: storyWidth, // Set fixed width for Instagram story
+          height: storyHeight, // Set fixed height based on the aspect ratio
+          scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile to prevent pixelation
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
+        });
+
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
-        link.download = `story_${id}.png`;
-        link.click(); // Trigger the download
-      });
+        link.download = `${story.title}.png`;
+        link.click();
+      }
+    } catch (error) {
+      console.error("Error generating canvas:", error);
     }
   };
 
@@ -59,20 +78,20 @@ function StoryDetails() {
     return <ErrorMessage>No story found.</ErrorMessage>;
   }
 
-  const formattedDate = moment(story.date).format('MMM DD, YYYY');
-
   return (
-    <StoryContainer id="story-container"> {/* Add an id to the container for html2canvas */}
-      <StoryBox>
-        <TitleText>{story.title}</TitleText>
-        <StoryDate>{formattedDate}</StoryDate> {/* Display the formatted date */}
+    <StoryContainer>
+      <StoryBox ref={storyRef} bgImage={backgroundImage}>
+        <StoryTitle>{story.title}</StoryTitle>
+        <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
         <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryText>{story.story}</StoryText>
-        <VisitedText>
+        <StoryContent>{story.story}</StoryContent>
+        <VisitedLocations>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedText>
+        </VisitedLocations>
       </StoryBox>
-      <DownloadButton onClick={handleDownloadClick}>Download as Instagram Story</DownloadButton>
+      <DownloadButton onClick={handleDownload}>
+        Click here to download image as PNG
+      </DownloadButton>
     </StoryContainer>
   );
 }
@@ -80,6 +99,7 @@ function StoryDetails() {
 export default StoryDetails;
 
 // Styled-components for styling inside the file
+
 const StoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -91,62 +111,89 @@ const StoryContainer = styled.div`
 `;
 
 const StoryBox = styled.div`
-  background-color: white;
-  border-radius: 16px;
+  background-color: #fff;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  text-align: center;
-  width: 100%;
-  max-width: 600px;
-  position: relative;
+  padding: 12px;
+  width: 100%; /* Ensure width is fully responsive */
+  max-width: 1080px; /* Set a max-width */
+  height: auto;
+  background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centering content vertically */
+  align-items: center; /* Centering content horizontally */
+  text-align: center; /* Center the text */
+  padding: 0 20px;
+
+  /* Responsive Content Styling for smaller devices */
+  @media (max-width: 768px) {
+    padding: 15px;
+    width: 100%;
+  }
+
+  /* Remove white background overflow */
+  @media (max-width: 480px) {
+    padding: 10px;
+  }
 `;
 
-const TitleText = styled.h1`
+const StoryTitle = styled.h1`
   font-size: 2rem;
-  margin-bottom: 10px;
+  font-weight: bold;
+  color: #000; /* Change text color to black */
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Add shadow for better text readability */
+  margin-top: 10px;
 `;
 
 const StoryDate = styled.p`
   font-size: 1rem;
-  color: #555;
-  margin-bottom: 20px;
+  color: #000; /* Change text color to black */
+  margin-bottom: 12px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 `;
 
 const StoryImage = styled.img`
-  width: 100%;
+  width: 80%; /* Reduced the width of the image */
+  max-width: 800px;
   height: auto;
-  margin: 20px 0;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for image */
+  object-fit: contain; /* Ensure the image stays within bounds */
 `;
 
-const StoryText = styled.p`
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+const StoryContent = styled.p`
+  font-size: 1.1rem;
+  color: #000; /* Change text color to black */
+  line-height: 1.5;
+  margin-bottom: 15px;
+  max-width: 90%; /* Prevent the text from overflowing */
+  word-wrap: break-word;
 `;
 
-const VisitedText = styled.p`
-  font-size: 1rem;
-  margin-top: 20px;
+const VisitedLocations = styled.p`
+  font-size: 1.1rem;
+  color: #000; /* Change text color to black */
+  max-width: 90%;
+  word-wrap: break-word;
 `;
 
 const DownloadButton = styled.button`
   background-color: #4caf50;
   color: white;
-  padding: 12px 30px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 30px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  width: 100%;  /* Button width matches the box size */
-  max-width: 600px; /* Max width matches box */
   margin-top: 20px;
 
   &:hover {
     background-color: #45a049;
-  }
-
-  &:active {
-    transform: scale(0.95);
   }
 `;
 
