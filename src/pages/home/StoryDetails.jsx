@@ -134,7 +134,8 @@ const StoryBox = styled.div`
 `;
 
 const CreateStoryMessage = styled.p`
-  font-size: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
   color: #555;
   margin-top: 10px;
   position: absolute;
@@ -142,6 +143,7 @@ const CreateStoryMessage = styled.p`
   text-align: center;
   width: 100%;
   opacity: 0.8;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 `;
 
 const StoryTitle = styled.h1`
