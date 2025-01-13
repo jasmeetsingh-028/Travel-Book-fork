@@ -13,12 +13,10 @@ function StoryDetails() {
     const fetchStory = async () => {
       try {
         const response = await fetch(`https://travel-book-backend.onrender.com/api/story/${id}`);
-        console.log("Response Status:", response.status); // Log response status
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log("Story Data:", data); // Log the fetched data
         setStory(data);
       } catch (error) {
         console.error("Error fetching story details:", error);
