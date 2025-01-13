@@ -35,11 +35,16 @@ function StoryDetails() {
     try {
       if (storyRef.current) {
         const isMobile = window.innerWidth <= 768; // Check if the device is mobile
+
+        // Get the size of the element for proper scaling
+        const elementWidth = storyRef.current.offsetWidth;
+        const elementHeight = storyRef.current.offsetHeight;
+
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true, // Allow cross-origin images to be captured
           useCORS: true, // Use CORS for loading images
-          width: isMobile ? window.innerWidth : 1080, // Set width based on device screen
-          height: isMobile ? (window.innerWidth * 1920) / 1080 : 1920, // Maintain aspect ratio for mobile
+          width: elementWidth, // Match the width of the content container
+          height: elementHeight, // Match the height of the content container
           scale: isMobile ? 1.5 : 2, // Adjust scale factor for mobile to prevent pixelation
           x: 0,
           y: 0,
@@ -106,9 +111,9 @@ const StoryBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
-  width: 1080px; /* Fixed width for canvas rendering */
-  height: 1920px; /* Fixed height for canvas rendering */
-  margin: 20px;
+  width: 100%; /* Ensure width is fully responsive */
+  max-width: 1080px; /* Set a max-width */
+  height: auto;
   background-image: url(${(props) => props.bgImage || "default_bg.png"}); /* Use the imported background image */
   background-size: cover;
   background-position: center;
@@ -121,16 +126,13 @@ const StoryBox = styled.div`
   padding: 0 20px;
 
   /* Responsive Content Styling for smaller devices */
-  @media (max-width: 1080px) {
-    width: 90%;
-    height: auto; /* Allow the height to adjust based on content */
-  }
   @media (max-width: 768px) {
-    width: 100%;
     padding: 15px;
-  }
-  @media (max-width: 480px) {
     width: 100%;
+  }
+
+  /* Remove white background overflow */
+  @media (max-width: 480px) {
     padding: 10px;
   }
 `;
