@@ -71,7 +71,9 @@ function DownloadStoryPage() {
     <StoryContainer>
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <TitleText>{story.title}</TitleText>
-        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
+        <StoryImageWrapper>
+          <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
+        </StoryImageWrapper>
         <StoryText>{updatedStoryText}</StoryText>
       </StoryBox>
       <DownloadButton onClick={handleDownload}>Download as Instagram Story</DownloadButton>
@@ -117,10 +119,19 @@ const TitleText = styled.h1`
   margin-bottom: 10px;
 `;
 
+const StoryImageWrapper = styled.div`
+  width: 100%;
+  height: 300px; /* Fixed height for image */
+  margin: 20px 0;
+  overflow: hidden;
+  position: relative;
+`;
+
 const StoryImage = styled.img`
   width: 100%;
-  height: auto;
-  margin: 20px 0;
+  height: 100%;
+  object-fit: cover; /* Ensures image fills container and maintains aspect ratio */
+  object-position: center; /* Keeps the focal point in the center */
 `;
 
 const StoryText = styled.p`
