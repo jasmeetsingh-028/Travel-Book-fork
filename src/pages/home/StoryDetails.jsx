@@ -33,13 +33,13 @@ function StoryDetails() {
   const handleDownload = async () => {
     try {
       if (storyRef.current) {
-        // Capture the image with html2canvas
+        // Capture the image with html2canvas in Instagram story aspect ratio (9:16)
         const canvas = await html2canvas(storyRef.current, {
           allowTaint: true,
           useCORS: true,
-          width: storyRef.current.offsetWidth, // Use actual element width
-          height: storyRef.current.offsetHeight, // Use actual element height
-          scale: 2,
+          width: 1080, // Instagram story width
+          height: 1920, // Instagram story height
+          scale: 2, // Double resolution for high-quality image
           x: 0,
           y: 0,
           backgroundColor: null, // Transparent background
@@ -113,7 +113,7 @@ const StoryBox = styled.div`
   text-align: center;
   padding: 20px;
   position: relative; /* To maintain a good positioning for capturing */
-  
+
   @media (max-width: 768px) {
     padding: 15px;
   }
@@ -145,7 +145,7 @@ const StoryImage = styled.img`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   object-fit: cover; /* This makes sure the image fills the width and maintains aspect ratio */
-  
+
   @media (max-width: 480px) {
     width: 100%;
     height: auto;
