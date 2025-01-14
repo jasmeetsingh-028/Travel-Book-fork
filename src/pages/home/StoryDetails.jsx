@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components"; // Import styled-components
@@ -69,7 +70,7 @@ function StoryDetails() {
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} onError={(e) => e.target.src = 'default-image.png'} />
+        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
         <StoryContent>{story.story}</StoryContent>
         <VisitedLocations>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
@@ -105,7 +106,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px;
-  height: auto;
+  height: 1920px;
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -113,14 +114,11 @@ const StoryBox = styled.div`
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align the content at the top */
+  justify-content: center;
   align-items: center;
   text-align: center;
   padding: 0 20px;
   position: relative;
-  min-height: 80vh; /* Set a minimum height for the box */
-  max-height: 90vh; /* Optional, but helps maintain a consistent height */
-  box-sizing: border-box; /* Ensures padding does not overflow */
 
   @media (max-width: 1080px) {
     width: 90%;
@@ -135,7 +133,6 @@ const StoryBox = styled.div`
     padding: 10px;
   }
 `;
-
 
 const CreateStoryMessage = styled.p`
   font-size: 1rem;
@@ -185,10 +182,6 @@ const StoryContent = styled.p`
   margin-bottom: 15px;
   max-width: 90%;
   word-wrap: break-word;
-  overflow-wrap: break-word;
-  flex-grow: 1; /* Allow it to grow within available space */
-  flex-shrink: 1; /* Ensure it can shrink if needed */
-  padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
 
 const VisitedLocations = styled.p`
@@ -197,9 +190,6 @@ const VisitedLocations = styled.p`
   color: #000;
   max-width: 90%;
   word-wrap: break-word;
-  margin-top: 15px;
-  flex-grow: 0; /* Keep it from expanding too much */
-  padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
 
 const DownloadButton = styled.button`
