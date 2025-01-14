@@ -25,7 +25,6 @@ const App = () => {
           <Route path="/story/:id" element={<StoryDetails />} />
         </Routes>
       </Router>
-      <button onClick={() => toast('This is a test toast!')}>Show Toast</button>
     </div>
   );
 };
