@@ -6,10 +6,11 @@ import Home from './pages/home/Home.jsx';
 import Hero from './../src/pages/hero/Hero.jsx';
 import Mistake from './pages/mistake.jsx'; 
 import StoryDetails from './../src/pages/home/StoryDetails.jsx';
+import { Sonner } from 'sonner'; // Import Sonner
 
 const App = () => {
   return (
-    <div>
+    <Sonner> {/* Wrap the Router with Sonner */}
       <Router>
         <Routes>
           <Route path="/" exact element={<Hero />} />
@@ -20,7 +21,7 @@ const App = () => {
           <Route path="/story/:id" element={<StoryDetails />} />
         </Routes>
       </Router>
-    </div>
+    </Sonner>
   );
 };
 
