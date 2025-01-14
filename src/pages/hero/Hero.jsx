@@ -105,7 +105,7 @@ const Hero = () => {
                                 </p>
 
                                 {/* New button above the original button */}
-                                <div className="mt-4 sm:mt-24">
+                                <div className="mt-12 sm:mt-12 ">
                                     <div className="relative group sm:rounded-xl">
                                     <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2">
     <a
@@ -138,7 +138,7 @@ const Hero = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-center mt-52 space-x-6 lg:justify-start sm:space-x-8">
+                            <div className="flex items-center justify-center mt-40 space-x-6 lg:justify-start sm:space-x-8">
                                 <div className="flex items-center">
                                     <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">294</p>
                                     <p className="ml-3 text-sm text-gray-900 font-pj">
@@ -176,7 +176,7 @@ const Hero = () => {
                         </div>
 
                         <div>
-                            <img className="w-3/4 mx-auto" src={preview} alt="Preview of the Product" />
+                            <img className="w-4/4 mx-auto" src={preview} alt="Preview of the Product" />
                         </div>
                     </div>
                 </div>
