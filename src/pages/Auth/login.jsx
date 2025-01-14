@@ -3,7 +3,6 @@ import PasswordInput from "../../components/Input/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
-import { ClerkProvider, RedirectToSignIn, useSignIn, useClerk } from "@clerk/clerk-react";
 
 // Import the logo image (if it's stored locally)
 import logo from "../../assets/images/logo.png";
@@ -14,7 +13,6 @@ const Login = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-  const { signInWithGoogle } = useClerk();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -53,15 +51,6 @@ const Login = () => {
           "An unexpected error occurred in Travel Book's Backend, Please try again."
         );
       }
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      navigate("/dashboard");
-    } catch (error) {
-      setError("Google Sign-In failed, please try again.");
     }
   };
 
@@ -129,15 +118,7 @@ const Login = () => {
             <p className="text-sm text-center text-gray-600 mt-4">
               Kindly remember your password!
             </p>
-
-            {/* Google Sign-In Button */}
-            <button
-              type="button"
-              className="btn-primary w-full bg-red-500 mt-4"
-              onClick={handleGoogleSignIn}
-            >
-              Sign In with Google
-            </button>
+            
           </form>
         </div>
       </div>
@@ -158,4 +139,3 @@ const Login = () => {
 };
 
 export default Login;
-
