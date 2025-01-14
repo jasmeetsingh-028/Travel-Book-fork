@@ -11,7 +11,7 @@ function StoryDetails() {
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef(); // Create a ref for the story box
+  const storyRef = useRef(); // Create a ref for the story box  
 
   useEffect(() => {
     const fetchStory = async () => {
