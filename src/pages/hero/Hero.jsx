@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-scroll';
+import { Helmet } from 'react-helmet'; // Import Helmet
 import logo from '../../assets/images/logo.png';
 import preview from '../../assets/images/preview.png';
 import HowItWorks from './HowItWorks';
@@ -10,6 +11,26 @@ import Footer from './Footer';
 const Hero = () => {
     return (
         <div className="bg-gray-50">
+            {/* Add the Helmet component here */}
+            <Helmet>
+                <meta name="description" content="Travel-Book: A platform to share your travel stories and experiences with the world. Join and start sharing your adventures!" />
+                <meta name="keywords" content="travel, stories, travel blog, share experiences, adventure, travel book, travel journal" />
+                <meta name="author" content="Your Name or Company" />
+
+                {/* Open Graph Meta Tags */}
+                <meta property="og:title" content="Travel-Book: Share Your Travel Stories" />
+                <meta property="og:description" content="A platform for travelers to document and share their journeys. Join now to share your adventures!" />
+                <meta property="og:image" content="https://raw.githubusercontent.com/Sahilll94/Travel-Book/main/src/assets/images/meta.png" />
+                <meta property="og:url" content="https://travelbook.sahilportfolio.me/" />
+                <meta property="og:type" content="website" />
+
+                {/* Twitter Meta Tags */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Travel-Book: Share Your Travel Stories" />
+                <meta name="twitter:description" content="A platform for travelers to document and share their journeys. Join now to share your adventures!" />
+                <meta name="twitter:image" content="https://raw.githubusercontent.com/Sahilll94/Travel-Book/main/src/assets/images/meta.png" />
+            </Helmet>
+
             <header className="py-4 md:py-6">
                 <div className="container px-4 mx-auto sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
@@ -24,7 +45,6 @@ const Hero = () => {
                                 <img className="w-auto h-12" src={logo} alt="logo" />
                             </Link>
                         </div>
-
                         {/* Mobile Hamburger Icon */}
                         <div className="flex lg:hidden">
                             <button type="button" className="text-gray-900">
@@ -87,11 +107,11 @@ const Hero = () => {
                                 Sign in
                             </a>
                         </div>
-
                     </div>
                 </div>
             </header>
 
+            {/* Hero Section */}
             <section id="hero" className="pt-12 pb-12 sm:pb-16 lg:pt-8">
                 <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="grid max-w-lg grid-cols-1 mx-auto lg:max-w-full lg:items-center lg:grid-cols-2 gap-y-12 lg:gap-x-16">
@@ -132,11 +152,11 @@ const Hero = () => {
                                                 Log In
                                             </a>
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>
 
+                            {/* Stats */}
                             <div className="flex items-center justify-center mt-52 space-x-6 lg:justify-start sm:space-x-8">
                                 <div className="flex items-center">
                                     <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">294</p>
@@ -158,142 +178,37 @@ const Hero = () => {
                                     >
                                         <line x1="0.72265" y1="10.584" x2="15.7226" y2="0.583975"></line>
                                         <line x1="0.72265" y1="17.584" x2="15.7226" y2="7.58398"></line>
-                                        <line x1="0.72265" y1="24.584" x2="15.7226" y2="14.584"></line>
-                                        <line x1="0.72265" y1="31.584" x2="15.7226" y2="21.584"></line>
-                                        <line x1="0.72265" y1="38.584" x2="15.7226" y2="28.584"></line>
+                                        <line x1="0.72265" y1="24.584" x2="15.7226" y2="14.5839"></line>
+                                        <line x1="0.72265" y1="31.584" x2="15.7226" y2="21.5839"></line>
                                     </svg>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">400+</p>
+                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">432</p>
                                     <p className="ml-3 text-sm text-gray-900 font-pj">
-                                        Happy
-                                        <br /> Traveller
+                                        Active Users
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div>
-                            <img className="w-3/4 mx-auto" src={preview} alt="Preview of the Product" />
+                        {/* Image */}
+                        <div className="relative max-w-md mx-auto sm:max-w-3xl lg:max-w-none sm:w-full">
+                            <img
+                                className="object-cover object-center rounded-lg shadow-xl sm:rounded-xl lg:rounded-3xl"
+                                src={preview}
+                                alt="travel-book"
+                            />
                         </div>
                     </div>
                 </div>
             </section>
 
-
-            <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
-
-                <span className="relative z-10 bg-white px-6">Hey Travellers!</span>
-            </span>
-
-
-            <section id="about">
-                <About />
-            </section>
-
-            <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
-
-                <span className="relative z-10 bg-white px-6">How is it going?</span>
-            </span>
-
-            <section id="how-it-works">
-                <HowItWorks />
-            </section>
-
-            <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
-
-                <span className="relative z-10 bg-white px-6">How have you been?</span>
-            </span>
-
-
-            <section id="services">
-                <div className="py-12">
-                    <div className="container px-4 mx-auto sm:px-6 lg:px-8">
-                        <div className="text-center">
-                            <h2 className="text-3xl font-bold text-gray-900">Our Services</h2>
-                            <p className="mt-4 text-lg text-gray-600">
-                                TravelBook offers a range of services to make documenting your travels easy and enjoyable:
-                            </p>
-                        </div>
-                        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                            {/* Service Cards */}
-                            <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
-                                <img
-                                    alt="Travel Logging"
-                                    src="https://images.pexels.com/photos/2108813/pexels-photo-2108813.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                    className="w-full h-72 object-cover"
-                                />
-                                <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Travel Logging</h3>
-                                    <p className="mt-2 text-base text-gray-600">
-                                        Record each step of your journey with rich media and detailed entries.
-                                    </p>
-                                </div>
-                            </article>
-                            <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
-                                <img
-                                    alt="Travel Sharing"
-                                    src="https://images.pexels.com/photos/1194233/pexels-photo-1194233.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                    className="w-full h-72 object-cover"
-                                />
-                                <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Travel Sharing</h3>
-                                    <p className="mt-2 text-base text-gray-600">
-                                        Share your journeys with friends and family instantly with TravelBook.
-                                    </p>
-                                </div>
-                            </article>
-                            <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
-                                <img
-                                    alt="Travel Collaboration"
-                                    src="https://images.pexels.com/photos/1255062/pexels-photo-1255062.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                    className="w-full h-72 object-cover"
-                                />
-                                <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Travel Collaboration</h3>
-                                    <p className="mt-2 text-base text-gray-600">
-                                        Collaborate on travel logs with fellow travelers to share your experiences.
-                                    </p>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
-
-                <span className="relative z-10 bg-white px-6">Oh, So do you like the design?</span>
-            </span>
-
-            <section id="stats">
-                <Stats />
-            </section>
-
-            <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
-
-                <span className="relative z-10 bg-white px-6">Sign in to save your memories!</span>
-            </span>
-
-            <section id="footer">
-                <Footer />
-            </section>
+            {/* How It Works */}
+            <HowItWorks />
+            <Stats />
+            <About />
+            <Footer />
         </div>
     );
 };

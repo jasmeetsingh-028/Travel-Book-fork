@@ -75,6 +75,7 @@ function StoryDetails() {
         <meta property="og:description" content={story.story} />
         <meta property="og:url" content={`https://travelbook.sahilportfolio.me/story/${id}`} />
       </Helmet>
+      
       <StoryContainer>
         <StoryBox ref={storyRef} bgImage={backgroundImage}>
           <StoryTitle>{story.title}</StoryTitle>
