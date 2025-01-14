@@ -1,26 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import React from 'react';
-import Login from './pages/Auth/login.jsx';
-import SignUp from './pages/Auth/SignUp.jsx';
-import Home from './pages/home/Home.jsx';
-import Hero from './../src/pages/hero/Hero.jsx';
-import Mistake from './pages/mistake.jsx'; 
-import StoryDetails from './../src/pages/home/StoryDetails.jsx';
+import { ClerkProvider, RedirectToSignIn } from "@clerk/clerk-react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Auth/login";
+import SignUp from "./pages/Auth/SignUp";
+import Home from "./pages/home/Home";
+import Hero from "./pages/hero/Hero";
 
 const App = () => {
+  const frontendApi = "pk_test_bmV3LW1vbGx5LTU2LmNsZXJrLmFjY291bnRzLmRldiQ";
+
   return (
-    <div>
+    <ClerkProvider publishableKey="pk_test_bmV3LW1vbGx5LTU2LmNsZXJrLmFjY291bnRzLmRldiQ">
       <Router>
         <Routes>
           <Route path="/" exact element={<Hero />} />
           <Route path="/dashboard" exact element={<Home />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/signup" exact element={<SignUp />} />
-          <Route path="*" exact element={<Mistake />} /> {/* 404 not found page */}
-          <Route path="/story/:id" element={<StoryDetails />} />
         </Routes>
       </Router>
-    </div>
+    </ClerkProvider>
   );
 };
 
