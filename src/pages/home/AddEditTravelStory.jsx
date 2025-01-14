@@ -32,7 +32,6 @@ const AddEditTravelStory = ({
             // upload image if present
             if (storyImg) {
                 const imgUploadRes = await uploadImage(storyImg);
-
                 imageUrl = imgUploadRes.imageUrl || "";
             }
 
@@ -110,12 +109,10 @@ const AddEditTravelStory = ({
     const handleAddOrUpdateClick = () => {
         console.log("Input data: ", { title, storyImg, story, visitedLocation, visitedDate });
 
-
         if (!title) {
             setError("Please enter the title of your story!");
             return;
         }
-
 
         if (!story) {
             setError("Please enter the descriptive story.");
@@ -130,7 +127,6 @@ const AddEditTravelStory = ({
         else {
             addNewTravelStory();
         }
-
     };
 
     // delete story image and update the story;
@@ -185,25 +181,21 @@ const AddEditTravelStory = ({
 
                 <div>
                     <div className='flex items-center gap-3 bg-cyan-50/50 p-2 rounded-lg'>
-                        {type === 'add' ? (<button className='btn-small' onClick={handleAddOrUpdateClick}>
-                            <MdAdd className='text-lg' /> Add this story to your memories
-                        </button>) : (<>
+                        {type === 'add' ? (
                             <button className='btn-small' onClick={handleAddOrUpdateClick}>
-                                <MdUpdate className='text-lg' />Update this existing story in our book
+                                <MdAdd className='text-lg' /> Add this story to your memories
+                            </button>) : (<>
+                            <button className='btn-small' onClick={handleAddOrUpdateClick}>
+                                <MdUpdate className='text-lg' /> Update this existing story in our book
                             </button>
 
                             {/* SHARE BUTTON */}
-                            {/* <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
+                            <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
                                 <MdShare className='text-lg' /> Share this story
-                            </button> */}
+                            </button>
+                        </>)}
 
-
-
-                        </>
-                        )}
-
-                        <button
-                            className='' onClick={onClose}>
+                        <button className='' onClick={onClose}>
                             <MdClose className='text-xl text-slate-400' />
                         </button>
                     </div>
@@ -211,7 +203,6 @@ const AddEditTravelStory = ({
                     {error && (
                         <p className='text-red-800 text-xs pt-2 text-right'>{error}</p>
                     )}
-
                 </div>
             </div>
 
