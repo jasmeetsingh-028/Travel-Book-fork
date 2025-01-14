@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link } from 'react-scroll';
-import logo from '../../assets/images/logo.png';
-import preview from '../../assets/images/preview.png';
-import HowItWorks from './HowItWorks';
-import Stats from './Stats';
-import About from './About';
-import Footer from './Footer';
+import React from "react";
+import { Link } from "react-scroll";
+import logo from "../../assets/images/logo.png";
+import preview from "../../assets/images/preview.png";
+import HowItWorks from "./HowItWorks";
+import Stats from "./Stats";
+import About from "./About";
+import Footer from "./Footer";
 
 const Hero = () => {
     return (
@@ -81,13 +81,12 @@ const Hero = () => {
                         {/* Navbar items - Mobile */}
                         <div className="hidden lg:flex lg:ml-auto lg:items-center lg:space-x-8 xl:space-x-10">
                             <a
-                                href="https://travelbook.sahilportfolio.me/login"  // Updated link to the login page
+                                href="https://travelbook.sahilportfolio.me/login" // Updated link to the login page
                                 className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
                                 Sign in
                             </a>
                         </div>
-
                     </div>
                 </div>
             </header>
@@ -98,49 +97,51 @@ const Hero = () => {
                         <div>
                             <div className="text-center lg:text-left">
                                 <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:leading-tight lg:text-6xl font-pj">
-                                    Share Your Journey Today with <b>TravelBook</b>, Where Adventures are preserved!
+                                    Share Your Journey Today with <b>TravelBook</b>, Where
+                                    Adventures are preserved!
                                 </h1>
                                 <p className="mt-2 text-lg text-gray-600 sm:mt-8 font-inter">
-                                    Record your travels with TravelBook: where each place, image, and story is preserved forever.
+                                    Record your travels with TravelBook: where each place, image,
+                                    and story is preserved forever.
                                 </p>
 
                                 {/* New button above the original button */}
                                 <div className="mt-12 sm:mt-12 ">
                                     <div className="relative group sm:rounded-xl">
-                                    <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
-    <a
-        href="https://travelbook.sahilportfolio.me/signUp" // SIGN UP LINK HERE
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
-    >
-        Create Free Account
-    </a>
-</div>
+                                        <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
+                                            <a
+                                                href="https://travelbook.sahilportfolio.me/signUp" // SIGN UP LINK HERE
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                            >
+                                                Create Free Account
+                                            </a>
+                                        </div>
 
-<div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter mt-4 sm:mt-0 z-20">
-    <span className="mx-2">OR</span>
-</div>
+                                        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter mt-4 sm:mt-0 z-20">
+                                            <span className="mx-2">OR</span>
+                                        </div>
 
-<div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
-    <a
-        href="https://travelbook.sahilportfolio.me/login" // Log in link
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
-    >
-        Log In
-    </a>
-</div>
-
-                                        
+                                        <div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
+                                            <a
+                                                href="https://travelbook.sahilportfolio.me/login" // Log in link
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                            >
+                                                Log In
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex items-center justify-center mt-40 space-x-6 lg:justify-start sm:space-x-8">
                                 <div className="flex items-center">
-                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">294</p>
+                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">
+                                        294
+                                    </p>
                                     <p className="ml-3 text-sm text-gray-900 font-pj">
                                         Memories
                                         <br /> Delivered
@@ -157,16 +158,43 @@ const Hero = () => {
                                         stroke="currentColor"
                                         xmlns="http://www.w3.org/2000/svg"
                                     >
-                                        <line x1="0.72265" y1="10.584" x2="15.7226" y2="0.583975"></line>
-                                        <line x1="0.72265" y1="17.584" x2="15.7226" y2="7.58398"></line>
-                                        <line x1="0.72265" y1="24.584" x2="15.7226" y2="14.584"></line>
-                                        <line x1="0.72265" y1="31.584" x2="15.7226" y2="21.584"></line>
-                                        <line x1="0.72265" y1="38.584" x2="15.7226" y2="28.584"></line>
+                                        <line
+                                            x1="0.72265"
+                                            y1="10.584"
+                                            x2="15.7226"
+                                            y2="0.583975"
+                                        ></line>
+                                        <line
+                                            x1="0.72265"
+                                            y1="17.584"
+                                            x2="15.7226"
+                                            y2="7.58398"
+                                        ></line>
+                                        <line
+                                            x1="0.72265"
+                                            y1="24.584"
+                                            x2="15.7226"
+                                            y2="14.584"
+                                        ></line>
+                                        <line
+                                            x1="0.72265"
+                                            y1="31.584"
+                                            x2="15.7226"
+                                            y2="21.584"
+                                        ></line>
+                                        <line
+                                            x1="0.72265"
+                                            y1="38.584"
+                                            x2="15.7226"
+                                            y2="28.584"
+                                        ></line>
                                     </svg>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">400+</p>
+                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">
+                                        400+
+                                    </p>
                                     <p className="ml-3 text-sm text-gray-900 font-pj">
                                         Happy
                                         <br /> Traveller
@@ -176,30 +204,28 @@ const Hero = () => {
                         </div>
 
                         <div>
-                            <img className="w-4/4 mx-auto" src={preview} alt="Preview of the Product" />
+                            <img
+                                className="w-4/4 mx-auto"
+                                src={preview}
+                                alt="Preview of the Product"
+                            />
                         </div>
                     </div>
                 </div>
             </section>
 
-
             <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
                 <span className="relative z-10 bg-white px-6">Hey Travellers!</span>
             </span>
-
 
             <section id="about">
                 <About />
             </section>
 
             <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
                 <span className="relative z-10 bg-white px-6">How is it going?</span>
             </span>
@@ -209,13 +235,10 @@ const Hero = () => {
             </section>
 
             <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
                 <span className="relative z-10 bg-white px-6">How have you been?</span>
             </span>
-
 
             <section id="services">
                 <div className="py-12">
@@ -223,7 +246,8 @@ const Hero = () => {
                         <div className="text-center">
                             <h2 className="text-3xl font-bold text-gray-900">Our Services</h2>
                             <p className="mt-4 text-lg text-gray-600">
-                                TravelBook offers a range of services to make documenting your travels easy and enjoyable:
+                                TravelBook offers a range of services to make documenting your
+                                travels easy and enjoyable:
                             </p>
                         </div>
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -235,9 +259,12 @@ const Hero = () => {
                                     className="w-full h-72 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Travel Logging</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">
+                                        Travel Logging
+                                    </h3>
                                     <p className="mt-2 text-base text-gray-600">
-                                        Record each step of your journey with rich media and detailed entries.
+                                        Record each step of your journey with rich media and
+                                        detailed entries.
                                     </p>
                                 </div>
                             </article>
@@ -248,9 +275,12 @@ const Hero = () => {
                                     className="w-full h-72 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Travel Sharing</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">
+                                        Travel Sharing
+                                    </h3>
                                     <p className="mt-2 text-base text-gray-600">
-                                        Share your journeys with friends and family instantly with TravelBook.
+                                        Share your journeys with friends and family instantly with
+                                        TravelBook.
                                     </p>
                                 </div>
                             </article>
@@ -261,9 +291,12 @@ const Hero = () => {
                                     className="w-full h-72 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Travel Collaboration</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">
+                                        Travel Collaboration
+                                    </h3>
                                     <p className="mt-2 text-base text-gray-600">
-                                        Collaborate on travel logs with fellow travelers to share your experiences.
+                                        Collaborate on travel logs with fellow travelers to share
+                                        your experiences.
                                     </p>
                                 </div>
                             </article>
@@ -273,11 +306,11 @@ const Hero = () => {
             </section>
 
             <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">Oh, So do you like the design?</span>
+                <span className="relative z-10 bg-white px-6">
+                    Oh, So do you like the design?
+                </span>
             </span>
 
             <section id="stats">
@@ -285,11 +318,11 @@ const Hero = () => {
             </section>
 
             <span className="relative flex justify-center">
-                <div
-                    className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
-                ></div>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">Sign in to save your memories!</span>
+                <span className="relative z-10 bg-white px-6">
+                    Sign in to save your memories!
+                </span>
             </span>
 
             <section id="footer">
