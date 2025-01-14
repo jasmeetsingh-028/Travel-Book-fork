@@ -105,7 +105,8 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px;
-  height: 1920px;
+  height: auto;
+  max-height: 90vh; /* Limit the height of the box */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -113,12 +114,13 @@ const StoryBox = styled.div`
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Adjust to top */
   align-items: center;
   text-align: center;
   padding: 0 20px;
   position: relative;
-
+  overflow-y: auto; /* Add scrolling if content exceeds the max height */
+  
   @media (max-width: 1080px) {
     width: 90%;
     height: auto;
@@ -181,7 +183,10 @@ const StoryContent = styled.p`
   margin-bottom: 15px;
   max-width: 90%;
   word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
+
 
 const VisitedLocations = styled.p`
   font-size: 1.3rem;
@@ -189,6 +194,8 @@ const VisitedLocations = styled.p`
   color: #000;
   max-width: 90%;
   word-wrap: break-word;
+  margin-top: 15px; /* Ensure separation from story content */
+  padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
 
 const DownloadButton = styled.button`
