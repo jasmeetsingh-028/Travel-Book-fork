@@ -1,9 +1,9 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components"; // Import styled-components
 import html2canvas from "html2canvas"; // Import html2canvas
 import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
+import { Helmet } from "react-helmet"; // Import react-helmet
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -66,23 +66,32 @@ function StoryDetails() {
   }
 
   return (
-    <StoryContainer>
-      <StoryBox ref={storyRef} bgImage={backgroundImage}>
-        <StoryTitle>{story.title}</StoryTitle>
-        <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-        <StoryContent>{story.story}</StoryContent>
-        <VisitedLocations>
-          <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-        </VisitedLocations>
-        <CreateStoryMessage>
-          Create your own travel story from <a href="https://travelbook.sahilportfolio.me/">https://travelbook.sahilportfolio.me/</a>
-        </CreateStoryMessage>
-      </StoryBox>
-      <DownloadButton onClick={handleDownload}>
-        Click here to download image as PNG
-      </DownloadButton>
-    </StoryContainer>
+    <>
+      <Helmet>
+        <title>{story.title} | Travel Book</title>
+        <meta property="og:title" content="The memories are shared with you." />
+        <meta property="og:image" content={story.imageUrl} />
+        <meta property="og:description" content={story.story} />
+        <meta property="og:url" content={`https://travelbook.sahilportfolio.me/story/${id}`} />
+      </Helmet>
+      <StoryContainer>
+        <StoryBox ref={storyRef} bgImage={backgroundImage}>
+          <StoryTitle>{story.title}</StoryTitle>
+          <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
+          <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
+          <StoryContent>{story.story}</StoryContent>
+          <VisitedLocations>
+            <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
+          </VisitedLocations>
+          <CreateStoryMessage>
+            Create your own travel story from <a href="https://travelbook.sahilportfolio.me/">https://travelbook.sahilportfolio.me/</a>
+          </CreateStoryMessage>
+        </StoryBox>
+        <DownloadButton onClick={handleDownload}>
+          Click here to download image as PNG
+        </DownloadButton>
+      </StoryContainer>
+    </>
   );
 }
 
@@ -106,7 +115,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px;
-  height: auto; /* Adjust height automatically */
+  height: auto;
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -182,8 +191,6 @@ const StoryContent = styled.p`
   overflow-wrap: break-word;
 `;
 
-
-
 const VisitedLocations = styled.p`
   font-size: 1.3rem;
   font-weight: normal;
@@ -192,8 +199,6 @@ const VisitedLocations = styled.p`
   word-wrap: break-word;
   margin-top: 15px;
 `;
-
-
 
 const DownloadButton = styled.button`
   background-color: #4caf50;
@@ -218,3 +223,4 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
+
