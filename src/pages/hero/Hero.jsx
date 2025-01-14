@@ -107,7 +107,7 @@ const Hero = () => {
                                 {/* New button above the original button */}
                                 <div className="mt-12 sm:mt-12 ">
                                     <div className="relative group sm:rounded-xl">
-                                    <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2">
+                                    <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-10">
     <a
         href="https://travelbook.sahilportfolio.me/signUp" // SIGN UP LINK HERE
         target="_blank"
@@ -118,11 +118,11 @@ const Hero = () => {
     </a>
 </div>
 
-<div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter mt-4 sm:mt-0">
+<div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter mt-4 sm:mt-0 z-10">
     <span className="mx-2">OR</span>
 </div>
 
-<div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36">
+<div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-10">
     <a
         href="https://travelbook.sahilportfolio.me/login" // Log in link
         target="_blank"
