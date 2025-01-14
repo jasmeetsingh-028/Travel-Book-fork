@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Navbar from '../../components/Navbar'
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
+import { useEffect } from 'react';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd } from "react-icons/md";
+import { ToastContainer, toast} from 'react-toastify'; //Alert or pop up;
+import {MdAdd} from "react-icons/md";
 import Modal from "react-modal";
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -13,34 +15,40 @@ import { DayPicker } from 'react-day-picker';
 import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
-import { toast } from 'sonner';
 
 const Home = () => {
   const navigate = useNavigate();
 
   const [userInfo, setUserInfo] = useState(null);
-  const [allStories, setAllStories] = useState([]);
+  const [allStories,setAllStories] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState('');
+
   const [filterType, setFilterType] = useState('');
-  const [dataRange, setDataRange] = useState({ from: null, to: null });
-  const [openAddEditModal, setOpenAddEditModal] = useState({
-    isShown: false,
-    type: "add",
-    data: null
+
+  const [dataRange, setDataRange] = useState({from:null, to:null})
+
+  const [openAddEditModal,setOpenAddEditModal] = useState({
+    isShown:false,
+    type:"add",
+    data:null
   });
+
   const [openViewModal, setOpenViewModal] = useState({
-    isShown: false,
-    data: null,
-  });
+    isShown:false,
+    data:null,
+  })
 
   const getUserInfo = async () => {
     try {
       const response = await axiosInstance.get("/get-user");
-      if (response.data && response.data.user) {
+      if(response.data && response.data.user)
+      {
         setUserInfo(response.data.user);
       }
     } catch (error) {
-      if (error.response.status === 401) {
+      if(error.response.status === 401)
+      {
         localStorage.clear();
         navigate("/login");
       }
@@ -48,10 +56,11 @@ const Home = () => {
   }
 
   // Get all the travel stories
-  const getAllTravelStories = async () => {
+  const getAllTravelStories = async ()=> {
     try {
       const response = await axiosInstance.get("/get-all-stories");
-      if (response.data && response.data.stories) {
+      if(response.data && response.data.stories)
+      {
         setAllStories(response.data.stories);
       }
     } catch (error) {
@@ -61,15 +70,16 @@ const Home = () => {
 
   // To handle edit story click fn;
   const handleEdit = (data) => {
-    setOpenAddEditModal({ isShown: true, type: "edit", data: data });
+    setOpenAddEditModal({isShown:true,type:"edit",data:data});
+    
   }
 
-  // To handle travel story click
+  // to handle travel story click
   const handleViewStory = (data) => {
-    setOpenViewModal({ isShown: true, data });
+    setOpenViewModal({isShown:true,data});
   }
 
-  // To handle update favourite
+  // to handle update favourite
   const updateIsFavourite = async (storyData) => {
     const storyId = storyData._id;
 
@@ -80,19 +90,23 @@ const Home = () => {
           isFavourite: !storyData.isFavourite,
         }
       );
-      if (response.data && response.data.story) {
+      if(response.data && response.data.story){
         toast.success("Favourite Story Updated.");
 
-        if (filterType === "search" && searchQuery) {
+        if(filterType==="search" && searchQuery)
+        {
           onSearchStory(searchQuery);
-        } else if (filterType === "date") {
-          filterStoriesByDate(dataRange);
-        } else {
-          getAllTravelStories();
         }
+        else if(filterType==="date"){
+          filterStoriesByDate(dataRange);
+        }
+        else{
+          getAllTravelStories();
+        } 
       }
     } catch (error) {
       console.log("An Unexpected error occurred. Please try again later.");
+      
     }
   }
 
@@ -118,13 +132,13 @@ const Home = () => {
   // To search a story
   const onSearchStory = async (query) => {
     try {
-      const response = await axiosInstance.get("/search", {
-        params: {
+      const response = await axiosInstance.get("/search",{
+        params:{
           query,
         },
       });
 
-      if (response.data && response.data.stories) {
+      if(response.data && response.data.stories){
         setFilterType("search");
         setAllStories(response.data.stories);
       }
@@ -144,18 +158,21 @@ const Home = () => {
       const startDate = day.from ? moment(day.from).valueOf() : null;
       const endDate = day.to ? moment(day.to).valueOf() : null;
 
-      if (startDate && endDate) {
-        const response = await axiosInstance.get("/travel-stories-filter", {
-          params: { startDate, endDate },
+      if(startDate && endDate)
+      {
+        const response = await axiosInstance.get("/travel-stories-filter",{
+          params:{startDate,endDate},
         });
 
-        if (response.data && response.data.stories) {
+        if(response.data && response.data.stories)
+        {
           setFilterType("date");
           setAllStories(response.data.stories);
         }
       }
     } catch (error) {
       console.log("An unexpected error occured in filtering stories by date!");
+      
     }
   };
 
@@ -166,11 +183,11 @@ const Home = () => {
   }
 
   const resetFilter = () => {
-    setDataRange({ from: null, to: null });
+    setDataRange({from:null,to:null});
     setFilterType("");
     getAllTravelStories();
   }
-
+  
   useEffect(() => {
     getAllTravelStories();
     getUserInfo();
