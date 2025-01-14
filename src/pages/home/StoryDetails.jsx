@@ -106,7 +106,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px;
-  height: auto;  /* Set height to auto to accommodate content */
+  height: auto;  /* Ensure it adjusts to content height */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -118,7 +118,7 @@ const StoryBox = styled.div`
   align-items: center;
   text-align: center;
   padding: 0 20px;
-  position: relative;
+  position: relative; /* This ensures absolute positioning works */
   overflow: hidden; /* Ensures no overflow outside the box */
 
   @media (max-width: 1080px) {
@@ -138,15 +138,16 @@ const CreateStoryMessage = styled.p`
   font-size: 1rem;
   font-weight: bold;
   color: #555;
-  margin-top: 10px;
+  margin-top: 15px;
   position: absolute;
-  bottom: 20px;
+  bottom: 20px;  /* This places it at the bottom of the StoryBox */
   text-align: center;
   width: 100%;
   opacity: 0.8;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 0 20px; /* Add some padding around the text */
+  box-sizing: border-box; /* Ensure padding doesn't break layout */
 `;
-
 const StoryTitle = styled.h1`
   font-size: 3rem;
   font-weight: bold;
