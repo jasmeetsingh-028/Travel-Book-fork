@@ -3,7 +3,6 @@ import PasswordInput from "../../components/Input/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
-import { Helmet } from "react-helmet";  // Import Helmet
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -54,33 +53,8 @@ const Login = () => {
 
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative flex items-center justify-center">
-      {/* Helmet for social media metadata */}
-      <Helmet>
-        <meta property="og:title" content="Travel-Book Login Page" />
-        <meta
-          property="og:description"
-          content="Login to get your Travel memories"
-        />
-        <meta
-          property="og:image"
-          content="https://raw.githubusercontent.com/Sahilll94/Travel-Book/main/src/assets/images/meta.png"
-        />
-        <meta property="og:url" content="https://travelbook.sahilportfolio.me/login" />
-        <meta property="og:type" content="website" />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Travel-Book Login Page" />
-        <meta
-          name="twitter:description"
-          content="Login to get your Travel memories"
-        />
-        <meta
-          name="twitter:image"
-          content="https://raw.githubusercontent.com/Sahilll94/Travel-Book/main/src/assets/images/meta.png"
-        />
-      </Helmet>
-
       <div className="container h-screen flex flex-col sm:flex-row items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
+        
         {/* Image section with a class to hide it on mobile */}
         <div className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-login-bg-img bg-cover bg-center rounded-lg p-10 z-50">
           <div>
@@ -96,9 +70,7 @@ const Login = () => {
 
         <div className="w-full sm:w-2/4 lg:w-2/4 bg-white rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
           <form onSubmit={handleLogin}>
-            <h4 className="text-2xl font-semibold mb-7 text-center">
-              Sign In and Continue Your Travel Log
-            </h4>
+            <h4 className="text-2xl font-semibold mb-7 text-center">Sign In and Continue Your Travel Log</h4>
 
             <input
               type="text"
@@ -136,8 +108,9 @@ const Login = () => {
             </button>
 
             <p className="text-sm text-center text-gray-600 mt-4">
-              Kindly remember your password!
-            </p>
+            Kindly remember your password!
+          </p>
+            
           </form>
         </div>
       </div>
