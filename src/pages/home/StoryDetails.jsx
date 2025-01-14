@@ -175,23 +175,16 @@ const StoryImage = styled.img`
 `;
 
 const StoryContent = styled.p`
-  font-size: 1.2rem; /* Base font size */
-  font-weight: bold;
+  font-size: 1.2rem; /* Adjust font size to prevent overflow */
+  font-weight: normal; /* Removed bold to make it fit better */
   color: #000;
-  line-height: 1.5;
+  line-height: 1.6; /* Increased line-height for readability */
   margin-bottom: 15px;
-  max-width: 90%;
-  word-wrap: break-word; 
-  overflow: hidden;
-  white-space: normal;
-  padding-right: 10px;
-
-  @media (max-width: 768px) {
-    font-size: 1rem; /* Adjust font size for smaller screens */
-  }
-  @media (max-width: 480px) {
-    font-size: 0.9rem; /* Adjust font size for very small screens */
-  }
+  max-width: 90%; /* Ensure the text doesn't stretch too far */
+  word-wrap: break-word; /* Break long words to prevent overflow */
+  padding-right: 10px; /* Added padding for space */
+  white-space: normal; /* Ensure text wraps to next line */
+  overflow: visible; /* Allow text to overflow if needed */
 `;
 
 
