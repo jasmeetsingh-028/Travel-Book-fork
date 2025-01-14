@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { MdAdd, MdClose, MdDeleteOutline, MdUpdate, MdShare } from 'react-icons/md'
+import { MdAdd, MdClose, MdUpdate, MdShare } from 'react-icons/md'
 import DataSelector from '../../components/Input/DataSelector';
 import ImageSelector from '../../components/Input/ImageSelector';
 import TagInput from '../../components/Input/TagInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'; // Sonner toast import
 import 'react-toastify/dist/ReactToastify.css';
 import uploadImage from '../../utils/uploadImage';
 
@@ -44,19 +44,13 @@ const AddEditTravelStory = ({
             });
 
             if (response.data && response.data.story) {
-                toast.success("Story Added Successfully!");
-                // refresh the feed;
+                toast.success("Story Added Successfully!"); // Sonner Toast on success
                 getAllTravelStories();
-                // close the form;
                 onClose();
             }
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                setError(error.response.data.message);
-            }
-            else {
-                setError(error.response.data.message);
-            }
+            setError(error?.response?.data?.message || "Something went wrong");
+            toast.error(error?.response?.data?.message || "Failed to add the story!"); // Sonner Toast on error
         }
     };
 
@@ -90,19 +84,13 @@ const AddEditTravelStory = ({
             )
 
             if (response.data && response.data.story) {
-                toast.success("Story Updated Successfully!");
-                // refresh the feed;
+                toast.success("Story Updated Successfully!"); // Sonner Toast on success
                 getAllTravelStories();
-                // close the form;
                 onClose();
             }
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                setError(error.response.data.message);
-            }
-            else {
-                setError(error.response.data.message);
-            }
+            setError(error?.response?.data?.message || "Something went wrong");
+            toast.error(error?.response?.data?.message || "Failed to update the story!"); // Sonner Toast on error
         }
     };
 
@@ -131,7 +119,6 @@ const AddEditTravelStory = ({
 
     // delete story image and update the story;
     const handleDeleteStoryImg = async () => {
-        // Deleting the Image
         const deleteImgRes = await axiosInstance.delete('/delete-image', {
             params: {
                 imageUrl: storyInfo.imageUrl,
@@ -149,17 +136,16 @@ const AddEditTravelStory = ({
                 imageUrl: "",
             };
 
-            // Updating story
             const response = await axiosInstance.put(
                 "/edit-story/" + storyId,
                 postData
             );
 
             setStoryImg(null);
+            toast.success('Image deleted successfully!'); // Sonner Toast on success
         }
-    }
+    };
 
-    // Share 
     function handleShare(storyId) {
         const shareUrl = `${window.location.origin}/story/${storyId}`;
         navigator.clipboard.writeText(shareUrl)
@@ -170,7 +156,6 @@ const AddEditTravelStory = ({
                 toast.error('Failed to copy the link. Please try again.');
             });
     }
-
 
     return (
         <div className='relative'>
@@ -189,10 +174,9 @@ const AddEditTravelStory = ({
                                 <MdUpdate className='text-lg' /> Update this existing story in our book
                             </button>
 
-                            {/* SHARE BUTTON */}
-                            <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
+                            {/* <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
                                 <MdShare className='text-lg' /> Share this story
-                            </button>
+                            </button> */}
                         </>)}
 
                         <button className='' onClick={onClose}>
