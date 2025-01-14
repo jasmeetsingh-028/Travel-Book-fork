@@ -6,10 +6,10 @@ import Home from "./pages/home/Home";
 import Hero from "./pages/hero/Hero";
 
 const App = () => {
-  const frontendApi = "pk_test_bmV3LW1vbGx5LTU2LmNsZXJrLmFjY291bnRzLmRldiQ";
+  const frontendApi = "pk_test_dml0YWwtdmlwZXItNjQuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
   return (
-    <ClerkProvider publishableKey="pk_test_bmV3LW1vbGx5LTU2LmNsZXJrLmFjY291bnRzLmRldiQ">
+    <ClerkProvider publishableKey="pk_test_dml0YWwtdmlwZXItNjQuY2xlcmsuYWNjb3VudHMuZGV2JA">
       <Router>
         <Routes>
           <Route path="/" exact element={<Hero />} />
