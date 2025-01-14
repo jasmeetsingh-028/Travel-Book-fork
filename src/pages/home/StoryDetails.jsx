@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components"; // Import styled-components
@@ -70,7 +69,7 @@ function StoryDetails() {
       <StoryBox ref={storyRef} bgImage={backgroundImage}>
         <StoryTitle>{story.title}</StoryTitle>
         <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
+        <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} onError={(e) => e.target.src = 'default-image.png'} />
         <StoryContent>{story.story}</StoryContent>
         <VisitedLocations>
           <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
