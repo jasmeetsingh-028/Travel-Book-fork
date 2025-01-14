@@ -17,7 +17,7 @@ const About = () => {
                     <path d="M45 29H33V45H41C43.209 45 45 43.209 45 41V29Z" fill="#D4D4D8" stroke="#161616" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <h3 className="mt-12 text-xl font-bold text-gray-900 font-pj">Overview</h3>
-                <p className="mt-5 text-base text-gray-600 font-pj">Travel-Book is an online platform designed to simplify the process of booking and exploring travel destinations, with a user-friendly interface and a wide range of options.</p>
+                <p className="mt-5 text-base text-gray-600 font-pj">Travel-Book is an online platform designed to simplify the process of preserving your core travel memories and share it with your loved ones, with a user-friendly interface and a wide range of options.</p>
             </div>
 
             <div className="md:p-8 lg:p-14 md:border-l md:border-gray-200">
@@ -40,7 +40,7 @@ const About = () => {
                     <path d="M35 7H24V35H35V7Z" fill="#D4D4D8" stroke="#161616" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <h3 className="mt-12 text-xl font-bold text-gray-900 font-pj">Features</h3>
-                <p className="mt-5 text-base text-gray-600 font-pj">The app allows users to search, filter, and compare various travel destinations, offering detailed information and booking capabilities in a few simple clicks.</p>
+                <p className="mt-5 text-base text-gray-600 font-pj">The app lets users store travel memories as a diary, including a title, start date, image, detailed description, and visited locations. Users can update and share their memories by clicking "Update this story" and copying the link to their clipboard or sharing it on their Instagram story.</p>
             </div>
 
             <div className="md:p-8 lg:p-14 md:border-t md:border-gray-200">

@@ -193,9 +193,9 @@ const AddEditTravelStory = ({
                             </button>
 
                             {/* SHARE BUTTON */}
-                            <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
+                            {/* <button className='btn-small' onClick={() => handleShare(storyInfo._id)}>
                                 <MdShare className='text-lg' /> Share this story
-                            </button>
+                            </button> */}
 
 
 

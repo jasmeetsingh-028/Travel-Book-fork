@@ -36,7 +36,7 @@ const HowItWorks = () => {
                                 <span className="text-xl font-semibold text-gray-700"> 3 </span>
                             </div>
                             <h3 className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10">Save & Launch</h3>
-                            <p className="mt-4 text-base text-gray-600">Save your trip details and share your documentaries with friends or colleagues. Your memories are now ready to go!</p>
+                            <p className="mt-4 text-base text-gray-600">Save your trip details and share your documentaries with friends or colleagues via the link and also on instagram story. Your memories are now ready to go!</p>
                         </div>
                     </div>
                 </div>
