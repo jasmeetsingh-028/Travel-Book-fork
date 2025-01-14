@@ -106,7 +106,6 @@ const StoryBox = styled.div`
   padding: 12px;
   width: 1080px;
   height: auto;
-  max-height: 90vh; /* Limit the height of the box */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -114,13 +113,15 @@ const StoryBox = styled.div`
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Adjust to top */
+  justify-content: flex-start; /* Align the content at the top */
   align-items: center;
   text-align: center;
   padding: 0 20px;
   position: relative;
-  overflow-y: auto; /* Add scrolling if content exceeds the max height */
-  
+  min-height: 80vh; /* Set a minimum height for the box */
+  max-height: 90vh; /* Optional, but helps maintain a consistent height */
+  box-sizing: border-box; /* Ensures padding does not overflow */
+
   @media (max-width: 1080px) {
     width: 90%;
     height: auto;
@@ -134,6 +135,7 @@ const StoryBox = styled.div`
     padding: 10px;
   }
 `;
+
 
 const CreateStoryMessage = styled.p`
   font-size: 1rem;
@@ -184,9 +186,10 @@ const StoryContent = styled.p`
   max-width: 90%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  flex-grow: 1; /* Allow it to grow within available space */
+  flex-shrink: 1; /* Ensure it can shrink if needed */
   padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
-
 
 const VisitedLocations = styled.p`
   font-size: 1.3rem;
@@ -194,7 +197,8 @@ const VisitedLocations = styled.p`
   color: #000;
   max-width: 90%;
   word-wrap: break-word;
-  margin-top: 15px; /* Ensure separation from story content */
+  margin-top: 15px;
+  flex-grow: 0; /* Keep it from expanding too much */
   padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
 
