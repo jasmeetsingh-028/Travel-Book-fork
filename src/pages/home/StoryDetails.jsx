@@ -192,11 +192,16 @@ const StoryContent = styled.p`
 
 const VisitedLocations = styled.p`
   font-size: 1.3rem;
-  font-weight: bold;
+  font-weight: normal; /* Removed bold for better fitting */
   color: #000;
   max-width: 90%;
   word-wrap: break-word;
+  padding-right: 10px; /* Added padding for space */
+  white-space: normal; /* Ensure text wraps properly */
+  overflow: visible; /* Allow the text to overflow if needed */
+  margin-top: 15px; /* Add space between this and the content above */
 `;
+
 
 const DownloadButton = styled.button`
   background-color: #4caf50;
