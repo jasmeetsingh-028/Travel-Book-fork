@@ -67,6 +67,7 @@ function StoryDetails() {
 
   return (
     <>
+      {/* Update meta tags only when story data is available */}
       <Helmet>
         <title>{story.title} | Travel Book</title>
         <meta property="og:title" content="The memories are shared with you." />
