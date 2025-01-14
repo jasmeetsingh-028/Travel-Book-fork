@@ -175,14 +175,19 @@ const StoryImage = styled.img`
 `;
 
 const StoryContent = styled.p`
-  font-size: 1.3rem;
+  font-size: 1.2rem; /* Adjust the font size to fit better */
   font-weight: bold;
   color: #000;
   line-height: 1.5;
   margin-bottom: 15px;
   max-width: 90%;
   word-wrap: break-word;
+  overflow: hidden; /* Prevent overflow */
+  max-height: 500px; /* Restrict the height of the content */
+  padding-right: 10px; /* Optional: Adjust padding for better text fit */
 `;
+
+
 
 const VisitedLocations = styled.p`
   font-size: 1.3rem;
