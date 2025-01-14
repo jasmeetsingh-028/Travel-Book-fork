@@ -5,8 +5,9 @@ import ImageSelector from '../../components/Input/ImageSelector';
 import TagInput from '../../components/Input/TagInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
-import { notify } from 'sonner';
-import 'sonner/dist/sonner.css'; // Import Sonner's styles
+import { toast } from 'sonner';
+import 'sonner/dist/styles.css'; // Correct path
+
 import uploadImage from '../../utils/uploadImage';
 
 const AddEditTravelStory = ({
@@ -40,7 +41,7 @@ const AddEditTravelStory = ({
             });
 
             if (response.data && response.data.story) {
-                notify.success("Story Added Successfully!");
+                toast.success("Story Added Successfully!");
                 getAllTravelStories();
                 onClose();
             }
@@ -64,7 +65,7 @@ const AddEditTravelStory = ({
             const response = await axiosInstance.put(`/edit-story/${storyId}`, postData);
 
             if (response.data && response.data.story) {
-                notify.success("Story Updated Successfully!");
+                toast.success("Story Updated Successfully!");
                 getAllTravelStories();
                 onClose();
             }
@@ -108,10 +109,10 @@ const AddEditTravelStory = ({
         const shareUrl = `${window.location.origin}/story/${storyId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
-                notify.success('Link copied to your clipboard! 🎉 Now you can share it with your friends! 😎✨');
+                toast.success('Link copied to your clipboard! 🎉 Now you can share it with your friends! 😎✨');
             })
             .catch(() => {
-                notify.error('Failed to copy the link. Please try again.');
+                toast.error('Failed to copy the link. Please try again.');
             });
     };
 
