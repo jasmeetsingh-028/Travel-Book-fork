@@ -4,6 +4,7 @@ import styled from "styled-components"; // Import styled-components
 import html2canvas from "html2canvas"; // Import html2canvas
 import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 import { Helmet } from "react-helmet"; // Import react-helmet
+import { toast, Toaster } from 'sonner'; // Import Sonner
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -21,9 +22,11 @@ function StoryDetails() {
         }
         const data = await response.json();
         setStory(data);
+        toast.success("Story details loaded successfully.");
       } catch (error) {
         console.error("Error fetching story details:", error);
         setError("Error fetching story details.");
+        toast.error("Failed to fetch story details.");
       } finally {
         setLoading(false);
       }
@@ -47,9 +50,11 @@ function StoryDetails() {
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}.png`;
         link.click();
+        toast.success("Image downloaded successfully.");
       }
     } catch (error) {
       console.error("Error generating canvas:", error);
+      toast.error("Failed to generate image.");
     }
   };
 
@@ -67,6 +72,9 @@ function StoryDetails() {
 
   return (
     <>
+      {/* Toast notifications */}
+      <Toaster position="top-right" richColors />
+
       {/* Update meta tags only when story data is available */}
       <Helmet>
         <title>{story.title} | Travel Book</title>
@@ -225,4 +233,3 @@ const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
 `;
-
