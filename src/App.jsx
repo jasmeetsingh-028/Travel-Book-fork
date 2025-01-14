@@ -7,6 +7,8 @@ import Hero from './../src/pages/hero/Hero.jsx';
 import Mistake from './pages/mistake.jsx'; 
 import StoryDetails from './../src/pages/home/StoryDetails.jsx';
 import { Sonner } from 'sonner'; // Import Sonner
+import 'sonner/dist/sonner.css';
+
 
 const App = () => {
   return (
