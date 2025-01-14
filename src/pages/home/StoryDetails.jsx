@@ -106,7 +106,7 @@ const StoryBox = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 12px;
   width: 1080px;
-  height: 1920px;
+  height: auto;  /* Set height to auto to accommodate content */
   margin: 20px;
   background-image: url(${(props) => props.bgImage || "default_bg.png"});
   background-size: cover;
@@ -114,15 +114,15 @@ const StoryBox = styled.div`
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   padding: 0 20px;
   position: relative;
+  overflow: hidden; /* Ensures no overflow outside the box */
 
   @media (max-width: 1080px) {
     width: 90%;
-    height: auto;
   }
   @media (max-width: 768px) {
     width: 100%;
@@ -175,32 +175,29 @@ const StoryImage = styled.img`
 `;
 
 const StoryContent = styled.p`
-  font-size: 1.2rem; /* Adjust font size to prevent overflow */
-  font-weight: normal; /* Removed bold to make it fit better */
+  font-size: 1.3rem;
+  font-weight: normal;
   color: #000;
-  line-height: 1.6; /* Increased line-height for readability */
+  line-height: 1.5;
   margin-bottom: 15px;
-  max-width: 90%; /* Ensure the text doesn't stretch too far */
-  word-wrap: break-word; /* Break long words to prevent overflow */
-  padding-right: 10px; /* Added padding for space */
-  white-space: normal; /* Ensure text wraps to next line */
-  overflow: visible; /* Allow text to overflow if needed */
+  max-width: 90%;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* Ensure word wrapping */
 `;
-
 
 
 
 const VisitedLocations = styled.p`
   font-size: 1.3rem;
-  font-weight: normal; /* Removed bold for better fitting */
+  font-weight: normal;
   color: #000;
   max-width: 90%;
   word-wrap: break-word;
-  padding-right: 10px; /* Added padding for space */
-  white-space: normal; /* Ensure text wraps properly */
-  overflow: visible; /* Allow the text to overflow if needed */
-  margin-top: 15px; /* Add space between this and the content above */
+  margin-top: 15px; /* Add space before this section */
+  padding-right: 10px; /* Padding for better space distribution */
+  white-space: normal; /* Ensure wrapping */
 `;
+
 
 
 const DownloadButton = styled.button`
