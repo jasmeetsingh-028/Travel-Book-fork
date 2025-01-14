@@ -26,7 +26,7 @@ const Hero = () => {
                         </div>
 
                         {/* Mobile Hamburger Icon */}
-                        <div className="flex lg:hidden">
+                        {/* <div className="flex lg:hidden">
                             <button type="button" className="text-gray-900">
                                 <svg
                                     className="w-7 h-7"
@@ -43,7 +43,7 @@ const Hero = () => {
                                     ></path>
                                 </svg>
                             </button>
-                        </div>
+                        </div> */}
 
                         {/* Navbar items - Desktop */}
                         <div className="hidden lg:flex lg:ml-10 xl:ml-16 lg:items-center lg:justify-center lg:space-x-8 xl:space-x-16">
@@ -107,31 +107,32 @@ const Hero = () => {
                                 {/* New button above the original button */}
                                 <div className="mt-4 sm:mt-24">
                                     <div className="relative group sm:rounded-xl">
-                                        <div className="mt-4  sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2">
-                                            <a
-                                                href="https://travelbook.sahilportfolio.me/signUp" //SIGN UP LINK HERE
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
-                                            >
-                                                Create Free Account
-                                            </a>
-                                        </div>
+                                    <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2">
+    <a
+        href="https://travelbook.sahilportfolio.me/signUp" // SIGN UP LINK HERE
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+    >
+        Create Free Account
+    </a>
+</div>
 
-                                        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter">
-                                            <span className='mx-2'>OR</span>
-                                        </div>
+<div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter mt-4 sm:mt-0">
+    <span className="mx-2">OR</span>
+</div>
 
-                                        <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36">
-                                            <a
-                                                href="https://travelbook.sahilportfolio.me/login" // Log in link
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
-                                            >
-                                                Log In
-                                            </a>
-                                        </div>
+<div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36">
+    <a
+        href="https://travelbook.sahilportfolio.me/login" // Log in link
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+    >
+        Log In
+    </a>
+</div>
+
                                         
                                     </div>
                                 </div>
