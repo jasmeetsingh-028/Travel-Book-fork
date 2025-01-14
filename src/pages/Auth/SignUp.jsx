@@ -3,6 +3,7 @@ import PasswordInput from "../../components/Input/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
+import logo from "../../assets/images/logo.png"
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -60,14 +61,18 @@ const SignUp = () => {
 
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative">
-      <div className="login-ui-box right-10 -top-40" />
-      <div className="login-ui-box " />
-      <div className="login-ui-box bg-cyan-200 -bottom-40 right-1/2" />
-      <div className="login-ui-box bg-cyan-200 bottom-0 left-0 absolute" />
-      <div className="login-ui-box bg-cyan-200 bottom-0 right-0 absolute" />
+      {/* <div className="login-ui-box right-10 -top-40" /> */}
+      {/* <div className="login-ui-box " /> */}
+      {/* <div className="login-ui-box bg-cyan-200 -bottom-40 right-1/2" /> */}
+      {/* <div className="login-ui-box bg-cyan-200 bottom-0 left-0 absolute" /> */}
+      {/* <div className="login-ui-box bg-cyan-200 bottom-0 right-0 absolute" /> */}
 
       <div className="container h-screen flex items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
-        
+        {/* Logo section */}
+        {/* <div className="absolute top-5 left-5">
+          <img src={logo  } alt="Logo" className="h-12" />
+        </div> */}
+
         {/* Image section with a class to hide it on mobile */}
         <div className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-signup-bg-img bg-cover bg-center rounded-lg p-10 z-50">
           <div>
@@ -80,7 +85,12 @@ const SignUp = () => {
           </div>
         </div>
 
-        <div className="w-full sm:w-2/4 lg:w-2/4 h-[75vh] bg-white rounded-r-lg relative p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
+        <div className="w-full sm:w-2/4 lg:w-2/4 h-[75vh]  rounded-r-lg relative p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
+
+        <div className="flex justify-center mb-6">
+            <img src={logo} alt="Logo" className="h-24  " />
+          </div>
+
           <form onSubmit={handleSignUp}>
             <h4 className="text-2xl font-semibold mb-7">Register Now to Document Your Travels</h4>
 
@@ -130,8 +140,8 @@ const SignUp = () => {
             </button>
 
             <p className="text-sm text-center text-gray-600 mt-4">
-            Kindly remember your password!
-          </p>
+              Kindly remember your password!
+            </p>
             
           </form>
         </div>

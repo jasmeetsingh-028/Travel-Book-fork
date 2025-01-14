@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 
+// Import the logo image (if it's stored locally)
+import logo from "../../assets/images/logo.png";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,7 +71,12 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="w-full sm:w-2/4 lg:w-2/4 bg-white rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
+        <div className="w-full sm:w-2/4 lg:w-2/4 rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
+          {/* Logo Section */}
+          <div className="text-center mb-6">
+            <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto" />
+          </div>
+
           <form onSubmit={handleLogin}>
             <h4 className="text-2xl font-semibold mb-7 text-center">Sign In and Continue Your Travel Log</h4>
 
@@ -108,8 +116,8 @@ const Login = () => {
             </button>
 
             <p className="text-sm text-center text-gray-600 mt-4">
-            Kindly remember your password!
-          </p>
+              Kindly remember your password!
+            </p>
             
           </form>
         </div>
