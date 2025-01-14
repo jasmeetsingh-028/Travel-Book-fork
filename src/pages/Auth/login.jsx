@@ -3,6 +3,7 @@ import PasswordInput from "../../components/Input/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
+import { toast } from 'sonner';  // Import Sonner toast
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,6 +35,7 @@ const Login = () => {
 
       if (response.data && response.data.accessToken) {
         localStorage.setItem("token", response.data.accessToken);
+        toast.success("Successfully logged in!"); // Sonner success toast
         navigate("/dashboard");
       }
     } catch (error) {
