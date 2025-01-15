@@ -2,7 +2,7 @@ import React from "react";
 import { GrMapLocation } from "react-icons/gr";
 import { MdUpdate, MdDeleteOutline, MdClose, MdShare } from "react-icons/md";
 import moment from "moment";
-import { toast, Toaster } from 'sonner'; // Import Sonner
+import { toast } from 'sonner'; // Import Sonner
 
 
 const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => {

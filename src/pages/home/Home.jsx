@@ -12,7 +12,7 @@ import { DayPicker } from 'react-day-picker';
 import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 
 const Home = () => {
   const navigate = useNavigate();
