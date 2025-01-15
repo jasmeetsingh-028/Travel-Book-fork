@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import logo from "../../assets/images/logo.png"
+import { toast } from "sonner"; 
+
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -42,6 +44,7 @@ const SignUp = () => {
 
       if (response.data && response.data.accessToken) {
         localStorage.setItem("token", response.data.accessToken);
+        toast.success("Account created successfully! Welcome to Travel Book.");
         navigate("/dashboard");
       }
     } catch (error) {
