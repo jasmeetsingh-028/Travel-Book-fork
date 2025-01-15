@@ -3,6 +3,7 @@ import PasswordInput from "../../components/Input/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
+import { toast } from "sonner"; 
 
 // Import the logo image (if it's stored locally)
 import logo from "../../assets/images/logo.png";
@@ -37,6 +38,7 @@ const Login = () => {
 
       if (response.data && response.data.accessToken) {
         localStorage.setItem("token", response.data.accessToken);
+        toast.success("Successfully logged in! Welcome to your Travel Book!");
         navigate("/dashboard");
       }
     } catch (error) {
