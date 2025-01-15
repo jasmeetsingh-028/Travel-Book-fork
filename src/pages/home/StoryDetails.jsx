@@ -83,7 +83,7 @@ function StoryDetails() {
         <meta property="og:description" content={story.story} />
         <meta property="og:url" content={`https://travelbook.sahilportfolio.me/story/${id}`} />
       </Helmet>
-      
+
       <StoryContainer>
         <StoryBox ref={storyRef} bgImage={backgroundImage}>
           <StoryTitle>{story.title}</StoryTitle>
@@ -142,10 +142,15 @@ const StoryBox = styled.div`
   @media (max-width: 1080px) {
     width: 90%;
   }
+
   @media (max-width: 768px) {
     width: 100%;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; // Ensures the content is centered on small screens
   }
+
   @media (max-width: 480px) {
     width: 100%;
     padding: 10px;
@@ -191,15 +196,6 @@ const StoryImage = styled.img`
   display: block; // Ensures the image is a block element (which helps with centering)
 `;
 
-@media (max-width: 768px) {
-  const StoryBox = styled.div`
-    width: 100%;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; // Ensures the content is centered on small screens
-  `;
-}
 const StoryContent = styled.p`
   font-size: 1.3rem;
   font-weight: normal;
