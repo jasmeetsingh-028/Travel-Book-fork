@@ -181,15 +181,25 @@ const StoryDate = styled.p`
 `;
 
 const StoryImage = styled.img`
-  width: 80%;
+  width: 100%;
   max-width: 800px;
   height: auto;
-  margin-bottom: 15px;
+  margin: 0 auto 15px; // Centers the image horizontally
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   object-fit: contain;
+  display: block; // Ensures the image is a block element (which helps with centering)
 `;
 
+@media (max-width: 768px) {
+  const StoryBox = styled.div`
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; // Ensures the content is centered on small screens
+  `;
+}
 const StoryContent = styled.p`
   font-size: 1.3rem;
   font-weight: normal;
