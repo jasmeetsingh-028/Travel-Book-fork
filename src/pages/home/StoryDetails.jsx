@@ -4,7 +4,7 @@ import styled from "styled-components"; // Import styled-components
 import html2canvas from "html2canvas"; // Import html2canvas
 import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 import { Helmet } from "react-helmet"; // Import react-helmet
-import { toast} from 'sonner'; // Import Sonner
+import { toast, Toaster } from 'sonner'; // Import Sonner
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL

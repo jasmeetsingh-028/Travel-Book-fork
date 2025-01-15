@@ -5,7 +5,7 @@ import ImageSelector from '../../components/Input/ImageSelector';
 import TagInput from '../../components/Input/TagInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
-import { toast } from 'sonner'; // Import Sonner
+import { toast, Toaster } from 'sonner'; // Import Sonner
 
 import 'sonner/dist/styles.css'; // Correct path
 

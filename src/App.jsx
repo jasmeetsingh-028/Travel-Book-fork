@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'sonner'; // Import Toaster once here
+import { Toaster, toast } from 'sonner';
+import 'sonner/dist/styles.css'; // Correct path
+
 import Login from './pages/Auth/login.jsx';
 import SignUp from './pages/Auth/SignUp.jsx';
 import Home from './pages/home/Home.jsx';
@@ -11,8 +13,7 @@ import StoryDetails from './../src/pages/home/StoryDetails.jsx';
 const App = () => {
   return (
     <div>
-      {/* Toaster is only rendered here, at the top level */}
-      <Toaster />
+      <Toaster /> {/* Toast container */}
       <Router>
         <Routes>
           <Route path="/" exact element={<Hero />} />
