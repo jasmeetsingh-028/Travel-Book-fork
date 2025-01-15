@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
-import 'sonner/dist/styles.css'; // Correct path
+// import 'sonner/dist/styles.css'; // Correct path
 import Login from './pages/Auth/login.jsx';
 import SignUp from './pages/Auth/SignUp.jsx';
 import Home from './pages/home/Home.jsx';
