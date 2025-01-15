@@ -21,7 +21,9 @@ const Hero = () => {
                                 offset={-50} // Adjust the scroll position a little
                                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
+                                <a href ="https://travelbook.sahilportfolio.me/">
                                 <img className="w-auto h-12" src={logo} alt="logo" />
+                                    </a>
                             </Link>
                         </div>
 
