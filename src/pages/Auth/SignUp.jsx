@@ -91,7 +91,9 @@ const SignUp = () => {
         <div className="w-full sm:w-2/4 lg:w-2/4 h-[75vh]  rounded-r-lg relative p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
 
         <div className="flex justify-center mb-6">
+          <a href="https://travelbook.sahilportfolio.me/">
             <img src={logo} alt="Logo" className="h-24  " />
+            </a>
           </div>
 
           <form onSubmit={handleSignUp}>
