@@ -157,7 +157,7 @@ const Home = () => {
   return (
     <>
       <Navbar userInfo={userInfo} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
-      <div className="container mx-auto py-10">
+      <div className="bg-cyan-50 container mx-auto py-10">
         <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
         <div className="flex flex-col sm:flex-row gap-7">
           <div className="flex-1">
