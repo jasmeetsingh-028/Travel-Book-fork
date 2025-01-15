@@ -59,7 +59,7 @@ function StoryDetails() {
   };
 
   if (loading) {
-    return <Loading>Loading...</Loading>;
+    return <Loading />;
   }
 
   if (error) {
@@ -142,15 +142,10 @@ const StoryBox = styled.div`
   @media (max-width: 1080px) {
     width: 90%;
   }
-
   @media (max-width: 768px) {
     width: 100%;
     padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; // Ensures the content is centered on small screens
   }
-
   @media (max-width: 480px) {
     width: 100%;
     padding: 10px;
@@ -186,14 +181,13 @@ const StoryDate = styled.p`
 `;
 
 const StoryImage = styled.img`
-  width: 100%;
+  width: 80%;
   max-width: 800px;
   height: auto;
-  margin: 0 auto 15px; // Centers the image horizontally
+  margin-bottom: 15px;
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   object-fit: contain;
-  display: block; // Ensures the image is a block element (which helps with centering)
 `;
 
 const StoryContent = styled.p`
@@ -233,16 +227,6 @@ const DownloadButton = styled.button`
 const Loading = styled.div`
   font-size: 1.5rem;
   color: #333;
-`;
-
-const ErrorMessage = styled.div`
-  font-size: 1.5rem;
-  color: red;
-`;
-
-const Loading = styled.div`
-  font-size: 1.5rem;
-  color: #333;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -266,4 +250,9 @@ const Loading = styled.div`
       transform: rotate(360deg);
     }
   }
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 1.5rem;
+  color: red;
 `;
