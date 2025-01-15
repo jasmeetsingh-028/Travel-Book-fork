@@ -242,7 +242,7 @@ const Home = () => {
           setOpenAddEditModal({ isShown: true, type: 'add', data: null });
         }} />
       </button>
-      <Toaster position="top-right" />
+      <Toaster />
     </>
   );
 };
