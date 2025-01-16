@@ -7,7 +7,7 @@ import logo from "../../assets/images/logo.png"
 import { toast } from "sonner"; 
 
 
-const SignUp = () => {
+const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -167,4 +167,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Signup;
