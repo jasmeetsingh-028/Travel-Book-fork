@@ -128,26 +128,35 @@ const AddEditTravelStory = ({
                 <h5 className='text-xl font-medium text-slate-700'>
                     {type === "add" ? "Add New Story" : "Update This Story"}
                 </h5>
-                <div className='flex items-center gap-3 bg-cyan-50/50 p-2 rounded-lg'>
-                    {type === 'add' ? (
+                <button className='' onClick={onClose}>
+                    <MdClose className='text-xl text-slate-400' />
+                </button>
+            </div>
+            <div className='flex items-center gap-3 bg-cyan-50/50 p-2 rounded-lg'>
+                {type === 'add' ? (
+                    <div className='w-full'>
                         <button className='btn-small' onClick={handleAddOrUpdateClick}>
                             <MdAdd className='text-lg' /> Add this story to your memories
                         </button>
-                    ) : (
+                        {error && (
+                            <p className='text-red-800 text-xs pt-2'>
+                                {error}
+                            </p>
+                        )}
+                    </div>
+                ) : (
+                    <div className='w-full'>
                         <button className='btn-small' onClick={handleAddOrUpdateClick}>
                             <MdUpdate className='text-lg' /> Update this existing story in our book
                         </button>
-                    )}
-                    <button className='' onClick={onClose}>
-                        <MdClose className='text-xl text-slate-400' />
-                    </button>
-                </div>
+                        {error && (
+                            <p className='text-red-800 text-xs pt-2'>
+                                {error}
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
-            {error && (
-                <p className='text-red-800 text-xs pt-2 text-center'>
-                    {error}
-                </p>
-            )}
             <div className='flex-1 flex flex-col gap-2 pt-4'>
                 <label className='input-label'>TITLE OF THE MEMORY</label>
                 <input
