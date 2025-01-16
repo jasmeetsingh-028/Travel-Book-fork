@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { MdAdd, MdClose, MdDeleteOutline, MdUpdate, MdShare } from 'react-icons/md';
+import { MdAdd, MdClose, MdUpdate } from 'react-icons/md';
 import DataSelector from '../../components/Input/DataSelector';
 import ImageSelector from '../../components/Input/ImageSelector';
 import TagInput from '../../components/Input/TagInput';
 import axiosInstance from '../../utils/axiosInstance';
 import moment from 'moment';
-import { toast, Toaster } from 'sonner'; // Import Sonner
+import { toast } from 'sonner';
 
-import 'sonner/dist/styles.css'; // Correct path
+import 'sonner/dist/styles.css';
 
 import uploadImage from '../../utils/uploadImage';
 
@@ -22,7 +22,6 @@ const AddEditTravelStory = ({
     const [story, setStory] = useState(storyInfo?.story || "");
     const [visitedLocation, setVisitedLocation] = useState(storyInfo?.visitedLocation || []);
     const [visitedDate, setVisitedDate] = useState(storyInfo?.visitedDate || null);
-
     const [error, setError] = useState("");
 
     const addNewTravelStory = async () => {
@@ -55,7 +54,13 @@ const AddEditTravelStory = ({
         const storyId = storyInfo._id;
         try {
             let imageUrl = storyInfo.imageUrl || "";
-            let postData = { title, story, imageUrl, visitedLocation, visitedDate: visitedDate ? moment(visitedDate).valueOf() : moment().valueOf() };
+            let postData = {
+                title,
+                story,
+                imageUrl,
+                visitedLocation,
+                visitedDate: visitedDate ? moment(visitedDate).valueOf() : moment().valueOf()
+            };
 
             if (typeof storyImg === "object") {
                 const imgUploadRes = await uploadImage(storyImg);
@@ -129,18 +134,20 @@ const AddEditTravelStory = ({
                             <MdAdd className='text-lg' /> Add this story to your memories
                         </button>
                     ) : (
-                        <>
-                            <button className='btn-small' onClick={handleAddOrUpdateClick}>
-                                <MdUpdate className='text-lg' /> Update this existing story in our book
-                            </button>
-                        </>
+                        <button className='btn-small' onClick={handleAddOrUpdateClick}>
+                            <MdUpdate className='text-lg' /> Update this existing story in our book
+                        </button>
                     )}
                     <button className='' onClick={onClose}>
                         <MdClose className='text-xl text-slate-400' />
                     </button>
                 </div>
-                {error && <p className='text-red-800 text-xs pt-2 text-right'>{error}</p>}
             </div>
+            {error && (
+                <p className='text-red-800 text-xs pt-2 text-center'>
+                    {error}
+                </p>
+            )}
             <div className='flex-1 flex flex-col gap-2 pt-4'>
                 <label className='input-label'>TITLE OF THE MEMORY</label>
                 <input
@@ -172,6 +179,6 @@ const AddEditTravelStory = ({
             </div>
         </div>
     );
-}
+};
 
 export default AddEditTravelStory;
