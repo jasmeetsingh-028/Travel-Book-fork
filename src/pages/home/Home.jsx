@@ -13,7 +13,6 @@ import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
 import { Toaster, toast } from 'sonner';
-import Skeleton from 'react-loading-skeleton'; // Import the skeleton component
 
 const Home = () => {
   const navigate = useNavigate();
@@ -31,7 +30,6 @@ const Home = () => {
     isShown: false,
     data: null,
   });
-  const [loading, setLoading] = useState(true); // State to handle loading
 
   const getUserInfo = async () => {
     try {
@@ -48,7 +46,6 @@ const Home = () => {
   };
 
   const getAllTravelStories = async () => {
-    setLoading(true); // Set loading to true when data fetching begins
     try {
       const response = await axiosInstance.get('/get-all-stories');
       if (response.data && response.data.stories) {
@@ -56,9 +53,100 @@ const Home = () => {
       }
     } catch (error) {
       console.log('An Unexpected error occurred. Please try again later.');
-    } finally {
-      setLoading(false); // Set loading to false when data fetching is complete
     }
+  };
+
+  const handleEdit = (data) => {
+    setOpenAddEditModal({ isShown: true, type: 'edit', data: data });
+  };
+
+  const handleViewStory = (data) => {
+    setOpenViewModal({ isShown: true, data });
+  };
+
+  const updateIsFavourite = async (storyData) => {
+    const storyId = storyData._id;
+    try {
+      const response = await axiosInstance.put(`/update-is-favourite/${storyId}`, {
+        isFavourite: !storyData.isFavourite,
+      });
+      if (response.data && response.data.story) {
+        toast.success('Favourite Story Updated.');
+        if (filterType === 'search' && searchQuery) {
+          onSearchStory(searchQuery);
+        } else if (filterType === 'date') {
+          filterStoriesByDate(dataRange);
+        } else {
+          getAllTravelStories();
+        }
+      }
+    } catch (error) {
+      console.log('An Unexpected error occurred. Please try again later.');
+    }
+  };
+
+  const deleteTravelStory = async (data) => {
+    const storyId = data._id;
+    try {
+      const response = await axiosInstance.delete(`/delete-story/${storyId}`);
+      if (response.data && !response.data.error) {
+        toast.error('Story Deleted Successfully');
+        setOpenViewModal((prevState) => ({ ...prevState, isShown: false }));
+        getAllTravelStories();
+      }
+    } catch (error) {
+      console.log('An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const onSearchStory = async (query) => {
+    try {
+      const response = await axiosInstance.get('/search', {
+        params: {
+          query,
+        },
+      });
+      if (response.data && response.data.stories) {
+        setFilterType('search');
+        setAllStories(response.data.stories);
+      }
+    } catch (error) {
+      console.log('An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const handleClearSearch = () => {
+    setFilterType('');
+    getAllTravelStories();
+  };
+
+  const filterStoriesByDate = async (day) => {
+    try {
+      const startDate = day.from ? moment(day.from).valueOf() : null;
+      const endDate = day.to ? moment(day.to).valueOf() : null;
+      if (startDate && endDate) {
+        const response = await axiosInstance.get('/travel-stories-filter', {
+          params: { startDate, endDate },
+        });
+        if (response.data && response.data.stories) {
+          setFilterType('date');
+          setAllStories(response.data.stories);
+        }
+      }
+    } catch (error) {
+      console.log('An unexpected error occurred in filtering stories by date!');
+    }
+  };
+
+  const handleDayClick = (day) => {
+    setDataRange(day);
+    filterStoriesByDate(day);
+  };
+
+  const resetFilter = () => {
+    setDataRange({ from: null, to: null });
+    setFilterType('');
+    getAllTravelStories();
   };
 
   useEffect(() => {
@@ -73,13 +161,7 @@ const Home = () => {
         <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
         <div className="flex flex-col sm:flex-row gap-7">
           <div className="flex-1">
-            {loading ? ( // If loading is true, display skeleton screens
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[...Array(6)].map((_, index) => (
-                  <Skeleton key={index} height={200} containerClassName="rounded-lg" />
-                ))}
-              </div>
-            ) : allStories.length > 0 ? (
+            {allStories.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {allStories.map((item) => (
                   <TravelStoryCard
