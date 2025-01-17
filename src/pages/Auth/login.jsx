@@ -12,6 +12,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);  // State for loader
 
   const navigate = useNavigate();
 
@@ -29,6 +30,7 @@ const Login = () => {
     }
 
     setError("");
+    setLoading(true);  // Show loader before API call
 
     try {
       const response = await axiosInstance.post("/login", {
@@ -53,6 +55,8 @@ const Login = () => {
           "An unexpected error occurred in Travel Book's Backend, Please try again."
         );
       }
+    } finally {
+      setLoading(false);  // Hide loader after the request finishes
     }
   };
 
@@ -76,9 +80,9 @@ const Login = () => {
         <div className="w-full sm:w-2/4 lg:w-2/4 rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
           {/* Logo Section */}
           <div className="text-center mb-6">
-            <a href = "https://travelbook.sahilportfolio.me/">
-            <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto" />
-              </a>
+            <a href="https://travelbook.sahilportfolio.me/">
+              <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto" />
+            </a>
           </div>
 
           <form onSubmit={handleLogin}>
@@ -103,9 +107,19 @@ const Login = () => {
 
             {error && <p className="text-red-600 text-xs pb-1">{error}</p>}
 
-            <button type="submit" className="btn-primary w-full">
-              LOGIN
+            <button type="submit" className="btn-primary w-full" disabled={loading}>
+              {loading ? "Logging In..." : "LOGIN"}
             </button>
+
+            {/* Display loading dots if the login is in progress */}
+            {loading && (
+              <div className="flex justify-center mt-4 space-x-2">
+                <span className="loading loading-dots loading-xs"></span>
+                <span className="loading loading-dots loading-sm"></span>
+                <span className="loading loading-dots loading-md"></span>
+                <span className="loading loading-dots loading-lg"></span>
+              </div>
+            )}
 
             <p className="text-xs text-slate-500 text-center my-4">Or</p>
 
@@ -122,7 +136,6 @@ const Login = () => {
             <p className="text-sm text-center text-gray-600 mt-4">
               Kindly remember your password!
             </p>
-            
           </form>
         </div>
       </div>
