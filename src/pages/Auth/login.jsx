@@ -107,17 +107,22 @@ const Login = () => {
 
             {error && <p className="text-red-600 text-xs pb-1">{error}</p>}
 
-            <button type="submit" className="btn-primary w-full" disabled={loading}>
-              {loading ? "Logging In..." : "LOGIN"}
-            </button>
+          <button type="submit" className="btn-primary w-full" disabled={loading}>
+  {loading ? (
+    <div className="d-flex justify-center items-center">
+      <div className="spinner-border text-white" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+      <span className="ml-2">Waiting for the server to respond......</span>
+    </div>
+  ) : (
+    "LOGIN"
+  )}
+</button>
 
-            {/* Display loading dots if the login is in progress */}
             {loading && (
-              <div className="flex justify-center mt-4 space-x-2">
-                <span className="loading loading-dots loading-xs"></span>
-                <span className="loading loading-dots loading-sm"></span>
-                <span className="loading loading-dots loading-md"></span>
-                <span className="loading loading-dots loading-lg"></span>
+              <div className="flex justify-center mt-4">
+                <div className="spinner-border animate-spin border-t-2 border-cyan-500 rounded-full w-8 h-8"></div>
               </div>
             )}
 
