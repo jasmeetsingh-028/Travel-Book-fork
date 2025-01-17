@@ -115,17 +115,18 @@ const Signup = () => {
             {error && <p className="text-red-600 text-xs pb-1">{error}</p>}
 
             <button type="submit" className="btn-primary w-full" disabled={loading}>
-              {loading ? (
-                <div className="d-flex justify-center items-center">
-                  <div className="spinner-border text-white" role="status">
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                  <span className="ml-2">Creating your account...</span>
-                </div>
-              ) : (
-                "CREATE ACCOUNT"
-              )}
-            </button>
+  {loading ? (
+    <div className="d-flex justify-center items-center">
+      <div className="spinner-border text-white" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+      <span className="ml-2">Creating your account...</span>
+    </div>
+  ) : (
+    "CREATE ACCOUNT"
+  )}
+</button>
+
 
             <p className="text-xs text-slate-500 text-center my-4">Or</p>
 
