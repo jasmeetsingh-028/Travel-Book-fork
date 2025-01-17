@@ -11,7 +11,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);  // Added loading state
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -117,7 +117,7 @@ const Signup = () => {
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? (
                 <div className="d-flex justify-center items-center">
-                  <div className="spinner-border text-white" role="status">
+                  <div className="spinner-border text-white" role="status" style={{ width: '1.5rem', height: '1.5rem' }}>
                     <span className="sr-only">Loading...</span>
                   </div>
                   <span className="ml-2">Creating your account...</span>
