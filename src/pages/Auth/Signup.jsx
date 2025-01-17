@@ -116,8 +116,10 @@ const Signup = () => {
 
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? (
-                <div className="flex justify-center items-center">
-                  <div className="animate-spin h-5 w-5 border-4 border-t-transparent border-blue-500 rounded-full"></div>
+                <div className="d-flex justify-center items-center">
+                  <div className="spinner-border text-white" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div>
                   <span className="ml-2">Creating your account...</span>
                 </div>
               ) : (
