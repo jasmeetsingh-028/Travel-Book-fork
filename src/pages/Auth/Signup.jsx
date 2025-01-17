@@ -116,31 +116,32 @@ const Signup = () => {
 
             <button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? (
-                <div className="d-flex justify-center items-center">
-                  <div className="spinner-border text-white" role="status" style={{ width: '1.5rem', height: '1.5rem' }}>
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                  <span className="ml-2">Creating your account...</span>
-                </div>
+                "Creating your account..."
               ) : (
                 "CREATE ACCOUNT"
               )}
             </button>
-
-            <p className="text-xs text-slate-500 text-center my-4">Or</p>
-
-            <button
-              type="button"
-              className="btn-primary btn-light w-full"
-              onClick={() => navigate("/login")}
-            >
-              LOGIN
-            </button>
-
-            <p className="text-sm text-center text-gray-600 mt-4">
-              Kindly remember your password!
-            </p>
           </form>
+
+          {loading && (
+            <div className="flex justify-center items-center mt-4">
+              <div className="custom-loader"></div>
+            </div>
+          )}
+
+          <p className="text-xs text-slate-500 text-center my-4">Or</p>
+
+          <button
+            type="button"
+            className="btn-primary btn-light w-full"
+            onClick={() => navigate("/login")}
+          >
+            LOGIN
+          </button>
+
+          <p className="text-sm text-center text-gray-600 mt-4">
+            Kindly remember your password!
+          </p>
         </div>
       </div>
 
@@ -152,6 +153,20 @@ const Signup = () => {
           .container {
             flex-direction: column;
           }
+        }
+
+        .custom-loader {
+          border: 4px solid #f3f3f3; /* Light grey */
+          border-top: 4px solid #00bcd4; /* Cyan */
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       `}</style>
     </div>
