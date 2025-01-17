@@ -97,7 +97,7 @@ const Signup = () => {
           </div>
 
           <form onSubmit={handleSignUp}>
-            <h4 className="text-2xl font-semibold mb-7">Register Now to Document Your Travels</h4>
+            <h4 className="text-2xl font-semibold mb-7 text-center">Register Now to Document Your Travels</h4>
 
             <input
               type="text"
