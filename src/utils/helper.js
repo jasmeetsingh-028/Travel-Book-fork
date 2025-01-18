@@ -1,4 +1,4 @@
-import addStory from '../../src/assets/images/addStory.png'
+import addStory from '../../src/assets/images/addStory.gif'
 import noSearch from '../../src/assets/images/no-search.gif'
 import noCal from '../../src/assets/images/no-calendar.gif'
 
