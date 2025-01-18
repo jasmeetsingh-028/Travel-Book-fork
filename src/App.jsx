@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import 'sonner/dist/styles.css'; // Correct path
-import './scrollbar.css'; // Import the scrollbar styles
 
 import Login from './pages/Auth/login.jsx';
 import Signup from './pages/Auth/Signup.jsx';
