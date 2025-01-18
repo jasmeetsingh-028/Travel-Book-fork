@@ -12,11 +12,12 @@
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1; /* Track color */
+  border-radius: 10px; /* Rounded corners for the track */
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #06b6d4; /* Cyan-500 color */
-  border-radius: 50%; /* Circular thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
   border: 2px solid #f1f1f1; /* Adding border to create separation */
 }
 
