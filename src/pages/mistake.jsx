@@ -1,16 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 
 const mistake = () => {
+    useEffect(() => {
+        document.title = "404 Error | Travel-Book";
+    }, []);
+
     return (
-        <div>
-            <div className="grid h-screen place-content-center bg-white px-4">
+        <div className="grid h-screen place-content-center bg-white px-4">
+            <div className="text-center">
                 <h1 className="uppercase tracking-widest text-gray-500">404 | Not Found | Kindly write the correct route to get your travel book!</h1>
                 
                 {/* Small Text */}
-                <p className="mt-4 text-sm text-gray-500">Meet the developer from the below links.</p>
+                <p className="mt-4 text-sm text-gray-500">Meet the developer from the below links</p>
 
                 {/* Social Media Links */}
-                <ul className="flex items-center space-x-3 mt-9">
+                <ul className="flex justify-center items-center space-x-4 mt-9">
                     <li>
                         <a href="https://sahilportfolio.me/" title="" className="flex items-center justify-center text-white transition-all duration-200 bg-gray-800 rounded-full w-7 h-7 hover:bg-blue-600 focus:bg-blue-600">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
@@ -48,7 +52,7 @@ const mistake = () => {
                 </ul>
             </div>
         </div>
-    )
+    );
 }
 
-export default mistake
+export default mistake;
