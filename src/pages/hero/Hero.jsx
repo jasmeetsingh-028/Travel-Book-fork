@@ -81,7 +81,7 @@ const Hero = () => {
                         </div>
 
                         {/* Navbar items - Mobile */}
-                        <div className="hidden lg:flex lg:ml-auto lg:items-center lg:space-x-8 xl:space-x-10">
+                        <div className="hidden lg:flex lg:ml-auto lg:items-center lg:space-x-8 xl:space-x-12">
                             <a
                                 href="https://travelbook.sahilportfolio.me/login" // Updated link to the login page
                                 className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
@@ -89,6 +89,18 @@ const Hero = () => {
                                 Sign in
                             </a>
                         </div>
+
+                        <div className="flex items-center">
+                            <a
+                                href="https://github.com/Sahilll94/Travel-Book"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                            >
+                                <i className="bi bi-github"></i>
+                            </a>
+                        </div>
+                        
                     </div>
                 </div>
             </header>
