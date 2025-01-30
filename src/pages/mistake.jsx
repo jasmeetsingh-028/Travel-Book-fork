@@ -11,7 +11,7 @@ const mistake = () => {
                 <h1 className="uppercase tracking-widest text-gray-500">404 | Not Found | Kindly write the correct route to get your travel book!</h1>
                 
                 {/* Small Text */}
-                <p className="mt-4 text-sm text-gray-500">If you believe that I've made a mistake, please feel free to contact the developer using the links below.</p>
+                <p className="mt-4 text-sm text-gray-500">If you believe that we have made a mistake, please feel free to contact the developer using the links below.</p>
 
                 {/* Social Media Links */}
                 <ul className="flex justify-center items-center space-x-4 mt-9">
