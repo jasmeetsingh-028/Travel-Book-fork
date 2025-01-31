@@ -5,6 +5,7 @@ import html2canvas from "html2canvas"; // Import html2canvas
 import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import background image
 import { Helmet } from "react-helmet"; // Import react-helmet
 import { toast, Toaster } from 'sonner'; // Import Sonner
+import { FaInstagram } from "react-icons/fa"; // Import Instagram icon
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -59,7 +60,7 @@ function StoryDetails() {
   };
 
   if (loading) {
-    return <Loading />;
+    return <Loading>Loading...</Loading>;
   }
 
   if (error) {
@@ -97,9 +98,11 @@ function StoryDetails() {
             Create your own travel story from <a href="https://travelbook.sahilportfolio.me/">https://travelbook.sahilportfolio.me/</a>
           </CreateStoryMessage>
         </StoryBox>
-        <DownloadButton onClick={handleDownload}>
-          Click here to download image as PNG
-        </DownloadButton>
+        
+        {/* Share on Instagram Button */}
+        <ShareButton onClick={handleDownload}>
+          <FaInstagram /> Share it on your Instagram Story by downloading it!
+        </ShareButton>
       </StoryContainer>
     </>
   );
@@ -210,49 +213,40 @@ const VisitedLocations = styled.p`
   margin-top: 15px;
 `;
 
-const DownloadButton = styled.button`
-  background-color: #4caf50;
+// New Share Button with Instagram Logo
+const ShareButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #e1306c;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    background-color: #45a049;
-  }
-`;
-
-const Loading = styled.div`
-  font-size: 1.5rem;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-
-  ::after {
-    content: "";
-    border: 4px solid transparent;
-    border-top: 4px solid #4caf50;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+    background-color: #c13584;
   }
 
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+  svg {
+    font-size: 1.5rem;
   }
 `;
 
 const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
+  text-align: center;
 `;
+
+const Loading = styled.div`
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+`;
+
