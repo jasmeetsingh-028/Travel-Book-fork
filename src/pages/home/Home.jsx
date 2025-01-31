@@ -13,6 +13,7 @@ import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
 import { Toaster, toast } from 'sonner';
+import { Helmet } from "react-helmet"; // Import react-helmet
 
 const Home = () => {
   const navigate = useNavigate();
@@ -156,6 +157,9 @@ const Home = () => {
 
   return (
     <>
+        <Helmet>
+        <title>Dashboard | Travel Book</title>
+        </Helmet>
       <Navbar userInfo={userInfo} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
       <div className="container mx-auto py-10">
         <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
