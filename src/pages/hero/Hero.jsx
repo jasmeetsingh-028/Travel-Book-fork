@@ -219,9 +219,10 @@ const Hero = () => {
 
                         <div>
                             <img
-                                className="w-4/4 mx-auto"
+                                className="w-4/4 mx-auto no-drag"
                                 src={preview}
-                                alt="Preview of the Product"
+                                alt="Preview of the Travel-Book"
+                                draggable="false"
                             />
                         </div>
                     </div>
