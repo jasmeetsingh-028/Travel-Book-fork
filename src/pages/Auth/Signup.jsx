@@ -5,6 +5,7 @@ import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import logo from "../../assets/images/logo.png";
 import { toast } from "sonner"; 
+import { Helmet } from "react-helmet"; // Import react-helmet
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -67,6 +68,9 @@ const Signup = () => {
 
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative">
+       <Helmet>
+        <title>Create Account | Travel Book</title>
+        </Helmet>
       <div className="container h-screen flex items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
         <div className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-signup-bg-img bg-cover bg-center rounded-lg p-10 z-50">
           <div>
