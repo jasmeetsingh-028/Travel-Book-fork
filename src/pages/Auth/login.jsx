@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "sonner"; 
+import { Helmet } from "react-helmet"; // Import react-helmet
 
 // Import the logo image (if it's stored locally)
 import logo from "../../assets/images/logo.png";
@@ -62,6 +63,9 @@ const Login = () => {
 
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative flex items-center justify-center">
+       <Helmet>
+        <title>Login | Travel Book</title>
+        </Helmet>
       <div className="container h-screen flex flex-col sm:flex-row items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
         
         {/* Image section with a class to hide it on mobile */}
