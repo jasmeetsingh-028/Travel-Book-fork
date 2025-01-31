@@ -12,7 +12,7 @@ const Stats = () => {
                 <div className="grid grid-cols-1 gap-8 mt-10 text-center lg:mt-24 sm:gap-x-8 md:grid-cols-3">
                     <div>
                         <h3 className="font-bold text-7xl">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-blue-600"> 200+ </span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-blue-600"> 50+ </span>
                         </h3>
                         <p className="mt-4 text-xl font-medium text-gray-900">Trips recorded</p>
                         <p className="text-base mt-0.5 text-gray-500">Capturing memories from all over the world</p>
@@ -20,7 +20,7 @@ const Stats = () => {
 
                     <div>
                         <h3 className="font-bold text-7xl">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-blue-600"> 2K+ </span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-blue-600"> 20+ </span>
                         </h3>
                         <p className="mt-4 text-xl font-medium text-gray-900">Images uploaded</p>
                         <p className="text-base mt-0.5 text-gray-500">Stunning photos from places around the globe</p>
@@ -28,7 +28,7 @@ const Stats = () => {
 
                     <div>
                         <h3 className="font-bold text-7xl">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-blue-600"> 2+ </span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-blue-600"> 1 </span>
                         </h3>
                         <p className="mt-4 text-xl font-medium text-gray-900">Countries explored</p>
                         <p className="text-base mt-0.5 text-gray-500">By our community of avid travelers</p>
