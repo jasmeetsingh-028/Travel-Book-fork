@@ -92,6 +92,15 @@ const Hero = () => {
 
                         <div className="flex items-center">
                             <a
+                                href="https://medium.com/@sa_hilll94/travel-book-d9435771e23e"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                            >
+                                <i className="bi bi-journal-code"></i>
+                            </a>
+                            
+                            <a
                                 href="https://github.com/Sahilll94/Travel-Book"
                                 target="_blank"
                                 rel="noopener noreferrer"
