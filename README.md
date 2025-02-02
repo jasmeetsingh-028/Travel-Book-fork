@@ -14,5 +14,5 @@ The **Travel-Book** frontend is a web application that allows users to search, e
 - **Backend**: Node.js and Express (MERN Stack)
 - **Database**: MongoDB (for storing destination data and user information)
 - **Routing**: React Router
-- **Styling**: CSS / Tailwind CSS (or any other used)
+- **Styling**: CSS / Tailwind CSS
 - **API Integration**: Connected to the backend via RESTful APIs to fetch destination data and handle bookings.
