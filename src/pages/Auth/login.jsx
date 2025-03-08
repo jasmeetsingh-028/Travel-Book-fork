@@ -84,7 +84,7 @@ const Login = () => {
         <div className="w-full sm:w-2/4 lg:w-2/4 rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
           {/* Logo Section */}
           <div className="text-center mb-6">
-            <a href="https://travelbook.sahilportfolio.me/">
+            <a href="https://travelbook.sahilfolio.live/">
               <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto" />
             </a>
           </div>
