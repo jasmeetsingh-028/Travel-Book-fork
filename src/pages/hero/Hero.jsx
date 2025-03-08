@@ -21,7 +21,7 @@ const Hero = () => {
                                 offset={-50} // Adjust the scroll position a little
                                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
-                                <a href ="https://travelbook.sahilportfolio.me/">
+                                <a href ="https://travelbook.sahilfolio.live/">
                                 <img className="w-auto h-12" src={logo} alt="logo" />
                                     </a>
                             </Link>
@@ -157,7 +157,7 @@ const Hero = () => {
 
                                         <div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
                                             <a
-                                                href="https://travelbook.sahilportfolio.me/login" // Log in link
+                                                href="https://travelbook.sahilfolio.live/login" // Log in link
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
