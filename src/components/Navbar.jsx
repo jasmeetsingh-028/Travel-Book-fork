@@ -32,7 +32,7 @@ const Navbar = ({userInfo,
 
     return (
         <div className='bg-white flex items-center justify-between px-6 py-2 drop-shadow sticky top-0 z-10'>
-            <a href="https://travelbook.sahilportfolio.me/">
+            <a href="https://travelbook.sahilfolio.live/">
             <img src={logo} alt="Travel Book Logo" className='h-16' />
             </a>
 
