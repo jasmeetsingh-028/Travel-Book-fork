@@ -82,7 +82,7 @@ function StoryDetails() {
         <meta property="og:title" content="The memories are shared with you." />
         <meta property="og:image" content={story.imageUrl} />
         <meta property="og:description" content={story.story} />
-        <meta property="og:url" content={`https://travelbook.sahilportfolio.me/story/${id}`} />
+        <meta property="og:url" content={`https://travelbook.sahilfolio.live/story/${id}`} />
       </Helmet>
 
       <StoryContainer>
@@ -95,7 +95,7 @@ function StoryDetails() {
             <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
           </VisitedLocations>
           <CreateStoryMessage>
-            Create your own travel story from <a href="https://travelbook.sahilportfolio.me/">https://travelbook.sahilportfolio.me/</a>
+            Create your own travel story from <a href="https://travelbook.sahilfolio.live/">https://travelbook.sahilfolio.live/</a>
           </CreateStoryMessage>
         </StoryBox>
         
