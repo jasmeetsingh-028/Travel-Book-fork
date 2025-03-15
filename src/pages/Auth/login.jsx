@@ -53,7 +53,7 @@ const Login = () => {
         setError(error.response.data.message);
       } else {
         setError(
-          "An unexpected error occurred in Travel Book's Backend, Please try again."
+          "An error occurred. Please wait a minute as the backend may take some time to start. Try again shortly."
         );
       }
     } finally {
