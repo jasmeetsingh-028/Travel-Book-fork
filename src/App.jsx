@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
-import 'sonner/dist/styles.css'; // Correct path
+import 'sonner/dist/styles.css'; 
 
 import Login from './pages/Auth/login.jsx';
 import Signup from './pages/Auth/Signup.jsx';
@@ -13,7 +13,7 @@ import StoryDetails from './../src/pages/home/StoryDetails.jsx';
 const App = () => {
   return (
     <div>
-      <Toaster /> {/* Toast container */}
+      <Toaster />
       <Router>
         <Routes>
           <Route path="/" exact element={<Hero />} />
