@@ -6,6 +6,7 @@ import HowItWorks from "./HowItWorks";
 import Stats from "./Stats";
 import About from "./About";
 import Footer from "./Footer";
+import { AiOutlineCloudServer } from "react-icons/ai";
 
 const Hero = () => {
     return (
@@ -21,9 +22,9 @@ const Hero = () => {
                                 offset={-50} // Adjust the scroll position a little
                                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
-                                <a href ="https://travelbook.sahilfolio.live/">
-                                <img className="w-auto h-12" src={logo} alt="logo" />
-                                    </a>
+                                <a href="https://travelbook.sahilfolio.live/">
+                                    <img className="w-auto h-12" src={logo} alt="logo" />
+                                </a>
                             </Link>
                         </div>
 
@@ -91,24 +92,34 @@ const Hero = () => {
                         </div>
 
                         <div className="flex items-center">
+
+                            <a
+                                href="https://stats.uptimerobot.com/4klrGTjcP6"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Server Status"
+                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                            >
+                                <AiOutlineCloudServer className="w-8 h-8" />
+                            </a>
                             <a
                                 href="https://travel-book-api-docs.hashnode.dev/travel-book-api-documentation"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
                             >
-                               <i class="bi bi-journal-code"></i>
+                                <i class="bi bi-journal-code"></i>
                             </a>
-                            
+
                             <a
                                 href="https://medium.com/@sa_hilll94/travel-book-d9435771e23e"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
                             >
-                               <i class="bi bi-journal-richtext"></i>
+                                <i class="bi bi-journal-richtext"></i>
                             </a>
-                            
+
                             <a
                                 href="https://github.com/Sahilll94/Travel-Book"
                                 target="_blank"
@@ -118,7 +129,7 @@ const Hero = () => {
                                 <i className="bi bi-github"></i>
                             </a>
                         </div>
-                        
+
                     </div>
                 </div>
             </header>
