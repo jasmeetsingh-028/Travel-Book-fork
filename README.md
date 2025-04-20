@@ -1,6 +1,8 @@
 # Travel-Book - Frontend
 ![preview img](src/assets/images/overview.png)
 
+### To check the status of the servers (Frontend server and Backend server) - [Click here](https://stats.uptimerobot.com/4klrGTjcP6)
+
 ## Overview
 The **Travel-Book** frontend is a web application that allows users to search, explore, and book travel destinations with ease. Built using the **MERN stack**, this platform is designed to be intuitive, responsive, and user-friendly. It enables users to browse various destinations, view detailed information, and book trips with just a few clicks.
 
