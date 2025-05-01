@@ -3,13 +3,13 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 
 const ThemeToggle = () => {
   const [darkMode, setDarkMode] = useState(() => {
-    // Check for saved theme preference or use OS preference
+    // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       return savedTheme === 'dark';
     }
-    // If no saved preference, check system preference
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Default to light mode, don't use system preference
+    return false;
   });
 
   // Apply the theme when component mounts or theme changes
