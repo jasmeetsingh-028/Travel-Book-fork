@@ -48,3 +48,10 @@ export const getEmptyImg = (filterType) =>{
             return addStory;
     }
 }
+
+// Generate a random color for chart use
+export const getRandomColor = () => {
+    // Generate pastel colors for better visual appeal
+    const hue = Math.floor(Math.random() * 360);
+    return `hsla(${hue}, 70%, 80%, 0.8)`;
+};

@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd, MdQueryStats } from 'react-icons/md';
 import Modal from 'react-modal';
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -13,7 +13,8 @@ import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
 import { Toaster, toast } from 'sonner';
-import { Helmet } from "react-helmet"; // Import react-helmet
+import { Helmet } from "react-helmet";
+import TravelAnalytics from '../../components/Cards/TravelAnalytics';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Home = () => {
     isShown: false,
     data: null,
   });
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   const getUserInfo = async () => {
     try {
@@ -186,11 +188,22 @@ const Home = () => {
             )}
           </div>
           <div className="w-full sm:w-[320px]">
-            <div className="bg-white border border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg">
+            <div className="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-lg shadow-slate-200/60 dark:shadow-none rounded-lg">
               <div className="p-3">
                 <DayPicker captionLayout="dropdown-buttons" mode="range" selected={dataRange} onSelect={handleDayClick} pagedNavigation />
               </div>
             </div>
+            
+            {/* Analytics Button */}
+            {allStories.length > 0 && (
+              <button 
+                onClick={() => setShowAnalytics(true)}
+                className="mt-4 w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white py-3 px-4 rounded-lg transition-colors"
+              >
+                <MdQueryStats className="text-lg" />
+                <span>View Your Travel Analytics</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -241,6 +254,23 @@ const Home = () => {
           }}
         />
       </Modal>
+      
+      {/* Analytics Modal */}
+      <Modal
+        isOpen={showAnalytics}
+        onRequestClose={() => setShowAnalytics(false)}
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            zIndex: 999,
+          },
+        }}
+        appElement={document.getElementById('root')}
+        className="model-box"
+      >
+        <TravelAnalytics onClose={() => setShowAnalytics(false)} />
+      </Modal>
+      
       <button className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10">
         <MdAdd className="text-[32px] text-white" onClick={() => {
           setOpenAddEditModal({ isShown: true, type: 'add', data: null });

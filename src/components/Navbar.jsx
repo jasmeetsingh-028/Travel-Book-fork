@@ -3,6 +3,7 @@ import logo from "../../src/assets/images/logo.png"
 import ProfileInfo from './Cards/ProfileInfo'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from './Input/SearchBar'
+import ThemeToggle from './ThemeToggle/ThemeToggle'
 
 
 const Navbar = ({userInfo,
@@ -31,7 +32,7 @@ const Navbar = ({userInfo,
     };
 
     return (
-        <div className='bg-white flex items-center justify-between px-6 py-2 drop-shadow sticky top-0 z-10'>
+        <div className='bg-white dark:bg-gray-800 flex items-center justify-between px-6 py-2 drop-shadow sticky top-0 z-10'>
             <a href="https://travelbook.sahilfolio.live/">
             <img src={logo} alt="Travel Book Logo" className='h-16' />
             </a>
@@ -46,9 +47,16 @@ const Navbar = ({userInfo,
             onClearSearch={onClearSearch}
             />
             
-            <ProfileInfo userInfo={userInfo} onLogout={onLogout} /> {" "}
+            <div className="flex items-center gap-4">
+                <ThemeToggle />
+                <ProfileInfo userInfo={userInfo} onLogout={onLogout} /> 
+            </div>
             </> 
             
+            )}
+            
+            {!isToken && (
+                <ThemeToggle />
             )}
         </div>
     )

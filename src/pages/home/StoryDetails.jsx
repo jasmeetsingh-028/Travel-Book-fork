@@ -6,6 +6,7 @@ import backgroundImage from "../../../src/assets/images/bg-share.png"; // Import
 import { Helmet } from "react-helmet"; // Import react-helmet
 import { toast, Toaster } from 'sonner'; // Import Sonner
 import { FaInstagram } from "react-icons/fa"; // Import Instagram icon
+import LocationMap from "../../components/Cards/LocationMap"; // Import LocationMap component
 
 function StoryDetails() {
   const { id } = useParams(); // Get the ID from the URL
@@ -98,6 +99,14 @@ function StoryDetails() {
             Create your own travel story from <a href="https://travelbook.sahilfolio.live/">https://travelbook.sahilfolio.live/</a>
           </CreateStoryMessage>
         </StoryBox>
+        
+        {/* Map Component */}
+        <div className="w-full max-w-2xl mx-auto my-6">
+          <LocationMap 
+            locations={story.visitedLocation} 
+            title={`Locations from "${story.title}"`} 
+          />
+        </div>
         
         {/* Share on Instagram Button */}
         <ShareButton onClick={handleDownload}>
