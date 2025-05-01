@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import html2canvas from "html2canvas";
+import { saveAs } from 'file-saver';
 import backgroundImage from "../../../src/assets/images/bg-share.png";
 import logoImage from "../../../src/assets/images/logo.png";
 import { Helmet } from "react-helmet";
 import { toast, Toaster } from 'sonner';
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram, FaDownload, FaShare } from "react-icons/fa";
 import { motion } from "framer-motion"; 
 import LocationMap from "../../components/Cards/LocationMap";
 
@@ -15,13 +15,13 @@ function StoryDetails() {
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef();
-  const instagramStoryRef = useRef(); // Separate ref for Instagram story template
   const [showInstagramPreview, setShowInstagramPreview] = useState(false);
-  
-  // Track download progress
   const [isDownloading, setIsDownloading] = useState(false);
-
+  const [templateType, setTemplateType] = useState('instagram');
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  
+  const canvasRef = useRef(null);
+  
   useEffect(() => {
     const fetchStory = async () => {
       try {
@@ -44,63 +44,199 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  // Regular download (as before)
-  const handleDownload = async () => {
-    setShowInstagramPreview(true);
-  };
-
-  // Instagram story optimized download
-  const downloadForInstagram = async () => {
-    try {
-      setIsDownloading(true);
-      
-      if (instagramStoryRef.current) {
-        // First ensure all images are loaded
-        const images = instagramStoryRef.current.querySelectorAll('img');
-        await Promise.all(Array.from(images).map(img => {
-          if (img.complete) return Promise.resolve();
-          return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve; // Handle error case too
-          });
-        }));
-        
-        const canvas = await html2canvas(instagramStoryRef.current, {
-          allowTaint: true,
-          useCORS: true,
-          width: 1080,
-          height: 1920,
-          scale: 2,
-          logging: false,
-          backgroundColor: null,
-          // Ensure the entire element is captured
-          x: 0,
-          y: 0,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: document.documentElement.offsetWidth,
-          windowHeight: document.documentElement.offsetHeight
-        });
-
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = `${story.title}-instagram-story.png`;
-        link.click();
-        toast.success("Instagram Story image downloaded successfully.");
-        setShowInstagramPreview(false);
-      }
-    } catch (error) {
-      console.error("Error generating Instagram Story image:", error);
-      toast.error("Failed to generate Instagram Story image.");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  // Format date nicely
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const generateStoryImage = async () => {
+    try {
+      setIsDownloading(true);
+      setDownloadProgress(10);
+      
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = 1080;
+      canvas.height = 1920;
+      
+      const loadImage = (src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => {
+            console.error(`Failed to load image: ${src}`);
+            resolve(null);
+          };
+          img.src = src;
+        });
+      };
+      
+      setDownloadProgress(20);
+      
+      const logoImg = await loadImage(logoImage);
+      const storyImg = await loadImage(story.imageUrl);
+      
+      setDownloadProgress(40);
+      
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, '#f09433');
+      gradient.addColorStop(0.25, '#e6683c');
+      gradient.addColorStop(0.5, '#dc2743');
+      gradient.addColorStop(0.75, '#cc2366');
+      gradient.addColorStop(1, '#bc1888');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      setDownloadProgress(50);
+      
+      const contentAreaMargin = 80;
+      const contentAreaWidth = canvas.width - (contentAreaMargin * 2);
+      const contentAreaHeight = canvas.height - 300;
+      const contentAreaX = contentAreaMargin;
+      const contentAreaY = 200;
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.beginPath();
+      ctx.roundRect(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight, 20);
+      ctx.fill();
+      
+      setDownloadProgress(60);
+      
+      if (logoImg) {
+        const logoWidth = 200;
+        const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
+        const logoX = (canvas.width - logoWidth) / 2;
+        const logoY = 80;
+        
+        ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+      }
+      
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      
+      ctx.font = 'bold 56px Arial';
+      ctx.fillText(story.title, canvas.width / 2, contentAreaY + 80, contentAreaWidth - 40);
+      
+      ctx.font = '36px Arial';
+      ctx.fillText(formatDate(story.createdOn), canvas.width / 2, contentAreaY + 140, contentAreaWidth - 40);
+      
+      setDownloadProgress(70);
+      
+      if (storyImg) {
+        const imgWidth = contentAreaWidth - 80;
+        const imgHeight = (storyImg.height / storyImg.width) * imgWidth;
+        const imgX = (canvas.width - imgWidth) / 2;
+        const imgY = contentAreaY + 200;
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgWidth, imgHeight, 15);
+        ctx.clip();
+        ctx.drawImage(storyImg, imgX, imgY, imgWidth, imgHeight);
+        ctx.restore();
+        
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 15;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 5;
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgWidth, imgHeight, 15);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+      
+      setDownloadProgress(80);
+      
+      const descriptionY = contentAreaY + (storyImg ? 200 + ((storyImg.height / storyImg.width) * (contentAreaWidth - 80)) + 50 : 300);
+      ctx.textAlign = 'left';
+      ctx.font = '36px Arial';
+      
+      const wrapText = (text, x, y, maxWidth, lineHeight) => {
+        const words = text.split(' ');
+        let line = '';
+        let testLine = '';
+        let lineCount = 0;
+        
+        for (let i = 0; i < words.length; i++) {
+          testLine = line + words[i] + ' ';
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+          
+          if (testWidth > maxWidth && i > 0) {
+            ctx.fillText(line, x, y + (lineCount * lineHeight));
+            line = words[i] + ' ';
+            lineCount++;
+            if (lineCount > 6) {
+              line += '...';
+              ctx.fillText(line, x, y + (lineCount * lineHeight));
+              break;
+            }
+          } else {
+            line = testLine;
+          }
+        }
+        
+        if (lineCount <= 6) {
+          ctx.fillText(line, x, y + (lineCount * lineHeight));
+        }
+        
+        return lineCount;
+      };
+      
+      const descriptionLineHeight = 44;
+      const descriptionLines = wrapText(
+        story.story.length > 350 ? `${story.story.substring(0, 350)}...` : story.story, 
+        contentAreaX + 40, 
+        descriptionY, 
+        contentAreaWidth - 80, 
+        descriptionLineHeight
+      );
+      
+      setDownloadProgress(90);
+      
+      const locationsY = contentAreaY + contentAreaHeight - 100;
+      
+      ctx.font = 'bold 30px Arial';
+      ctx.fillText('Visited:', contentAreaX + 40, locationsY);
+      
+      ctx.font = '36px Arial';
+      ctx.fillText(story.visitedLocation.join(' • '), contentAreaX + 40, locationsY + 50, contentAreaWidth - 80);
+      
+      ctx.textAlign = 'center';
+      ctx.font = '32px Arial';
+      ctx.fillText('Create your travel story at travelbook.sahilfolio.live', canvas.width / 2, canvas.height - 80);
+      
+      setDownloadProgress(95);
+      
+      canvas.toBlob((blob) => {
+        if (blob) {
+          saveAs(blob, `${story.title}-instagram-story.png`);
+          toast.success("Instagram Story image downloaded successfully!");
+          setShowInstagramPreview(false);
+        } else {
+          throw new Error("Failed to create image file");
+        }
+        setIsDownloading(false);
+        setDownloadProgress(100);
+      }, 'image/png');
+      
+    } catch (error) {
+      console.error("Error generating Instagram Story image:", error);
+      toast.error("Failed to generate Instagram Story image.");
+      setIsDownloading(false);
+      setDownloadProgress(0);
+    }
+  };
+
+  const handleDownload = () => {
+    setShowInstagramPreview(true);
+  };
+
+  const downloadWithTemplate = () => {
+    generateStoryImage();
   };
 
   if (loading) {
@@ -127,52 +263,56 @@ function StoryDetails() {
         <meta property="og:url" content={`https://travelbook.sahilfolio.live/story/${id}`} />
       </Helmet>
 
-      {/* Instagram Story Preview Modal */}
       {showInstagramPreview && (
         <InstagramPreviewOverlay>
           <InstagramPreviewContainer>
             <InstagramPreviewHeader>
-              <h3>Instagram Story Preview (9:16)</h3>
+              <h3>Instagram Story (9:16)</h3>
               <CloseButton onClick={() => setShowInstagramPreview(false)}>×</CloseButton>
             </InstagramPreviewHeader>
             
-            {/* Instagram Story Template */}
-            <InstagramStoryTemplate ref={instagramStoryRef}>
-              <InstagramStoryContent>
-                <StoryLogoArea>
-                  <StoryLogoImage src={logoImage} alt="Travel Book Logo" />
-                </StoryLogoArea>
-                
-                <StoryMainContent>
-                  <StoryMainTitle>{story.title}</StoryMainTitle>
-                  <StoryMainDate>{formatDate(story.createdOn)}</StoryMainDate>
-                  
-                  <StoryMainImage src={story.imageUrl} alt={story.title} />
-                  
-                  <StoryMainDescription>
-                    {story.story.length > 350 
-                      ? `${story.story.substring(0, 350)}...` 
-                      : story.story}
-                  </StoryMainDescription>
-                  
-                  <StoryMainLocations>
-                    <LocationsLabel>Visited:</LocationsLabel>
-                    <LocationsList>{story.visitedLocation.join(" • ")}</LocationsList>
-                  </StoryMainLocations>
-                </StoryMainContent>
-                
-                <StoryFooter>
-                  <FooterText>Create your travel story at travelbook.sahilfolio.live</FooterText>
-                </StoryFooter>
-              </InstagramStoryContent>
-            </InstagramStoryTemplate>
+            <TemplateSelectorContainer>
+              <TemplateOption 
+                isSelected={templateType === 'instagram'}
+                onClick={() => setTemplateType('instagram')}
+              >
+                <TemplatePreview type="instagram" />
+                <TemplateName>Instagram Gradient</TemplateName>
+              </TemplateOption>
+              
+              <TemplateOption 
+                isSelected={templateType === 'minimal'}
+                onClick={() => setTemplateType('minimal')}
+              >
+                <TemplatePreview type="minimal" />
+                <TemplateName>Minimal</TemplateName>
+              </TemplateOption>
+              
+              <TemplateOption 
+                isSelected={templateType === 'travel'}
+                onClick={() => setTemplateType('travel')}
+              >
+                <TemplatePreview type="travel" />
+                <TemplateName>Travel Theme</TemplateName>
+              </TemplateOption>
+            </TemplateSelectorContainer>
+            
+            {isDownloading && (
+              <ProgressContainer>
+                <ProgressText>Creating your story image...</ProgressText>
+                <ProgressBar>
+                  <ProgressFill width={downloadProgress} />
+                </ProgressBar>
+                <ProgressText>{downloadProgress}%</ProgressText>
+              </ProgressContainer>
+            )}
             
             <InstagramPreviewActions>
               <CancelButton onClick={() => setShowInstagramPreview(false)}>
                 Cancel
               </CancelButton>
               <DownloadButton 
-                onClick={downloadForInstagram}
+                onClick={downloadWithTemplate}
                 disabled={isDownloading}
               >
                 {isDownloading ? 'Creating...' : 'Download for Instagram Story'}
@@ -183,7 +323,7 @@ function StoryDetails() {
       )}
 
       <StoryContainer>
-        <StoryBox ref={storyRef} bgImage={backgroundImage}>
+        <StoryBox bgImage={backgroundImage}>
           <StoryTitle>{story.title}</StoryTitle>
           <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
           <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
@@ -196,31 +336,60 @@ function StoryDetails() {
           </CreateStoryMessage>
         </StoryBox>
         
-        {/* Map Component */}
+        <ShareOptionsContainer>
+          <ShareOptionTitle>Share this travel story</ShareOptionTitle>
+          
+          <ShareButtonsContainer>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ShareButton onClick={handleDownload} color="#e1306c">
+                <FaInstagram /> Instagram Story
+              </ShareButton>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ShareButton 
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Link copied to clipboard!");
+                }} 
+                color="#0088cc"
+              >
+                <FaShare /> Copy Link
+              </ShareButton>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ShareButton 
+                onClick={() => window.print()} 
+                color="#333333"
+              >
+                <FaDownload /> Print Story
+              </ShareButton>
+            </motion.div>
+          </ShareButtonsContainer>
+        </ShareOptionsContainer>
+        
         <div className="w-full max-w-2xl mx-auto my-6">
           <LocationMap 
             locations={story.visitedLocation} 
             title={`Locations from "${story.title}"`} 
           />
         </div>
-        
-        {/* Instagram Share Button */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ShareButton onClick={handleDownload}>
-            <FaInstagram /> Create Instagram Story Image
-          </ShareButton>
-        </motion.div>
       </StoryContainer>
     </>
   );
 }
 
 export default StoryDetails;
-
-// Styled-components for styling inside the file
 
 const StoryContainer = styled.div`
   display: flex;
@@ -323,30 +492,6 @@ const VisitedLocations = styled.p`
   margin-top: 15px;
 `;
 
-const ShareButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #e1306c;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: bold;
-  transition: background 0.3s ease-in-out;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
-  &:hover {
-    background-color: #c13584;
-  }
-
-  svg {
-    font-size: 1.5rem;
-  }
-`;
-
 const ErrorMessage = styled.div`
   font-size: 1.5rem;
   color: red;
@@ -358,8 +503,6 @@ const Loading = styled.div`
   color: #333;
   text-align: center;
 `;
-
-// Updated styled components for Instagram Story
 
 const InstagramPreviewOverlay = styled.div`
   position: fixed;
@@ -412,153 +555,133 @@ const CloseButton = styled.button`
   }
 `;
 
-const InstagramStoryTemplate = styled.div`
-  width: 270px;
-  height: 480px;
-  margin: 0 auto;
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  box-sizing: border-box;
-`;
-
-const InstagramStoryContent = styled.div`
+const ShareOptionsContainer = styled.div`
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  color: white;
-`;
-
-const StoryLogoArea = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-`;
-
-const StoryLogoImage = styled.img`
-  height: 40px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-`;
-
-const StoryMainContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  max-width: 800px;
+  margin: 20px 0;
+  background-color: white;
   border-radius: 12px;
-  padding: 15px;
-  overflow: hidden;
-  box-sizing: border-box;
-  width: 100%;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
-const StoryMainTitle = styled.h2`
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin: 0 0 5px 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+const ShareOptionTitle = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  text-align: center;
 `;
 
-const StoryMainDate = styled.p`
-  font-size: 0.8rem;
-  margin: 0 0 10px 0;
-  opacity: 0.9;
-`;
-
-const StoryMainImage = styled.img`
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-`;
-
-const StoryMainDescription = styled.p`
-  font-size: 0.8rem;
-  line-height: 1.4;
-  margin: 0 0 10px 0;
-  flex: 1;
-  overflow-y: auto;
-  max-height: 120px;
-  text-align: left;
-`;
-
-const StoryMainLocations = styled.div`
-  margin-top: auto;
-`;
-
-const LocationsLabel = styled.p`
-  font-size: 0.7rem;
-  font-weight: bold;
-  margin: 0;
-  opacity: 0.8;
-`;
-
-const LocationsList = styled.p`
-  font-size: 0.8rem;
-  margin: 2px 0 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const StoryFooter = styled.div`
-  margin-top: 10px;
+const ShareButtonsContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: center;
 `;
 
-const FooterText = styled.p`
-  font-size: 0.8rem;
-  text-align: center;
-  opacity: 0.9;
-  margin: 0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+const ShareButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: ${props => props.color || '#e1306c'};
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    filter: brightness(90%);
+  }
+
+  svg {
+    font-size: 1.3rem;
+  }
 `;
 
-const InstagramPreviewActions = styled.div`
+const TemplateSelectorContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin: 20px 0;
+  gap: 10px;
 `;
 
-const CancelButton = styled.button`
+const TemplateOption = styled.div`
   flex: 1;
-  padding: 10px;
-  margin-right: 10px;
-  border: 1px solid #ddd;
-  background-color: white;
-  border-radius: 6px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 3px solid ${props => props.isSelected ? '#e1306c' : 'transparent'};
   cursor: pointer;
-  font-weight: 500;
+  transition: all 0.2s ease;
   
   &:hover {
-    background-color: #f5f5f5;
+    transform: translateY(-5px);
   }
 `;
 
-const DownloadButton = styled.button`
-  flex: 2;
-  padding: 10px;
-  border: none;
-  background-color: #e1306c;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
+const TemplatePreview = styled.div`
+  height: 150px;
+  background: ${props => {
+    switch(props.type) {
+      case 'minimal':
+        return 'linear-gradient(to bottom, #f5f5f5, #ffffff)';
+      case 'travel':
+        return 'linear-gradient(to bottom, #4facfe, #00f2fe)';
+      case 'instagram':
+      default:
+        return 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)';
+    }
+  }};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &::after {
+    content: '';
+    width: 70%;
+    height: 40%;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+  }
+`;
+
+const TemplateName = styled.p`
+  text-align: center;
+  padding: 8px 0;
+  font-size: 14px;
   font-weight: 500;
-  
-  &:hover {
-    background-color: #c13584;
-  }
-  
-  &:disabled {
-    background-color: #e886ab;
-    cursor: not-allowed;
-  }
+  background-color: #f5f5f5;
+`;
+
+const ProgressContainer = styled.div`
+  margin: 20px 0;
+`;
+
+const ProgressText = styled.p`
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+`;
+
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+`;
+
+const ProgressFill = styled.div`
+  height: 100%;
+  width: ${props => props.width}%;
+  background-color: #e1306c;
+  transition: width 0.3s ease;
 `;
 
