@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import html2canvas from "html2canvas";
 import backgroundImage from "../../../src/assets/images/bg-share.png";
+import logoImage from "../../../src/assets/images/logo.png";
 import { Helmet } from "react-helmet";
 import { toast, Toaster } from 'sonner';
 import { FaInstagram } from "react-icons/fa";
@@ -54,6 +55,16 @@ function StoryDetails() {
       setIsDownloading(true);
       
       if (instagramStoryRef.current) {
+        // First ensure all images are loaded
+        const images = instagramStoryRef.current.querySelectorAll('img');
+        await Promise.all(Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve; // Handle error case too
+          });
+        }));
+        
         const canvas = await html2canvas(instagramStoryRef.current, {
           allowTaint: true,
           useCORS: true,
@@ -62,6 +73,13 @@ function StoryDetails() {
           scale: 2,
           logging: false,
           backgroundColor: null,
+          // Ensure the entire element is captured
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: document.documentElement.offsetWidth,
+          windowHeight: document.documentElement.offsetHeight
         });
 
         const link = document.createElement("a");
@@ -122,7 +140,7 @@ function StoryDetails() {
             <InstagramStoryTemplate ref={instagramStoryRef}>
               <InstagramStoryContent>
                 <StoryLogoArea>
-                  <img src="/src/assets/images/logo.png" alt="Travel Book Logo" className="logo" />
+                  <StoryLogoImage src={logoImage} alt="Travel Book Logo" />
                 </StoryLogoArea>
                 
                 <StoryMainContent>
@@ -132,8 +150,8 @@ function StoryDetails() {
                   <StoryMainImage src={story.imageUrl} alt={story.title} />
                   
                   <StoryMainDescription>
-                    {story.story.length > 200 
-                      ? `${story.story.substring(0, 200)}...` 
+                    {story.story.length > 350 
+                      ? `${story.story.substring(0, 350)}...` 
                       : story.story}
                   </StoryMainDescription>
                   
@@ -341,7 +359,7 @@ const Loading = styled.div`
   text-align: center;
 `;
 
-// New styled components for Instagram Story
+// Updated styled components for Instagram Story
 
 const InstagramPreviewOverlay = styled.div`
   position: fixed;
@@ -402,6 +420,7 @@ const InstagramStoryTemplate = styled.div`
   border-radius: 20px;
   overflow: hidden;
   position: relative;
+  box-sizing: border-box;
 `;
 
 const InstagramStoryContent = styled.div`
@@ -417,11 +436,11 @@ const StoryLogoArea = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
-  
-  .logo {
-    height: 40px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  }
+`;
+
+const StoryLogoImage = styled.img`
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 `;
 
 const StoryMainContent = styled.div`
@@ -433,6 +452,8 @@ const StoryMainContent = styled.div`
   border-radius: 12px;
   padding: 15px;
   overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
 `;
 
 const StoryMainTitle = styled.h2`
@@ -462,7 +483,9 @@ const StoryMainDescription = styled.p`
   line-height: 1.4;
   margin: 0 0 10px 0;
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 120px;
+  text-align: left;
 `;
 
 const StoryMainLocations = styled.div`
