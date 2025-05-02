@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth } from 'react-icons/md';
+import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort } from 'react-icons/md';
 import Modal from 'react-modal';
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -36,12 +36,21 @@ const Home = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+  const [sortBy, setSortBy] = useState('newest');
+  const [showSortOptions, setShowSortOptions] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
+  
   const calendarRef = useRef(null);
+  const sortOptionsRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
         setShowCalendar(false);
+      }
+      if (sortOptionsRef.current && !sortOptionsRef.current.contains(event.target)) {
+        setShowSortOptions(false);
       }
     }
     
@@ -50,6 +59,15 @@ const Home = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (showWelcomeMessage) {
+      const timer = setTimeout(() => {
+        setShowWelcomeMessage(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcomeMessage]);
 
   const getUserInfo = async () => {
     try {
@@ -184,7 +202,43 @@ const Home = () => {
   const resetFilter = () => {
     setDataRange({ from: null, to: null });
     setFilterType('');
+    setActiveFilter('all');
     getAllTravelStories();
+  };
+
+  const sortStories = (stories, sortType) => {
+    if (!stories || stories.length === 0) return [];
+    
+    const sorted = [...stories];
+    
+    switch (sortType) {
+      case 'newest':
+        return sorted.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+      case 'oldest':
+        return sorted.sort((a, b) => new Date(a.createdOn) - new Date(b.createdOn));
+      case 'az':
+        return sorted.sort((a, b) => a.title.localeCompare(b.title));
+      case 'za':
+        return sorted.sort((a, b) => b.title.localeCompare(a.title));
+      default:
+        return sorted;
+    }
+  };
+
+  const filterStories = (stories, filter) => {
+    if (!stories || stories.length === 0) return [];
+    if (filter === 'all') return stories;
+    
+    if (filter === 'favorites') {
+      return stories.filter(story => story.isFavourite);
+    }
+    
+    return stories;
+  };
+
+  const getDisplayedStories = () => {
+    const filtered = filterStories(allStories, activeFilter);
+    return sortStories(filtered, sortBy);
   };
 
   useEffect(() => {
@@ -207,9 +261,70 @@ const Home = () => {
         handleClearSearch={handleClearSearch} 
       />
       
+      <AnimatePresence>
+        {showWelcomeMessage && userInfo && (
+          <motion.div 
+            className="fixed top-20 right-4 z-50 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg border-l-4 border-cyan-500 max-w-md"
+            initial={{ x: 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 300, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-start">
+              <div className="mr-3 bg-cyan-100 dark:bg-cyan-900 p-2 rounded-full">
+                <MdWavingHand className="text-cyan-500 text-xl" />
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 dark:text-white">Welcome, {userInfo.fullName}!</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Ready to document your travel memories? Create a new story by clicking the "+" button.</p>
+              </div>
+              <button 
+                onClick={() => setShowWelcomeMessage(false)}
+                className="ml-auto text-gray-400 hover:text-gray-500"
+              >
+                <MdClose />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
         <div className="mb-4 sm:mb-6">
           <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
+          
+          <div className="overflow-x-auto pb-2 mt-4 hide-scrollbar">
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => setActiveFilter('all')} 
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeFilter === 'all' 
+                    ? 'bg-cyan-500 text-white' 
+                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
+                }`}
+              >
+                All Stories
+              </button>
+              <button 
+                onClick={() => setActiveFilter('favorites')} 
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
+                  activeFilter === 'favorites' 
+                    ? 'bg-cyan-500 text-white' 
+                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
+                }`}
+              >
+                <MdFavorite className="text-sm" />
+                Favorites
+              </button>
+              <button 
+                onClick={() => {}}
+                className="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 transition-colors flex items-center gap-1"
+              >
+                <MdOutlineExplore className="text-sm" />
+                Recent Visits
+              </button>
+            </div>
+          </div>
           
           <div className="mt-4 flex flex-wrap gap-3 sm:hidden">
             <button 
@@ -219,6 +334,48 @@ const Home = () => {
               <MdCalendarMonth className="text-lg text-primary" />
               <span>Filter by Date</span>
             </button>
+            
+            <div className="relative">
+              <button 
+                onClick={() => setShowSortOptions(!showSortOptions)}
+                className="flex items-center justify-center gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm"
+              >
+                <MdSort className="text-lg text-primary" />
+                <span>Sort</span>
+              </button>
+              
+              {showSortOptions && (
+                <div 
+                  ref={sortOptionsRef}
+                  className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-20 border border-gray-200 dark:border-gray-700"
+                >
+                  <button 
+                    onClick={() => {setSortBy('newest'); setShowSortOptions(false);}}
+                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'newest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                  >
+                    Newest First
+                  </button>
+                  <button 
+                    onClick={() => {setSortBy('oldest'); setShowSortOptions(false);}}
+                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'oldest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                  >
+                    Oldest First
+                  </button>
+                  <button 
+                    onClick={() => {setSortBy('az'); setShowSortOptions(false);}}
+                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'az' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                  >
+                    A-Z
+                  </button>
+                  <button 
+                    onClick={() => {setSortBy('za'); setShowSortOptions(false);}}
+                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'za' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                  >
+                    Z-A
+                  </button>
+                </div>
+              )}
+            </div>
             
             {allStories.length > 0 && (
               <button 
@@ -264,32 +421,101 @@ const Home = () => {
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="flex-1 order-2 lg:order-1">
+            <div className="hidden sm:flex justify-between items-center mb-4">
+              <div className="text-sm text-gray-500 dark:text-gray-300">
+                {getDisplayedStories().length} {getDisplayedStories().length === 1 ? 'story' : 'stories'} {activeFilter === 'favorites' ? 'in favorites' : ''}
+              </div>
+              
+              <div className="relative">
+                <button 
+                  onClick={() => setShowSortOptions(!showSortOptions)}
+                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200 py-1 px-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded"
+                >
+                  <span>Sort: </span>
+                  <span className="font-medium">
+                    {sortBy === 'newest' && 'Newest First'}
+                    {sortBy === 'oldest' && 'Oldest First'}
+                    {sortBy === 'az' && 'A-Z'}
+                    {sortBy === 'za' && 'Z-A'}
+                  </span>
+                  <MdSort />
+                </button>
+                
+                {showSortOptions && (
+                  <div 
+                    ref={sortOptionsRef}
+                    className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-20 border border-gray-200 dark:border-gray-700"
+                  >
+                    <button 
+                      onClick={() => {setSortBy('newest'); setShowSortOptions(false);}}
+                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'newest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    >
+                      Newest First
+                    </button>
+                    <button 
+                      onClick={() => {setSortBy('oldest'); setShowSortOptions(false);}}
+                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'oldest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    >
+                      Oldest First
+                    </button>
+                    <button 
+                      onClick={() => {setSortBy('az'); setShowSortOptions(false);}}
+                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'az' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    >
+                      A-Z
+                    </button>
+                    <button 
+                      onClick={() => {setSortBy('za'); setShowSortOptions(false);}}
+                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'za' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    >
+                      Z-A
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             {isLoading ? (
               <div className="flex justify-center items-center h-48">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               </div>
-            ) : allStories.length > 0 ? (
+            ) : getDisplayedStories().length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {allStories.map((item) => (
-                  <TravelStoryCard
+                {getDisplayedStories().map((item) => (
+                  <motion.div
                     key={item._id}
-                    imgUrl={item.imageUrl}
-                    title={item.title}
-                    story={item.story}
-                    date={item.visitedDate}
-                    visitedLocation={item.visitedLocation}
-                    isFavourite={item.isFavourite}
-                    onClick={() => handleViewStory(item)}
-                    onFavouriteClick={(e) => {
-                      e.stopPropagation();
-                      updateIsFavourite(item);
-                    }}
-                  />
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <TravelStoryCard
+                      imgUrl={item.imageUrl}
+                      title={item.title}
+                      story={item.story}
+                      date={item.visitedDate}
+                      visitedLocation={item.visitedLocation}
+                      isFavourite={item.isFavourite}
+                      onClick={() => handleViewStory(item)}
+                      onFavouriteClick={(e) => {
+                        e.stopPropagation();
+                        updateIsFavourite(item);
+                      }}
+                    />
+                  </motion.div>
                 ))}
               </div>
             ) : (
               <div className="flex justify-center">
-                <EmptyCard imgSrc={getEmptyImg(filterType)} message={getEmptyCardMessage(filterType)} />
+                <EmptyCard 
+                  imgSrc={getEmptyImg(filterType)} 
+                  message={
+                    activeFilter === 'favorites' && allStories.length > 0
+                      ? "You haven't marked any stories as favorites yet."
+                      : getEmptyCardMessage(filterType)
+                  } 
+                />
               </div>
             )}
           </div>
@@ -316,6 +542,24 @@ const Home = () => {
                 <span>View Your Travel Analytics</span>
               </button>
             )}
+            
+            <div className="mt-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg border border-cyan-100 dark:border-gray-600">
+              <h3 className="font-medium text-gray-800 dark:text-white text-lg mb-3">Travel Tips</h3>
+              <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
+                <li className="flex items-start">
+                  <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-600 dark:text-cyan-300 p-1 rounded mr-2 mt-0.5">•</span>
+                  <span>Use the "+" button to create new travel stories</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-600 dark:text-cyan-300 p-1 rounded mr-2 mt-0.5">•</span>
+                  <span>Mark stories as favorites for easy access</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-600 dark:text-cyan-300 p-1 rounded mr-2 mt-0.5">•</span>
+                  <span>Share your stories on Instagram or with a link</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -394,6 +638,16 @@ const Home = () => {
       >
         <MdAdd className="text-[28px] sm:text-[32px] text-white" />
       </motion.button>
+
+      <style jsx="true">{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
 
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
     </>
