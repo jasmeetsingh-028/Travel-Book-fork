@@ -40,6 +40,7 @@ const Home = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [showSortOptions, setShowSortOptions] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [recentDaysFilter, setRecentDaysFilter] = useState(30); // Default to 30 days for recent visits
   
   const calendarRef = useRef(null);
   const sortOptionsRef = useRef(null);
@@ -233,6 +234,15 @@ const Home = () => {
       return stories.filter(story => story.isFavourite);
     }
     
+    if (filter === 'recent') {
+      const recentDate = new Date();
+      recentDate.setDate(recentDate.getDate() - recentDaysFilter);
+      return stories.filter(story => {
+        const visitedDate = new Date(story.visitedDate);
+        return visitedDate >= recentDate;
+      });
+    }
+    
     return stories;
   };
 
@@ -313,16 +323,34 @@ const Home = () => {
                     : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
                 }`}
               >
-                <MdFavorite className="text-sm" />
+                <MdFavorite className={activeFilter === 'favorites' ? "text-sm text-white" : "text-sm text-red-500"} />
                 Favorites
               </button>
               <button 
-                onClick={() => {}}
-                className="whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 transition-colors flex items-center gap-1"
+                onClick={() => setActiveFilter('recent')}
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
+                  activeFilter === 'recent' 
+                    ? 'bg-cyan-500 text-white' 
+                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
+                }`}
               >
-                <MdOutlineExplore className="text-sm" />
+                <MdOutlineExplore className={activeFilter === 'recent' ? "text-sm text-white" : "text-sm text-cyan-500"} />
                 Recent Visits
               </button>
+              {activeFilter === 'recent' && (
+                <div className="relative ml-2 flex items-center">
+                  <select 
+                    value={recentDaysFilter}
+                    onChange={(e) => setRecentDaysFilter(Number(e.target.value))}
+                    className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg text-sm py-1 px-2"
+                  >
+                    <option value={7}>Last 7 days</option>
+                    <option value={30}>Last 30 days</option>
+                    <option value={90}>Last 3 months</option>
+                    <option value={180}>Last 6 months</option>
+                  </select>
+                </div>
+              )}
             </div>
           </div>
           
@@ -423,7 +451,9 @@ const Home = () => {
           <div className="flex-1 order-2 lg:order-1">
             <div className="hidden sm:flex justify-between items-center mb-4">
               <div className="text-sm text-gray-500 dark:text-gray-300">
-                {getDisplayedStories().length} {getDisplayedStories().length === 1 ? 'story' : 'stories'} {activeFilter === 'favorites' ? 'in favorites' : ''}
+                {getDisplayedStories().length} {getDisplayedStories().length === 1 ? 'story' : 'stories'} 
+                {activeFilter === 'favorites' ? ' in favorites' : ''}
+                {activeFilter === 'recent' ? ` in the last ${recentDaysFilter} ${recentDaysFilter === 1 ? 'day' : 'days'}` : ''}
               </div>
               
               <div className="relative">
