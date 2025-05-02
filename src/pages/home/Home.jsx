@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd, MdQueryStats } from 'react-icons/md';
+import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth } from 'react-icons/md';
 import Modal from 'react-modal';
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -15,6 +15,7 @@ import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
 import { Toaster, toast } from 'sonner';
 import { Helmet } from "react-helmet";
 import TravelAnalytics from '../../components/Cards/TravelAnalytics';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -33,6 +34,22 @@ const Home = () => {
     data: null,
   });
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setShowCalendar(false);
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const getUserInfo = async () => {
     try {
@@ -41,7 +58,7 @@ const Home = () => {
         setUserInfo(response.data.user);
       }
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         localStorage.clear();
         navigate('/login');
       }
@@ -49,13 +66,16 @@ const Home = () => {
   };
 
   const getAllTravelStories = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosInstance.get('/get-all-stories');
       if (response.data && response.data.stories) {
         setAllStories(response.data.stories);
       }
     } catch (error) {
-      console.log('An Unexpected error occurred. Please try again later.');
+      toast.error('Failed to load travel stories. Please try again later.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,7 +104,7 @@ const Home = () => {
         }
       }
     } catch (error) {
-      console.log('An Unexpected error occurred. Please try again later.');
+      toast.error('Failed to update favorite status.');
     }
   };
 
@@ -98,11 +118,18 @@ const Home = () => {
         getAllTravelStories();
       }
     } catch (error) {
-      console.log('An unexpected error occurred. Please try again.');
+      toast.error('Failed to delete story.');
     }
   };
 
   const onSearchStory = async (query) => {
+    if (!query.trim()) {
+      setFilterType('');
+      getAllTravelStories();
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const response = await axiosInstance.get('/search', {
         params: {
@@ -114,7 +141,9 @@ const Home = () => {
         setAllStories(response.data.stories);
       }
     } catch (error) {
-      console.log('An unexpected error occurred. Please try again.');
+      toast.error('Search failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -124,6 +153,9 @@ const Home = () => {
   };
 
   const filterStoriesByDate = async (day) => {
+    if (!day.from || !day.to) return;
+    
+    setIsLoading(true);
     try {
       const startDate = day.from ? moment(day.from).valueOf() : null;
       const endDate = day.to ? moment(day.to).valueOf() : null;
@@ -134,10 +166,13 @@ const Home = () => {
         if (response.data && response.data.stories) {
           setFilterType('date');
           setAllStories(response.data.stories);
+          setShowCalendar(false);
         }
       }
     } catch (error) {
-      console.log('An unexpected error occurred in filtering stories by date!');
+      toast.error('Failed to filter stories by date.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -159,16 +194,82 @@ const Home = () => {
 
   return (
     <>
-        <Helmet>
+      <Helmet>
         <title>Dashboard | Travel Book</title>
-        </Helmet>
-      <Navbar userInfo={userInfo} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
-      <div className="container mx-auto py-10">
-        <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
-        <div className="flex flex-col sm:flex-row gap-7">
-          <div className="flex-1">
-            {allStories.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </Helmet>
+      
+      <Navbar 
+        userInfo={userInfo} 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        onSearchNote={onSearchStory} 
+        handleClearSearch={handleClearSearch} 
+      />
+      
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <div className="mb-4 sm:mb-6">
+          <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
+          
+          <div className="mt-4 flex flex-wrap gap-3 sm:hidden">
+            <button 
+              onClick={() => setShowCalendar(!showCalendar)}
+              className="flex items-center justify-center gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm"
+            >
+              <MdCalendarMonth className="text-lg text-primary" />
+              <span>Filter by Date</span>
+            </button>
+            
+            {allStories.length > 0 && (
+              <button 
+                onClick={() => setShowAnalytics(true)}
+                className="flex items-center justify-center gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm"
+              >
+                <MdQueryStats className="text-lg text-primary" />
+                <span>Analytics</span>
+              </button>
+            )}
+          </div>
+        </div>
+        
+        <AnimatePresence>
+          {showCalendar && (
+            <motion.div 
+              ref={calendarRef}
+              className="sm:hidden mb-6 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-lg rounded-lg p-3"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-medium dark:text-white">Select Date Range</h3>
+                <button 
+                  onClick={() => setShowCalendar(false)}
+                  className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                >
+                  <MdClose size={20} />
+                </button>
+              </div>
+              <DayPicker 
+                captionLayout="dropdown-buttons" 
+                mode="range" 
+                selected={dataRange} 
+                onSelect={handleDayClick} 
+                pagedNavigation 
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <div className="flex-1 order-2 lg:order-1">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-48">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              </div>
+            ) : allStories.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {allStories.map((item) => (
                   <TravelStoryCard
                     key={item._id}
@@ -179,22 +280,33 @@ const Home = () => {
                     visitedLocation={item.visitedLocation}
                     isFavourite={item.isFavourite}
                     onClick={() => handleViewStory(item)}
-                    onFavouriteClick={() => updateIsFavourite(item)}
+                    onFavouriteClick={(e) => {
+                      e.stopPropagation();
+                      updateIsFavourite(item);
+                    }}
                   />
                 ))}
               </div>
             ) : (
-              <EmptyCard imgSrc={getEmptyImg(filterType)} message={getEmptyCardMessage(filterType)} />
+              <div className="flex justify-center">
+                <EmptyCard imgSrc={getEmptyImg(filterType)} message={getEmptyCardMessage(filterType)} />
+              </div>
             )}
           </div>
-          <div className="w-full sm:w-[320px]">
+
+          <div className="hidden lg:block w-full lg:w-[320px] order-1 lg:order-2 sticky top-24 self-start">
             <div className="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-lg shadow-slate-200/60 dark:shadow-none rounded-lg">
               <div className="p-3">
-                <DayPicker captionLayout="dropdown-buttons" mode="range" selected={dataRange} onSelect={handleDayClick} pagedNavigation />
+                <DayPicker 
+                  captionLayout="dropdown-buttons" 
+                  mode="range" 
+                  selected={dataRange} 
+                  onSelect={handleDayClick} 
+                  pagedNavigation 
+                />
               </div>
             </div>
             
-            {/* Analytics Button */}
             {allStories.length > 0 && (
               <button 
                 onClick={() => setShowAnalytics(true)}
@@ -207,6 +319,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       <Modal
         isOpen={openAddEditModal.isShown}
         onRequestClose={() => {}}
@@ -228,6 +341,7 @@ const Home = () => {
           getAllTravelStories={getAllTravelStories}
         />
       </Modal>
+      
       <Modal
         isOpen={openViewModal.isShown}
         onRequestClose={() => {}}
@@ -255,7 +369,6 @@ const Home = () => {
         />
       </Modal>
       
-      {/* Analytics Modal */}
       <Modal
         isOpen={showAnalytics}
         onRequestClose={() => setShowAnalytics(false)}
@@ -266,17 +379,23 @@ const Home = () => {
           },
         }}
         appElement={document.getElementById('root')}
-        className="model-box"
+        className="model-box max-w-3xl mx-auto"
       >
         <TravelAnalytics onClose={() => setShowAnalytics(false)} />
       </Modal>
       
-      <button className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10">
-        <MdAdd className="text-[32px] text-white" onClick={() => {
+      <motion.button 
+        className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-4 sm:right-10 bottom-6 sm:bottom-10 shadow-lg z-20"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => {
           setOpenAddEditModal({ isShown: true, type: 'add', data: null });
-        }} />
-      </button>
-      <Toaster />
+        }}
+      >
+        <MdAdd className="text-[28px] sm:text-[32px] text-white" />
+      </motion.button>
+
+      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
     </>
   );
 };
