@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth, useClerk } from '@clerk/clerk-react';
+import { useAuth as useClerkAuth, useClerk } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import axiosInstance from '../../utils/axiosInstance';
+import { useAuth } from '../../utils/AuthContext';
 
 const OAuthCallback = () => {
-  const { isLoaded, isSignedIn, userId } = useAuth();
+  const { isLoaded, isSignedIn, userId } = useClerkAuth();
   const navigate = useNavigate();
   const { handleRedirectCallback } = useClerk();
+  const { login } = useAuth();
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(true);
 
@@ -49,21 +51,22 @@ const OAuthCallback = () => {
             console.log("Backend response:", response.data);
             
             if (response.data && response.data.accessToken) {
-              // Save token to localStorage
-              localStorage.setItem("token", response.data.accessToken);
+              // Use the auth context login method instead of directly setting localStorage
+              login(response.data.accessToken, response.data.user);
               
               // Success message
               toast.success("Successfully authenticated!");
               
-              // Force a complete page reload to refresh the authentication state
-              // This ensures axiosInstance will use the new token for all future requests
-              window.location.href = '/dashboard';
+              // Use React Router navigation instead of window.location
+              navigate('/dashboard', { replace: true });
             } else {
               console.error("No access token in response:", response.data);
               setError("Authentication successful, but no access token received.");
             }
           } catch (apiError) {
             console.error("Backend API error:", apiError);
+            console.error("Error details:", apiError.response?.data || "No response data");
+            console.error("Error status:", apiError.response?.status || "No status code");
             setError(`Could not connect to our servers. Error: ${apiError.message}`);
           }
         } else {
@@ -79,7 +82,7 @@ const OAuthCallback = () => {
     };
 
     handleCallback();
-  }, [isLoaded, isSignedIn, userId, navigate, handleRedirectCallback]);
+  }, [isLoaded, isSignedIn, userId, navigate, handleRedirectCallback, login]);
 
   // If there's an error, provide option to go back to login
   if (error) {

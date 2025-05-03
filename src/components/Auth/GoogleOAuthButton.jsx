@@ -22,16 +22,30 @@ const GoogleOAuthButton = ({ mode = 'sign-in', className = '' }) => {
         toast.info("Signed out of previous session");
       }
       
-      // Use absolute paths for both redirects
-      const redirectUrl = `${window.location.origin}/oauth-callback`;
+      // Use the EXACT redirect URL that is configured in Google OAuth credentials
+      // This MUST match what's in your Google Cloud Console
+      // The URL should be one of the authorized redirect URIs in your Google OAuth client configuration
+      
+      // Use window.location.origin to dynamically determine the base URL in different environments
+      const origin = window.location.origin;
+      // Map of possible origins and their respective redirect URIs
+      const redirectMap = {
+        'http://localhost:5173': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback',
+        'https://travel-book-opal.vercel.app': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback',
+        'https://travelbook.sahilportfolio.me': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback',
+        'https://travelbook.sahilfolio.live': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback'
+      };
+      
+      // Get the appropriate redirect URI for the current origin
+      const redirectUrl = redirectMap[origin] || 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback';
+      
       console.log("Using redirect URL:", redirectUrl);
       
       // Now proceed with Google authentication
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
         redirectUrl: redirectUrl,
-        // We'll use window.location.href in the callback instead of this
-        redirectUrlComplete: '/dashboard'
+        // Remove redirectUrlComplete to avoid conflicts
       });
     } catch (error) {
       console.error('OAuth error:', error);
