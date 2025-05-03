@@ -11,13 +11,27 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-const LocationMap = ({ locations = [], title = "Travel Locations" }) => {
+const LocationMap = ({ locations = [], location, title = "Travel Locations", className = "" }) => {
   const [coordinates, setCoordinates] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
 
+  // Process locations coming from different props
+  const locationsToProcess = React.useMemo(() => {
+    // If a single location string is passed
+    if (location && typeof location === 'string') {
+      return [location];
+    }
+    // If an array of location strings is passed via locations prop
+    else if (Array.isArray(locations) && locations.length > 0) {
+      return locations;
+    }
+    // No valid location data
+    return [];
+  }, [location, locations]);
+
   useEffect(() => {
-    if (!locations.length) {
+    if (locationsToProcess.length === 0) {
       setIsLoading(false);
       return;
     }
@@ -25,7 +39,7 @@ const LocationMap = ({ locations = [], title = "Travel Locations" }) => {
     // Function to get coordinates from location names
     const fetchCoordinates = async () => {
       try {
-        const coordPromises = locations.map(async (location) => {
+        const coordPromises = locationsToProcess.map(async (location) => {
           try {
             const encodedLocation = encodeURIComponent(location);
             const response = await fetch(
@@ -59,7 +73,7 @@ const LocationMap = ({ locations = [], title = "Travel Locations" }) => {
     };
 
     fetchCoordinates();
-  }, [locations]);
+  }, [locationsToProcess]);
 
   // Calculate center coordinates based on the average of all points
   const center = React.useMemo(() => {
@@ -73,7 +87,7 @@ const LocationMap = ({ locations = [], title = "Travel Locations" }) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg">
+      <div className={`flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg ${className}`}>
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-cyan-500"></div>
       </div>
     );
@@ -81,7 +95,7 @@ const LocationMap = ({ locations = [], title = "Travel Locations" }) => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg">
+      <div className={`flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg ${className}`}>
         <p className="text-red-500">{error}</p>
       </div>
     );
@@ -89,16 +103,16 @@ const LocationMap = ({ locations = [], title = "Travel Locations" }) => {
 
   if (coordinates.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg">
+      <div className={`flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-700 rounded-lg ${className}`}>
         <p className="text-gray-500 dark:text-gray-300">No location data available</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-medium mb-2 dark:text-white">{title}</h3>
-      <div className="h-64 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+    <div className={className || "mt-6"}>
+      {title && <h3 className="text-lg font-medium mb-2 dark:text-white">{title}</h3>}
+      <div className={(className ? "" : "h-64") + " rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600"}>
         <MapContainer 
           center={center} 
           zoom={coordinates.length === 1 ? 10 : 2} 
