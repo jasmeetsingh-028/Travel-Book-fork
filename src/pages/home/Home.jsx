@@ -528,10 +528,7 @@ const Home = () => {
                       visitedLocation={item.visitedLocation}
                       isFavourite={item.isFavourite}
                       onClick={() => handleViewStory(item)}
-                      onFavouriteClick={(e) => {
-                        e.stopPropagation();
-                        updateIsFavourite(item);
-                      }}
+                      onFavouriteClick={() => updateIsFavourite(item)}
                     />
                   </motion.div>
                 ))}
