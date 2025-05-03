@@ -6,6 +6,20 @@ import "react-day-picker/style.css"
 import './scrollbar.css'; 
 import { registerSW } from 'virtual:pwa-register'
 
+// Initialize dark mode based on local storage preference
+const initializeDarkMode = () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || 
+      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+};
+
+// Run before app renders to prevent flash
+initializeDarkMode();
+
 // Register service worker
 const updateSW = registerSW({
   onNeedRefresh() {

@@ -13,8 +13,8 @@ const StoryDetails = lazy(() => import('./../src/pages/home/StoryDetails.jsx'));
 
 // Loading component
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen bg-cyan-50">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-cyan-500"></div>
+  <div className="flex items-center justify-center min-h-screen bg-cyan-50 dark:bg-gray-900">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-cyan-500 dark:border-cyan-400"></div>
   </div>
 );
 
