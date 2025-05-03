@@ -7,7 +7,7 @@ import logo from "../../assets/images/logo.png";
 import { toast } from "sonner"; 
 import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaEnvelope, FaLock, FaUser, FaArrowRight, FaCheck } from "react-icons/fa";
+import { FaEnvelope, FaShieldAlt, FaUser, FaArrowRight, FaCheck } from "react-icons/fa";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -306,24 +306,22 @@ const Signup = () => {
               )}
             </div>
 
-            {/* Password input with strength indicator */}
+            {/* Password input with animation */}
             <div className="space-y-2">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <FaLock className="text-gray-400 dark:text-gray-500" />
+                  <FaShieldAlt className="text-gray-400 dark:text-gray-500" />
                 </div>
-                <div className="pl-7">
-                  <PasswordInput
-                    value={password}
-                    onChange={handlePasswordChange}
-                    onFocus={() => handleInputFocus('password')}
-                    className={`${
-                      formTouched.password && !password 
-                        ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
-                        : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
-                    }`}
-                  />
-                </div>
+                <PasswordInput
+                  value={password}
+                  onChange={handlePasswordChange}
+                  onFocus={() => handleInputFocus('password')}
+                  className={`pl-10 ${
+                    formTouched.password && !password 
+                      ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
+                      : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
+                  }`}
+                />
                 {formTouched.password && !password && (
                   <motion.p 
                     initial={{ opacity: 0, y: -10 }}
