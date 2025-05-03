@@ -1,37 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PasswordInput from "../../components/Input/PasswordInput";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "sonner"; 
-import { Helmet } from "react-helmet"; // Import react-helmet
+import { Helmet } from "react-helmet";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
 
-// Import the logo image (if it's stored locally)
+// Import the logo image
 import logo from "../../assets/images/logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);  // State for loader
+  const [loading, setLoading] = useState(false);
+  const [formTouched, setFormTouched] = useState({
+    email: false,
+    password: false
+  });
+  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
+
+  // Load saved email if available
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    // Mark all fields as touched for validation
+    setFormTouched({
+      email: true,
+      password: true
+    });
+
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address to get your travel book!");
+      setError("Please enter a valid email address");
       return;
     }
 
     if (!password) {
-      setError("Please enter the password!");
+      setError("Please enter your password");
       return;
     }
 
     setError("");
-    setLoading(true);  // Show loader before API call
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post("/login", {
@@ -40,6 +62,13 @@ const Login = () => {
       });
 
       if (response.data && response.data.accessToken) {
+        // Remember email if checkbox is checked
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
+        
         localStorage.setItem("token", response.data.accessToken);
         toast.success("Successfully logged in! Welcome to your Travel Book!");
         navigate("/dashboard");
@@ -53,105 +82,249 @@ const Login = () => {
         setError(error.response.data.message);
       } else {
         setError(
-          "An error occurred. Please wait a minute as the backend may take some time to start. Try again shortly."
+          "An error occurred. Please wait a moment as the server responds."
         );
       }
     } finally {
-      setLoading(false);  // Hide loader after the request finishes
+      setLoading(false);
     }
   };
 
+  // Validate form on input change
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (formTouched.email) {
+      if (!validateEmail(e.target.value)) {
+        setError("Please enter a valid email address");
+      } else {
+        setError(null);
+      }
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (formTouched.password && !e.target.value) {
+      setError("Please enter your password");
+    } else if (formTouched.email && formTouched.password) {
+      setError(null);
+    }
+  };
+
+  const handleInputFocus = (field) => {
+    setFormTouched(prev => ({
+      ...prev,
+      [field]: true
+    }));
+  };
+
   return (
-    <div className="h-screen bg-cyan-50 overflow-hidden relative flex items-center justify-center">
-       <Helmet>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden relative flex items-center justify-center"
+    >
+      <Helmet>
         <title>Login | Travel Book</title>
-        </Helmet>
-      <div className="container h-screen flex flex-col sm:flex-row items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
+      </Helmet>
+      
+      <div className="container min-h-screen flex flex-col sm:flex-row items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
         
-        {/* Image section with a class to hide it on mobile */}
-        <div className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-login-bg-img bg-cover bg-center rounded-lg p-10 z-50">
-          <div>
-            <h4 className="text-3xl sm:text-4xl lg:text-5xl text-white font-semibold leading-[58px]">
+        {/* Image section with animation */}
+        <motion.div 
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-login-bg-img bg-cover bg-center rounded-xl p-10 z-50 overflow-hidden shadow-lg"
+        >
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <h4 className="text-3xl sm:text-4xl lg:text-5xl text-white font-semibold leading-tight">
               Capture Your <br /> Journeys
             </h4>
-            <p className="text-sm sm:text-base text-white leading-6 pr-7 mt-4">
+            <p className="text-sm sm:text-base text-white leading-relaxed pr-7 mt-4">
               Record your travel experiences and memories in your personal
               travel journey.
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="w-full sm:w-2/4 lg:w-2/4 rounded-r-lg p-5 sm:p-10 lg:p-16 shadow-lg shadow-cyan-200/20">
+        {/* Form section with animation */}
+        <motion.div 
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full sm:w-2/4 lg:w-2/4 rounded-xl p-5 sm:p-10 lg:p-16 bg-white dark:bg-gray-800 shadow-xl dark:shadow-gray-900/20"
+        >
           {/* Logo Section */}
-          <div className="text-center mb-6">
-            <a href="https://travelbook.sahilfolio.live/">
-              <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto" />
-            </a>
-          </div>
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center mb-8"
+          >
+            <Link to="/" className="inline-block">
+              <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto hover:scale-105 transition-transform duration-300" />
+            </Link>
+          </motion.div>
 
-          <form onSubmit={handleLogin}>
-            <h4 className="text-2xl font-semibold mb-7 text-center">Sign In and Continue Your Travel Log</h4>
+          <motion.form 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            onSubmit={handleLogin}
+            className="space-y-6"
+          >
+            <h4 className="text-2xl font-semibold mb-7 text-center text-gray-800 dark:text-white">
+              Welcome Back
+            </h4>
 
-            <input
-              type="text"
-              placeholder="Kindly enter your registered mail address"
-              className="input-box w-full"
-              value={email}
-              onChange={({ target }) => {
-                setEmail(target.value);
-              }}
-            />
-
-            <PasswordInput
-              value={password}
-              onChange={({ target }) => {
-                setPassword(target.value);
-              }}
-            />
-
-            {error && <p className="text-red-600 text-xs pb-1">{error}</p>}
-
-          <button type="submit" className="btn-primary w-full" disabled={loading}>
-  {loading ? (
-    <div className="d-flex justify-center items-center">
-      <div className="spinner-border text-white" role="status">
-        <span className="sr-only">Loading...</span>
-      </div>
-      <span className="ml-2">Waiting for the server to respond......</span>
-    </div>
-  ) : (
-    "LOGIN"
-  )}
-</button>
-
-            {loading && (
-              <div className="flex justify-center mt-4">
-                <div className="spinner-border animate-spin border-t-2 border-cyan-500 rounded-full w-8 h-8"></div>
+            {/* Email input with icon and validation */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <FaEnvelope className="text-gray-400 dark:text-gray-500" />
               </div>
-            )}
+              <input
+                type="email"
+                placeholder="Email address"
+                className={`pl-10 pr-4 py-3 w-full rounded-lg bg-gray-50 dark:bg-gray-700 border ${
+                  formTouched.email && !validateEmail(email) 
+                    ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
+                    : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
+                } focus:border-transparent focus:ring-2 transition-all duration-200 outline-none text-gray-800 dark:text-white`}
+                value={email}
+                onChange={handleEmailChange}
+                onFocus={() => handleInputFocus('email')}
+              />
+              {formTouched.email && !validateEmail(email) && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1 text-xs text-red-500"
+                >
+                  Please enter a valid email address
+                </motion.p>
+              )}
+            </div>
 
-            <p className="text-xs text-slate-500 text-center my-4">Or</p>
+            {/* Password input with animation */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <FaLock className="text-gray-400 dark:text-gray-500" />
+              </div>
+              <div className="pl-7">
+                <PasswordInput
+                  value={password}
+                  onChange={handlePasswordChange}
+                  onFocus={() => handleInputFocus('password')}
+                  className={`${
+                    formTouched.password && !password 
+                      ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
+                      : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
+                  }`}
+                />
+              </div>
+              {formTouched.password && !password && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1 text-xs text-red-500"
+                >
+                  Password is required
+                </motion.p>
+              )}
+            </div>
 
-            <button
-              type="button"
-              className="btn-primary btn-light w-full"
-              onClick={() => {
-                navigate("/signUp");
-              }}
+            {/* Remember me checkbox */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="remember-me"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                  className="h-4 w-4 text-cyan-500 focus:ring-cyan-400 border-gray-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  Remember me
+                </label>
+              </div>
+              <div className="text-sm">
+                <a href="#" className="text-cyan-500 hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300">
+                  {/* Forgot password? */}
+                </a>
+              </div>
+            </div>
+
+            {/* Error message with animation */}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                >
+                  <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Login button with animation */}
+            <motion.button 
+              type="submit" 
+              className="btn-primary w-full py-3 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={loading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              CREATE ACCOUNT
-            </button>
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <FaArrowRight />
+                </>
+              )}
+            </motion.button>
 
-            <p className="text-sm text-center text-gray-600 mt-4">
-              Kindly remember your password!
+            <div className="relative flex items-center justify-center">
+              <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+              <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
+              <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+            </div>
+
+            {/* Create account button */}
+            <motion.button
+              type="button"
+              className="w-full py-3 px-4 border border-cyan-500 dark:border-cyan-600 text-cyan-600 dark:text-cyan-400 rounded-lg font-medium hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-colors duration-300 flex items-center justify-center gap-2"
+              onClick={() => navigate("/signUp")}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Create New Account
+            </motion.button>
+
+            <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
+              By signing in, you agree to our <a href="#" className="text-cyan-500 hover:underline">Terms</a> and <a href="#" className="text-cyan-500 hover:underline">Privacy Policy</a>
             </p>
-          </form>
-        </div>
+          </motion.form>
+        </motion.div>
       </div>
 
       {/* CSS for responsive design */}
       <style jsx>{`
-        @media (max-width: 600px) {
+        @media (max-width: 640px) {
           .image-section {
             display: none;
           }
@@ -160,7 +333,7 @@ const Login = () => {
           }
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 };
 
