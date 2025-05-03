@@ -316,7 +316,7 @@ const Login = () => {
             </motion.button>
 
             <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
-              By signing in, you agree to our <a href="#" className="text-cyan-500 hover:underline">Terms</a> and <a href="#" className="text-cyan-500 hover:underline">Privacy Policy</a>
+              By signing in, you agree to our <Link to="/terms" className="text-cyan-500 hover:underline">Terms</Link> and <Link to="/privacy-policy" className="text-cyan-500 hover:underline">Privacy Policy</Link>
             </p>
           </motion.form>
         </motion.div>
