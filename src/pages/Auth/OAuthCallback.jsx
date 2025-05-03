@@ -57,10 +57,18 @@ const OAuthCallback = () => {
               // Success message
               toast.success("Successfully authenticated!");
               
-              // Redirect to dashboard with a slight delay to ensure token is saved
+              // Test the token by making a request to get-user
+              try {
+                await axiosInstance.get('/get-user');
+                console.log("Token validation successful");
+              } catch (tokenError) {
+                console.error("Token validation failed:", tokenError);
+              }
+              
+              // Redirect to dashboard with a forced page reload to refresh auth state
               setTimeout(() => {
                 console.log("Redirecting to dashboard...");
-                navigate("/dashboard", { replace: true });
+                window.location.href = '/dashboard';
               }, 500);
             } else {
               console.error("No access token in response:", response.data);

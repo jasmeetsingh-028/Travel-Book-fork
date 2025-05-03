@@ -30,8 +30,8 @@ const GoogleOAuthButton = ({ mode = 'sign-in', className = '' }) => {
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
         redirectUrl: redirectUrl,
-        // Make sure redirectUrlComplete is also an absolute path
-        redirectUrlComplete: `${window.location.origin}/dashboard`
+        // We'll use window.location.href in the callback instead of this
+        redirectUrlComplete: '/dashboard'
       });
     } catch (error) {
       console.error('OAuth error:', error);
