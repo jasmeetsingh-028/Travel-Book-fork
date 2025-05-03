@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaShieldAlt, FaUser, FaArrowRight, FaCheck } from "react-icons/fa";
+// Import Google OAuth Button
+import GoogleOAuthButton from "../../components/Auth/GoogleOAuthButton";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -403,6 +405,9 @@ const Signup = () => {
               <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
               <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
             </div>
+            
+            {/* Google OAuth Button */}
+            <GoogleOAuthButton mode="sign-up" />
 
             {/* Login button */}
             <motion.button

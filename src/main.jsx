@@ -5,6 +5,14 @@ import App from './App.jsx'
 import "react-day-picker/style.css"
 import './scrollbar.css'; 
 import { registerSW } from 'virtual:pwa-register'
+import { ClerkProvider } from '@clerk/clerk-react'
+
+// Get your Clerk publishable key from environment variables
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!publishableKey) {
+  console.error("Missing Clerk publishable key. Make sure VITE_CLERK_PUBLISHABLE_KEY is set in your .env file.");
+}
 
 // Initialize dark mode based on local storage preference
 const initializeDarkMode = () => {
@@ -34,6 +42,11 @@ const updateSW = registerSW({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <ClerkProvider 
+      publishableKey={publishableKey}
+      navigate={(to) => window.location.href = to}
+    >
+      <App />
+    </ClerkProvider>
   </StrictMode>,
 )

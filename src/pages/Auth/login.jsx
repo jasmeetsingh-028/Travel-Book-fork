@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaShieldAlt, FaArrowRight } from "react-icons/fa";
 // Import the logo image
 import logo from "../../assets/images/logo.png";
+// Import Google OAuth Button
+import GoogleOAuthButton from "../../components/Auth/GoogleOAuthButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -300,6 +302,9 @@ const Login = () => {
               <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
               <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
             </div>
+            
+            {/* Google OAuth Button */}
+            <GoogleOAuthButton mode="sign-in" />
 
             {/* Create account button */}
             <motion.button
