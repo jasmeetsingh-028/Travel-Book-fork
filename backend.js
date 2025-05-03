@@ -155,9 +155,11 @@ app.post("/login", async (req, res) => {
 
 // Google OAuth authentication endpoint
 app.post("/oauth/google", async (req, res) => {
+    console.log("OAuth/Google endpoint called with data:", req.body);
     const { email, fullName, profileImageUrl, clerkId } = req.body;
 
     if (!email) {
+        console.log("OAuth error: Email is required but missing");
         return res.status(400).json({
             message: "Email is required for Google authentication"
         });
@@ -165,9 +167,11 @@ app.post("/oauth/google", async (req, res) => {
 
     try {
         // Check if user already exists with this email
+        console.log("Checking if user already exists with email:", email);
         let user = await User.findOne({ email });
 
         if (user) {
+            console.log("User already exists in database, updating user:", user._id);
             // User exists - update their information
             user.clerkId = clerkId || user.clerkId;
             
@@ -180,32 +184,52 @@ app.post("/oauth/google", async (req, res) => {
                 user.profileImageUrl = profileImageUrl;
             }
 
+            console.log("Updated user object before save:", user);
             await user.save();
+            console.log("User successfully updated in database");
         } else {
+            console.log("User doesn't exist, creating new user with email:", email);
             // Create new user with Google OAuth data
             // Generate a random secure password since they won't use password login
             const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
             
-            user = new User({
+            // Create user object
+            const newUserData = {
                 fullName,
                 email,
                 password: hashedPassword,
                 profileImageUrl,
                 clerkId,
                 isEmailVerified: true // Email is verified through Google
-            });
+            };
+            
+            console.log("New user data:", newUserData);
+            user = new User(newUserData);
 
-            await user.save();
+            console.log("Attempting to save new user to database");
+            try {
+                await user.save();
+                console.log("New user successfully saved to database with ID:", user._id);
+            } catch (saveError) {
+                console.error("Error saving new user to database:", saveError);
+                // Check if it's a schema validation error
+                if (saveError.name === 'ValidationError') {
+                    console.error("Validation errors:", saveError.errors);
+                }
+                throw saveError;
+            }
         }
 
         // Generate JWT token - same as your regular login
+        console.log("Generating JWT token for user:", user._id);
         const accessToken = jwt.sign(
             { userId: user._id },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "72h" }
         );
 
+        console.log("Successfully generated token, sending response");
         return res.status(200).json({
             error: false,
             message: "Google authentication successful",
@@ -217,10 +241,12 @@ app.post("/oauth/google", async (req, res) => {
             accessToken
         });
     } catch (error) {
-        console.error("Google OAuth error:", error);
+        console.error("Google OAuth error in backend:", error);
+        // Return detailed error information for debugging
         res.status(500).json({
             error: true,
-            message: "Authentication failed: " + error.message
+            message: "Authentication failed: " + error.message,
+            details: error.stack
         });
     }
 });

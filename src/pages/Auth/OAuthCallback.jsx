@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, useClerk } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 import axiosInstance from '../../utils/axiosInstance';
+import { useAuth as useAppAuth } from '../../utils/AuthContext';
 
 const OAuthCallback = () => {
   const { isLoaded, isSignedIn, userId } = useAuth();
   const navigate = useNavigate();
   const { handleRedirectCallback } = useClerk();
+  const { setCurrentUser, setIsAuthenticated } = useAppAuth();
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(true);
 
@@ -43,6 +45,20 @@ const OAuthCallback = () => {
             
             console.log("Sending data to backend:", userData);
             
+            // Check axiosInstance configuration
+            console.log("Axios instance baseURL:", axiosInstance.defaults.baseURL);
+            console.log("Axios headers:", axiosInstance.defaults.headers);
+            
+            // Log the actual request before sending
+            const requestUrl = `${axiosInstance.defaults.baseURL}/oauth/google`;
+            console.log("Full request URL:", requestUrl);
+            console.log("Request method: POST");
+            console.log("Request headers:", {
+              'Content-Type': 'application/json',
+              ...axiosInstance.defaults.headers
+            });
+            console.log("Request body:", JSON.stringify(userData));
+            
             // Make the request to your backend
             const response = await axiosInstance.post("/oauth/google", userData);
             
@@ -51,19 +67,25 @@ const OAuthCallback = () => {
             if (response.data && response.data.accessToken) {
               // Save token to localStorage
               localStorage.setItem("token", response.data.accessToken);
+              console.log("Token saved to localStorage:", response.data.accessToken);
+              
+              // Update authentication context
+              setIsAuthenticated(true);
+              setCurrentUser(response.data.user);
               
               // Success message
               toast.success("Successfully authenticated!");
               
-              // Force a complete page reload to refresh the authentication state
-              // This ensures axiosInstance will use the new token for all future requests
-              window.location.href = '/dashboard';
+              // Navigate to dashboard using React Router instead of window.location
+              navigate('/dashboard', { replace: true });
             } else {
               console.error("No access token in response:", response.data);
               setError("Authentication successful, but no access token received.");
             }
           } catch (apiError) {
             console.error("Backend API error:", apiError);
+            console.error("Error details:", apiError.response?.data || "No response data");
+            console.error("Error status:", apiError.response?.status || "No status code");
             setError(`Could not connect to our servers. Error: ${apiError.message}`);
           }
         } else {
@@ -79,7 +101,7 @@ const OAuthCallback = () => {
     };
 
     handleCallback();
-  }, [isLoaded, isSignedIn, userId, navigate, handleRedirectCallback]);
+  }, [isLoaded, isSignedIn, userId, navigate, handleRedirectCallback, setCurrentUser, setIsAuthenticated]);
 
   // If there's an error, provide option to go back to login
   if (error) {

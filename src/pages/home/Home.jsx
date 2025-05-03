@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
+import { useAuth } from '../../utils/AuthContext';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
 import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort } from 'react-icons/md';
 import Modal from 'react-modal';
@@ -19,7 +20,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(null);
+  const { currentUser, logout } = useAuth();
   const [allStories, setAllStories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('');
@@ -70,20 +71,6 @@ const Home = () => {
     }
   }, [showWelcomeMessage]);
 
-  const getUserInfo = async () => {
-    try {
-      const response = await axiosInstance.get('/get-user');
-      if (response.data && response.data.user) {
-        setUserInfo(response.data.user);
-      }
-    } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.clear();
-        navigate('/login');
-      }
-    }
-  };
-
   const getAllTravelStories = async () => {
     setIsLoading(true);
     try {
@@ -92,7 +79,13 @@ const Home = () => {
         setAllStories(response.data.stories);
       }
     } catch (error) {
-      toast.error('Failed to load travel stories. Please try again later.');
+      if (error.response?.status === 401) {
+        // Use our logout function from AuthContext instead
+        logout();
+        toast.error('Your session has expired. Please login again.');
+      } else {
+        toast.error('Failed to load travel stories. Please try again later.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -253,7 +246,6 @@ const Home = () => {
 
   useEffect(() => {
     getAllTravelStories();
-    getUserInfo();
   }, []);
 
   return (
@@ -264,7 +256,7 @@ const Home = () => {
       </Helmet>
       
       <Navbar 
-        userInfo={userInfo} 
+        userInfo={currentUser} 
         searchQuery={searchQuery} 
         setSearchQuery={setSearchQuery} 
         onSearchNote={onSearchStory} 
@@ -272,7 +264,7 @@ const Home = () => {
       />
       
       <AnimatePresence>
-        {showWelcomeMessage && userInfo && (
+        {showWelcomeMessage && currentUser && (
           <motion.div 
             className="fixed top-20 right-4 z-50 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg border-l-4 border-cyan-500 max-w-md"
             initial={{ x: 300, opacity: 0 }}
@@ -285,7 +277,7 @@ const Home = () => {
                 <MdWavingHand className="text-cyan-500 text-xl" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">Welcome, {userInfo.fullName}!</h3>
+                <h3 className="font-medium text-gray-900 dark:text-white">Welcome, {currentUser.fullName}!</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Ready to document your travel memories? Create a new story by clicking the "+" button.</p>
               </div>
               <button 
