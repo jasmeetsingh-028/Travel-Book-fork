@@ -679,7 +679,7 @@ const Home = () => {
         }
       `}</style>
 
-      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
+      <Toaster position="bottom-right" toastOptions={{ duration: 3000 }} />
     </>
   );
 };

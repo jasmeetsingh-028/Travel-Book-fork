@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { GrMapLocation } from "react-icons/gr";
 import { MdUpdate, MdDeleteOutline, MdClose, MdShare, MdImage, MdOutlineZoomIn, MdLocationOn, MdFavorite } from "react-icons/md";
 import moment from "moment";
-import { toast, Toaster } from 'sonner';
+import { toast } from 'sonner'; // Import toast but not Toaster
 import { 
     FacebookShareButton, TwitterShareButton, WhatsappShareButton, 
     LinkedinShareButton, EmailShareButton, TelegramShareButton,
@@ -416,8 +416,6 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                     </div>
                 </div>
             </motion.div>
-            
-            <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
         </motion.div>
     );
 };
