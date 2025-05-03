@@ -1,41 +1,41 @@
-import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
-import styled from "styled-components";
-import html2canvas from "html2canvas";
-import backgroundImage from "../../../src/assets/images/bg-share.png";
-import logoImage from "../../../src/assets/images/logo.png";
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { toast, Toaster } from 'sonner';
-import { FaInstagram } from "react-icons/fa";
-import { motion } from "framer-motion"; 
+import html2canvas from "html2canvas";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaInstagram, FaMapMarkerAlt, FaCalendarAlt, FaDownload, FaShare, FaArrowLeft, FaTimes } from "react-icons/fa";
 import LocationMap from "../../components/Cards/LocationMap";
+import logo from "../../assets/images/logo.png";
 
-function StoryDetails() {
+const StoryDetails = () => {
   const { id } = useParams();
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const storyRef = useRef();
-  const instagramStoryRef = useRef(); // Separate ref for Instagram story template
   const [showInstagramPreview, setShowInstagramPreview] = useState(false);
-  
-  // Track download progress
   const [isDownloading, setIsDownloading] = useState(false);
-
+  const [showFullImage, setShowFullImage] = useState(false);
+  
+  const instagramStoryRef = useRef();
+  
   useEffect(() => {
     const fetchStory = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`https://travel-book-backend.onrender.com/api/story/${id}`);
+        
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error("Unable to fetch story details");
         }
+        
         const data = await response.json();
         setStory(data);
-        toast.success("Story details loaded successfully.");
+        toast.success("Story loaded successfully");
       } catch (error) {
-        console.error("Error fetching story details:", error);
-        setError("Error fetching story details.");
-        toast.error("Failed to fetch story details.");
+        console.error("Error fetching story:", error);
+        setError("We couldn't load this travel story. Please try again later.");
+        toast.error("Failed to load story");
       } finally {
         setLoading(false);
       }
@@ -44,24 +44,27 @@ function StoryDetails() {
     fetchStory();
   }, [id]);
 
-  // Regular download (as before)
-  const handleDownload = async () => {
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const handleShowInstagramPreview = () => {
     setShowInstagramPreview(true);
   };
 
-  // Instagram story optimized download
   const downloadForInstagram = async () => {
     try {
       setIsDownloading(true);
       
       if (instagramStoryRef.current) {
-        // First ensure all images are loaded
+        // Ensure all images are loaded
         const images = instagramStoryRef.current.querySelectorAll('img');
         await Promise.all(Array.from(images).map(img => {
           if (img.complete) return Promise.resolve();
           return new Promise(resolve => {
             img.onload = resolve;
-            img.onerror = resolve; // Handle error case too
+            img.onerror = resolve;
           });
         }));
         
@@ -72,53 +75,78 @@ function StoryDetails() {
           height: 1920,
           scale: 2,
           logging: false,
-          backgroundColor: null,
-          // Ensure the entire element is captured
-          x: 0,
-          y: 0,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: document.documentElement.offsetWidth,
-          windowHeight: document.documentElement.offsetHeight
+          backgroundColor: null
         });
 
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = `${story.title}-instagram-story.png`;
         link.click();
-        toast.success("Instagram Story image downloaded successfully.");
+        toast.success("Instagram Story image downloaded!");
         setShowInstagramPreview(false);
       }
     } catch (error) {
       console.error("Error generating Instagram Story image:", error);
-      toast.error("Failed to generate Instagram Story image.");
+      toast.error("Failed to generate Instagram Story image");
     } finally {
       setIsDownloading(false);
     }
   };
 
-  // Format date nicely
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  const shareStory = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: story.title,
+        text: "Check out this travel story!",
+        url: window.location.href,
+      })
+      .then(() => toast.success("Shared successfully"))
+      .catch((error) => console.error("Error sharing:", error));
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => toast.success("Link copied to clipboard"))
+        .catch(() => toast.error("Failed to copy link"));
+    }
   };
 
   if (loading) {
-    return <Loading>Loading...</Loading>;
+    return (
+      <div className="h-screen flex justify-center items-center bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-500"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
+        <div className="text-3xl text-red-500 mb-4">⚠️</div>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">{error}</h1>
+        <Link to="/" className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors">
+          Go Back Home
+        </Link>
+      </div>
+    );
   }
 
   if (!story) {
-    return <ErrorMessage>No story found.</ErrorMessage>;
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
+        <div className="text-3xl mb-4">🔍</div>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">Story not found</h1>
+        <Link to="/" className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors">
+          Discover Other Stories
+        </Link>
+      </div>
+    );
   }
 
   return (
     <>
-      <Toaster position="top-right" richColors />
-
+      <Toaster position="top-center" />
+      
+      {/* Meta tags for sharing */}
       <Helmet>
         <title>{story.title} | Travel Book</title>
         <meta property="og:title" content={story.title} />
@@ -132,437 +160,242 @@ function StoryDetails() {
       </Helmet>
 
       {/* Instagram Story Preview Modal */}
-      {showInstagramPreview && (
-        <InstagramPreviewOverlay>
-          <InstagramPreviewContainer>
-            <InstagramPreviewHeader>
-              <h3>Instagram Story Preview (9:16)</h3>
-              <CloseButton onClick={() => setShowInstagramPreview(false)}>×</CloseButton>
-            </InstagramPreviewHeader>
-            
-            {/* Instagram Story Template */}
-            <InstagramStoryTemplate ref={instagramStoryRef}>
-              <InstagramStoryContent>
-                <StoryLogoArea>
-                  <StoryLogoImage src={logoImage} alt="Travel Book Logo" />
-                </StoryLogoArea>
-                
-                <StoryMainContent>
-                  <StoryMainTitle>{story.title}</StoryMainTitle>
-                  <StoryMainDate>{formatDate(story.createdOn)}</StoryMainDate>
-                  
-                  <StoryMainImage src={story.imageUrl} alt={story.title} />
-                  
-                  <StoryMainDescription>
-                    {story.story.length > 350 
-                      ? `${story.story.substring(0, 350)}...` 
-                      : story.story}
-                  </StoryMainDescription>
-                  
-                  <StoryMainLocations>
-                    <LocationsLabel>Visited:</LocationsLabel>
-                    <LocationsList>{story.visitedLocation.join(" • ")}</LocationsList>
-                  </StoryMainLocations>
-                </StoryMainContent>
-                
-                <StoryFooter>
-                  <FooterText>Create your travel story at travelbook.sahilfolio.live</FooterText>
-                </StoryFooter>
-              </InstagramStoryContent>
-            </InstagramStoryTemplate>
-            
-            <InstagramPreviewActions>
-              <CancelButton onClick={() => setShowInstagramPreview(false)}>
-                Cancel
-              </CancelButton>
-              <DownloadButton 
-                onClick={downloadForInstagram}
-                disabled={isDownloading}
-              >
-                {isDownloading ? 'Creating...' : 'Download for Instagram Story'}
-              </DownloadButton>
-            </InstagramPreviewActions>
-          </InstagramPreviewContainer>
-        </InstagramPreviewOverlay>
-      )}
+      <AnimatePresence>
+        {showInstagramPreview && (
+          <motion.div 
+            className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-hidden"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+            >
+              <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 className="text-lg font-medium dark:text-white">Instagram Story Preview (9:16)</h3>
+                <button 
+                  onClick={() => setShowInstagramPreview(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                >
+                  <FaTimes size={20} />
+                </button>
+              </div>
+              
+              <div className="p-4 overflow-y-auto">
+                {/* Instagram Story Template */}
+                <div 
+                  ref={instagramStoryRef}
+                  className="w-[270px] h-[480px] mx-auto relative overflow-hidden rounded-xl"
+                  style={{
+                    background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)"
+                  }}
+                >
+                  <div className="w-full h-full p-4 flex flex-col">
+                    {/* Logo area */}
+                    <div className="flex justify-center mb-2">
+                      <img src={logo} alt="Travel Book Logo" className="h-10" />
+                    </div>
+                    
+                    {/* Main content */}
+                    <div className="flex-1 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 flex flex-col">
+                      <h2 className="text-lg font-bold text-white mb-1 line-clamp-1">{story.title}</h2>
+                      <p className="text-xs text-white opacity-90 mb-2">{formatDate(story.visitedDate)}</p>
+                      
+                      <div className="relative w-full h-32 mb-2 rounded-lg overflow-hidden">
+                        <img 
+                          src={story.imageUrl} 
+                          alt={story.title} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      
+                      <p className="text-xs text-white leading-tight mb-2 line-clamp-3">
+                        {story.story}
+                      </p>
+                      
+                      <div className="mt-auto">
+                        <p className="text-xs font-medium text-white opacity-80 mb-0.5">Visited:</p>
+                        <p className="text-xs text-white truncate">
+                          {story.visitedLocation.join(" • ")}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Footer */}
+                    <div className="mt-2 flex justify-center">
+                      <p className="text-xs text-white text-center">
+                        Create your travel story at travelbook.sahilfolio.live
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 border-t dark:border-gray-700 flex gap-2">
+                <button 
+                  onClick={() => setShowInstagramPreview(false)}
+                  className="flex-1 py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={downloadForInstagram}
+                  disabled={isDownloading}
+                  className="flex-1 py-2 px-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium disabled:opacity-70"
+                >
+                  {isDownloading ? 'Creating...' : 'Download Image'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <StoryContainer>
-        <StoryBox ref={storyRef} bgImage={backgroundImage}>
-          <StoryTitle>{story.title}</StoryTitle>
-          <StoryDate>{new Date(story.createdOn).toLocaleDateString()}</StoryDate>
-          <StoryImage src={story.imageUrl} alt={`Image for ${story.title}`} />
-          <StoryContent>{story.story}</StoryContent>
-          <VisitedLocations>
-            <strong>Visited Locations:</strong> {story.visitedLocation.join(", ")}
-          </VisitedLocations>
-          <CreateStoryMessage>
-            Create your own travel story from <a href="https://travelbook.sahilfolio.live/">https://travelbook.sahilfolio.live/</a>
-          </CreateStoryMessage>
-        </StoryBox>
-        
-        {/* Map Component */}
-        <div className="w-full max-w-2xl mx-auto my-6">
-          <LocationMap 
-            locations={story.visitedLocation} 
-            title={`Locations from "${story.title}"`} 
-          />
+      {/* Full image modal */}
+      <AnimatePresence>
+        {showFullImage && (
+          <motion.div 
+            className="fixed inset-0 bg-black bg-opacity-90 z-40 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowFullImage(false)}
+          >
+            <motion.button 
+              className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <FaTimes size={24} />
+            </motion.button>
+            <motion.img 
+              src={story.imageUrl} 
+              alt={story.title}
+              className="max-h-[90vh] max-w-full object-contain rounded"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main content */}
+      <div className="min-h-screen bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 pb-16">
+        {/* Top navigation */}
+        <div className="sticky top-0 z-30 bg-white dark:bg-gray-800 shadow-md">
+          <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+            <Link to="/" className="flex items-center gap-2 text-cyan-500 hover:text-cyan-600 transition-colors">
+              <FaArrowLeft />
+              <span className="font-medium">Back to Home</span>
+            </Link>
+            <div className="flex items-center gap-3">
+              <motion.button 
+                className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full px-3 py-1.5 text-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={shareStory}
+              >
+                <FaShare size={14} />
+                <span>Share</span>
+              </motion.button>
+              <motion.button 
+                className="flex items-center gap-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full px-3 py-1.5 text-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleShowInstagramPreview}
+              >
+                <FaInstagram size={14} />
+                <span>Create Instagram Story</span>
+              </motion.button>
+            </div>
+          </div>
         </div>
         
-        {/* Instagram Share Button */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ShareButton onClick={handleDownload}>
-            <FaInstagram /> Create Instagram Story Image
-          </ShareButton>
-        </motion.div>
-      </StoryContainer>
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            {/* Story header */}
+            <div className="mb-8 text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
+                {story.title}
+              </h1>
+              
+              <div className="flex flex-wrap gap-4 justify-center mb-4">
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <FaCalendarAlt />
+                  <span>{formatDate(story.visitedDate)}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                  <FaMapMarkerAlt />
+                  <span>{story.visitedLocation.join(", ")}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Story image */}
+            <div className="mb-8">
+              <div 
+                className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-xl overflow-hidden cursor-pointer group"
+                onClick={() => setShowFullImage(true)}
+              >
+                <img 
+                  src={story.imageUrl} 
+                  alt={story.title} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="bg-white bg-opacity-75 rounded-full p-3">
+                    <FaDownload className="text-gray-700" size={20} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Story content */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">The Story</h2>
+              <div className="prose dark:prose-invert max-w-none">
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                  {story.story}
+                </p>
+              </div>
+            </div>
+            
+            {/* Location map */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Locations Visited</h2>
+              <div className="h-[400px] rounded-lg overflow-hidden">
+                <LocationMap 
+                  location={story.visitedLocation[0]} 
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+            
+            {/* Create your own travel story */}
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl shadow-lg p-8 text-center text-white">
+              <img src={logo} alt="Travel Book" className="h-16 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-3">Create Your Own Travel Story</h2>
+              <p className="text-white/90 mb-6">Document and share your travel memories with friends and family</p>
+              <a 
+                href="https://travelbook.sahilfolio.live" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-block bg-white text-cyan-500 font-medium px-6 py-3 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                Get Started Now
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
-}
+};
 
 export default StoryDetails;
-
-// Styled-components for styling inside the file
-
-const StoryContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background-color: #f4f4f4;
-  min-height: 100vh;
-`;
-
-const StoryBox = styled.div`
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 12px;
-  width: 1080px;
-  height: auto;
-  margin: 20px;
-  background-image: url(${(props) => props.bgImage || "default_bg.png"});
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  text-align: center;
-  padding: 0 20px;
-  position: relative;
-
-  @media (max-width: 1080px) {
-    width: 90%;
-  }
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 15px;
-  }
-  @media (max-width: 480px) {
-    width: 100%;
-    padding: 10px;
-  }
-`;
-
-const CreateStoryMessage = styled.p`
-  font-size: 1rem;
-  font-weight: bold;
-  color: #555;
-  margin-top: 15px;
-  text-align: center;
-  width: 100%;
-  opacity: 0.8;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-`;
-
-const StoryTitle = styled.h1`
-  font-size: 3rem;
-  font-weight: bold;
-  color: #000;
-  margin-bottom: 8px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
-  margin-top: 10px;
-`;
-
-const StoryDate = styled.p`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #000;
-  margin-bottom: 12px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
-`;
-
-const StoryImage = styled.img`
-  width: 80%;
-  max-width: 800px;
-  height: auto;
-  margin-bottom: 15px;
-  border-radius: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  object-fit: contain;
-`;
-
-const StoryContent = styled.p`
-  font-size: 1.3rem;
-  font-weight: normal;
-  color: #000;
-  line-height: 1.5;
-  margin-bottom: 15px;
-  max-width: 90%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-`;
-
-const VisitedLocations = styled.p`
-  font-size: 1.3rem;
-  font-weight: normal;
-  color: #000;
-  max-width: 90%;
-  word-wrap: break-word;
-  margin-top: 15px;
-`;
-
-const ShareButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #e1306c;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: bold;
-  transition: background 0.3s ease-in-out;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
-  &:hover {
-    background-color: #c13584;
-  }
-
-  svg {
-    font-size: 1.5rem;
-  }
-`;
-
-const ErrorMessage = styled.div`
-  font-size: 1.5rem;
-  color: red;
-  text-align: center;
-`;
-
-const Loading = styled.div`
-  font-size: 1.5rem;
-  color: #333;
-  text-align: center;
-`;
-
-// Updated styled components for Instagram Story
-
-const InstagramPreviewOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const InstagramPreviewContainer = styled.div`
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  width: 90%;
-  max-width: 400px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-`;
-
-const InstagramPreviewHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-  }
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-  
-  &:hover {
-    color: #000;
-  }
-`;
-
-const InstagramStoryTemplate = styled.div`
-  width: 270px;
-  height: 480px;
-  margin: 0 auto;
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  box-sizing: border-box;
-`;
-
-const InstagramStoryContent = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  color: white;
-`;
-
-const StoryLogoArea = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-`;
-
-const StoryLogoImage = styled.img`
-  height: 40px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-`;
-
-const StoryMainContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 15px;
-  overflow: hidden;
-  box-sizing: border-box;
-  width: 100%;
-`;
-
-const StoryMainTitle = styled.h2`
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin: 0 0 5px 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-`;
-
-const StoryMainDate = styled.p`
-  font-size: 0.8rem;
-  margin: 0 0 10px 0;
-  opacity: 0.9;
-`;
-
-const StoryMainImage = styled.img`
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-`;
-
-const StoryMainDescription = styled.p`
-  font-size: 0.8rem;
-  line-height: 1.4;
-  margin: 0 0 10px 0;
-  flex: 1;
-  overflow-y: auto;
-  max-height: 120px;
-  text-align: left;
-`;
-
-const StoryMainLocations = styled.div`
-  margin-top: auto;
-`;
-
-const LocationsLabel = styled.p`
-  font-size: 0.7rem;
-  font-weight: bold;
-  margin: 0;
-  opacity: 0.8;
-`;
-
-const LocationsList = styled.p`
-  font-size: 0.8rem;
-  margin: 2px 0 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const StoryFooter = styled.div`
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-`;
-
-const FooterText = styled.p`
-  font-size: 0.8rem;
-  text-align: center;
-  opacity: 0.9;
-  margin: 0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-`;
-
-const InstagramPreviewActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-`;
-
-const CancelButton = styled.button`
-  flex: 1;
-  padding: 10px;
-  margin-right: 10px;
-  border: 1px solid #ddd;
-  background-color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  
-  &:hover {
-    background-color: #f5f5f5;
-  }
-`;
-
-const DownloadButton = styled.button`
-  flex: 2;
-  padding: 10px;
-  border: none;
-  background-color: #e1306c;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  
-  &:hover {
-    background-color: #c13584;
-  }
-  
-  &:disabled {
-    background-color: #e886ab;
-    cursor: not-allowed;
-  }
-`;
 
