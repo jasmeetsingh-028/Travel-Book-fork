@@ -22,11 +22,16 @@ const GoogleOAuthButton = ({ mode = 'sign-in', className = '' }) => {
         toast.info("Signed out of previous session");
       }
       
+      // Use absolute paths for both redirects
+      const redirectUrl = `${window.location.origin}/oauth-callback`;
+      console.log("Using redirect URL:", redirectUrl);
+      
       // Now proceed with Google authentication
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
-        redirectUrl: `${window.location.origin}/oauth-callback`,
-        redirectUrlComplete: '/dashboard'
+        redirectUrl: redirectUrl,
+        // Make sure redirectUrlComplete is also an absolute path
+        redirectUrlComplete: `${window.location.origin}/dashboard`
       });
     } catch (error) {
       console.error('OAuth error:', error);

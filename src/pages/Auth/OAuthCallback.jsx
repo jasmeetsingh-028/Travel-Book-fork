@@ -9,6 +9,7 @@ const OAuthCallback = () => {
   const navigate = useNavigate();
   const { handleRedirectCallback } = useClerk();
   const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
     // Handle the OAuth callback when the component mounts
@@ -16,6 +17,7 @@ const OAuthCallback = () => {
       if (!isLoaded) return;
 
       try {
+        console.log("Processing OAuth callback...");
         // Process the OAuth callback
         const result = await handleRedirectCallback({
           onRedirectError: (error) => {
@@ -25,17 +27,28 @@ const OAuthCallback = () => {
         });
         
         if (isSignedIn && userId) {
+          console.log("User is signed in with Clerk, userId:", userId);
           // Get user details from Clerk
           const user = result?.userData || {};
+          console.log("User data from Clerk:", user);
           
-          // If you need to connect with your backend
           try {
+            console.log("Sending data to backend:", {
+              email: user.emailAddresses?.[0]?.emailAddress,
+              fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+              profileImageUrl: user.imageUrl,
+              clerkId: userId
+            });
+            
+            // If you need to connect with your backend
             const response = await axiosInstance.post("/oauth/google", {
               email: user.emailAddresses?.[0]?.emailAddress,
               fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
               profileImageUrl: user.imageUrl,
               clerkId: userId
             });
+            
+            console.log("Backend response:", response.data);
             
             if (response.data && response.data.accessToken) {
               // Save token to localStorage
@@ -44,20 +57,29 @@ const OAuthCallback = () => {
               // Success message
               toast.success("Successfully authenticated!");
               
-              // Redirect to dashboard
-              navigate("/dashboard");
+              // Redirect to dashboard with a slight delay to ensure token is saved
+              setTimeout(() => {
+                console.log("Redirecting to dashboard...");
+                navigate("/dashboard", { replace: true });
+              }, 500);
+            } else {
+              console.error("No access token in response:", response.data);
+              setError("Authentication successful, but no access token received.");
             }
           } catch (apiError) {
             console.error("Backend API error:", apiError);
-            // Even if backend connection fails, we can still consider
-            // authentication successful and redirect the user
-            toast.error("Connected to Google successfully, but couldn't connect to our servers.");
-            navigate("/dashboard");
+            // Instead of automatically redirecting on error, set an error state
+            setError(`Could not connect to our servers. Error: ${apiError.message}`);
           }
+        } else {
+          console.error("User not signed in with Clerk after redirect");
+          setError("Authentication incomplete. Please try again.");
         }
       } catch (error) {
         console.error("OAuth callback error:", error);
         setError("Authentication failed. Please try again later.");
+      } finally {
+        setIsProcessing(false);
       }
     };
 
