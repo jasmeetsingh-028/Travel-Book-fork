@@ -143,31 +143,31 @@ const Hero = () => {
                                     Share Your Journey Today with <b>TravelBook</b>, Where
                                     Adventures are preserved!
                                 </h1>
-                                <p className="mt-2 text-lg text-gray-600 sm:mt-8 font-inter">
+                                <p className="mt-6 text-lg text-gray-600 sm:mt-6 font-inter">
                                     Record your travels with TravelBook: where each place, image,
                                     and story is preserved forever.
                                 </p>
 
                                 {/* New button above the original button */}
-                                <div className="mt-12 sm:mt-12 ">
-                                    <div className="relative group sm:rounded-xl">
-                                        <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
+                                <div className="mt-6 sm:mt-6">
+                                    <div className="flex flex-col sm:flex-row sm:relative items-center justify-center gap-3 sm:gap-0 sm:h-14">
+                                        <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
                                             <a
-                                                href="/signUp" // Changed to relative URL
-                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                                href="/signUp"
+                                                className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
                                             >
                                                 Create Free Account
                                             </a>
                                         </div>
 
-                                        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center text-gray-600 font-inter mt-4 sm:mt-0 z-20">
+                                        <div className="sm:absolute sm:inset-y-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 flex items-center text-gray-600 font-inter sm:mt-0 z-20">
                                             <span className="mx-2">OR</span>
                                         </div>
 
-                                        <div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
+                                        <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
                                             <a
-                                                href="/login" // Changed to relative URL
-                                                className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                                href="/login"
+                                                className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
                                             >
                                                 Log In
                                             </a>
@@ -176,7 +176,7 @@ const Hero = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-center mt-40 space-x-6 lg:justify-start sm:space-x-8">
+                            <div className="flex items-center justify-center mt-16 space-x-6 lg:justify-start sm:space-x-8">
                                 <div className="flex items-center">
                                     <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">
                                         294
