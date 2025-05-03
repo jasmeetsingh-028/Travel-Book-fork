@@ -23,21 +23,17 @@ const GoogleOAuthButton = ({ mode = 'sign-in', className = '' }) => {
       }
       
       // Use the EXACT redirect URL that is configured in Google OAuth credentials
-      // This MUST match what's in your Google Cloud Console
-      // The URL should be one of the authorized redirect URIs in your Google OAuth client configuration
-      
-      // Use window.location.origin to dynamically determine the base URL in different environments
+      // Map origins to their corresponding Clerk callback URLs
       const origin = window.location.origin;
-      // Map of possible origins and their respective redirect URIs
       const redirectMap = {
-        'http://localhost:5173': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback',
-        'https://travel-book-opal.vercel.app': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback',
-        'https://travelbook.sahilportfolio.me': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback',
-        'https://travelbook.sahilfolio.live': 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback'
+        'http://localhost:5173': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback',
+        'https://travel-book-opal.vercel.app': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback',
+        'https://travelbook.sahilportfolio.me': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback',
+        'https://travelbook.sahilfolio.live': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback'
       };
       
       // Get the appropriate redirect URI for the current origin
-      const redirectUrl = redirectMap[origin] || 'https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback';
+      const redirectUrl = redirectMap[origin] || 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback';
       
       console.log("Using redirect URL:", redirectUrl);
       
