@@ -121,10 +121,14 @@ function StoryDetails() {
 
       <Helmet>
         <title>{story.title} | Travel Book</title>
-        <meta property="og:title" content="The memories are shared with you." />
+        <meta property="og:title" content={story.title} />
         <meta property="og:image" content={story.imageUrl} />
-        <meta property="og:description" content={story.story} />
+        <meta property="og:description" content="A travel story has been shared with you" />
         <meta property="og:url" content={`https://travelbook.sahilfolio.live/story/${id}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={story.title} />
+        <meta name="twitter:description" content="A travel story has been shared with you" />
+        <meta name="twitter:image" content={story.imageUrl} />
       </Helmet>
 
       {/* Instagram Story Preview Modal */}
