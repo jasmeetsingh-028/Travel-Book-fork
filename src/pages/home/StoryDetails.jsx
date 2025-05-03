@@ -152,7 +152,7 @@ const StoryDetails = () => {
         <meta property="og:title" content={story.title} />
         <meta property="og:image" content={story.imageUrl} />
         <meta property="og:description" content="A travel story has been shared with you" />
-        <meta property="og:url" content={`https://travelbook.sahilfolio.live/story/${id}`} />
+        <meta property="og:url" content={`${window.location.origin}/story/${id}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={story.title} />
         <meta name="twitter:description" content="A travel story has been shared with you" />
@@ -382,7 +382,7 @@ const StoryDetails = () => {
               <h2 className="text-2xl font-bold mb-3">Create Your Own Travel Story</h2>
               <p className="text-white/90 mb-6">Document and share your travel memories with friends and family</p>
               <a 
-                href="https://travelbook.sahilfolio.live" 
+                href="/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-block bg-white text-cyan-500 font-medium px-6 py-3 rounded-full hover:bg-gray-100 transition-colors"

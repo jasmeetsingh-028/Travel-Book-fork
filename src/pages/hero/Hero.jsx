@@ -22,7 +22,7 @@ const Hero = () => {
                                 offset={-50} // Adjust the scroll position a little
                                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
-                                <a href="https://travelbook.sahilfolio.live/">
+                                <a href="/">
                                     <img className="w-auto h-12" src={logo} alt="logo" />
                                 </a>
                             </Link>
@@ -84,10 +84,10 @@ const Hero = () => {
                         {/* Navbar items - Mobile */}
                         <div className="hidden lg:flex lg:ml-auto lg:items-center lg:space-x-8 xl:space-x-12">
                             <a
-                                href="https://travelbook.sahilfolio.live/login" // Updated link to the login page
+                                href="/login" // Updated to relative URL
                                 className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
-                                Sign in
+                                {/* Sign in */}
                             </a>
                         </div>
 
@@ -153,9 +153,7 @@ const Hero = () => {
                                     <div className="relative group sm:rounded-xl">
                                         <div className="mt-4 sm:mt-0 sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
                                             <a
-                                                href="https://travelbook.sahilfolio.live/signUp" // SIGN UP LINK HERE
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                                href="/signUp" // Changed to relative URL
                                                 className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
                                             >
                                                 Create Free Account
@@ -168,9 +166,7 @@ const Hero = () => {
 
                                         <div className="mt-16 sm:mt-0 sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
                                             <a
-                                                href="https://travelbook.sahilfolio.live/login" // Log in link
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                                href="/login" // Changed to relative URL
                                                 className="inline-flex px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
                                             >
                                                 Log In

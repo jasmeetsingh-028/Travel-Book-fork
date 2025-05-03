@@ -6,7 +6,7 @@ const Footer = () => {
             <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
                 <div className="grid grid-cols-2 md:col-span-3 lg:grid-cols-6 gap-y-16 gap-x-12">
                     <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
-                        <a href = "https://travelbook.sahilfolio.live/">
+                        <a href="/">
                         <img className="w-40 h-30" src={logo} alt="" />
                         </a>
 
@@ -78,11 +78,11 @@ const Footer = () => {
                                 <a href="#" title="" className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Statistics </a>
                             </li> */}
                              <li>
-                                <a href="https://travelbook.sahilfolio.live/signUp" title="" className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Create Free Account </a>
+                                <a href="/signUp" title="" className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Create Free Account </a>
                             </li>
 
                              <li>
-                                <a href="https://travelbook.sahilfolio.live/login" title="" className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Login </a>
+                                <a href="/login" title="" className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Login </a>
                             </li>
                             
                         </ul>

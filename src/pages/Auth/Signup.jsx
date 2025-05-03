@@ -247,7 +247,7 @@ const Signup = () => {
             className="space-y-5"
           >
             <h4 className="text-2xl font-semibold mb-6 text-center text-gray-800 dark:text-white">
-              Create Your Account
+            Start Logging Your Adventures
             </h4>
 
             {/* Name input with icon and validation */}
