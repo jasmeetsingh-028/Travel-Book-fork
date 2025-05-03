@@ -21,7 +21,12 @@ cloudinary.config({
   });
 
 app.use(cors({
-  origin: ['https://travel-book-opal.vercel.app', 'https://travelbook.sahilportfolio.me','https://travelbook.sahilfolio.live'], // specific domain
+  origin: [
+    'https://travel-book-opal.vercel.app', 
+    'https://travelbook.sahilportfolio.me',
+    'https://travelbook.sahilfolio.live',
+    'http://localhost:5173'  // Add this for local development
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

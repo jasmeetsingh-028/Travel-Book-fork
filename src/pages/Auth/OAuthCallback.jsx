@@ -33,20 +33,18 @@ const OAuthCallback = () => {
           console.log("User data from Clerk:", user);
           
           try {
-            console.log("Sending data to backend:", {
+            // Prepare user data from Google OAuth
+            const userData = {
               email: user.emailAddresses?.[0]?.emailAddress,
               fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
               profileImageUrl: user.imageUrl,
               clerkId: userId
-            });
+            };
             
-            // If you need to connect with your backend
-            const response = await axiosInstance.post("/oauth/google", {
-              email: user.emailAddresses?.[0]?.emailAddress,
-              fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-              profileImageUrl: user.imageUrl,
-              clerkId: userId
-            });
+            console.log("Sending data to backend:", userData);
+            
+            // Make the request to your backend
+            const response = await axiosInstance.post("/oauth/google", userData);
             
             console.log("Backend response:", response.data);
             
@@ -57,26 +55,15 @@ const OAuthCallback = () => {
               // Success message
               toast.success("Successfully authenticated!");
               
-              // Test the token by making a request to get-user
-              try {
-                await axiosInstance.get('/get-user');
-                console.log("Token validation successful");
-              } catch (tokenError) {
-                console.error("Token validation failed:", tokenError);
-              }
-              
-              // Redirect to dashboard with a forced page reload to refresh auth state
-              setTimeout(() => {
-                console.log("Redirecting to dashboard...");
-                window.location.href = '/dashboard';
-              }, 500);
+              // Force a complete page reload to refresh the authentication state
+              // This ensures axiosInstance will use the new token for all future requests
+              window.location.href = '/dashboard';
             } else {
               console.error("No access token in response:", response.data);
               setError("Authentication successful, but no access token received.");
             }
           } catch (apiError) {
             console.error("Backend API error:", apiError);
-            // Instead of automatically redirecting on error, set an error state
             setError(`Could not connect to our servers. Error: ${apiError.message}`);
           }
         } else {
