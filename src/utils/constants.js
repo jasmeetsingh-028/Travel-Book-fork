@@ -1,2 +1,2 @@
-export const BASE_URL = 'https://travel-book-backend.onrender.com'
+export const BASE_URL = import.meta.env.VITE_BACKEND_URL
 
