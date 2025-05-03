@@ -418,7 +418,14 @@ const Signup = () => {
             </motion.button>
 
             <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
-              By creating an account, you agree to our <Link to="/terms" className="text-cyan-500 hover:underline">Terms</Link> and <Link to="/privacy-policy" className="text-cyan-500 hover:underline">Privacy Policy</Link>
+              By creating an account, you agree to our{" "}
+              <Link to="/terms" className="text-cyan-500 hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy-policy" className="text-cyan-500 hover:underline">
+                Privacy Policy
+              </Link>
             </p>
           </motion.form>
         </motion.div>

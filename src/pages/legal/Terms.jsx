@@ -12,7 +12,7 @@ const Terms = () => {
         <title>Terms of Service | Travel Book</title>
       </Helmet>
       
-      <Navbar />
+      {/* <Navbar /> */}
       
       <motion.div 
         className="container mx-auto px-4 py-12 max-w-4xl"
@@ -134,7 +134,7 @@ const Terms = () => {
               <p>
                 If you have any questions about these Terms, please contact us at:
                 <br />
-                <a href="mailto:terms@travelbook.com" className="text-cyan-500 hover:underline">terms@travelbook.com</a>
+                <a href="mailto:contact@sahilfolio.live" className="text-cyan-500 hover:underline">contact@sahilfolio.live</a>
               </p>
             </section>
           </div>
@@ -150,7 +150,7 @@ const Terms = () => {
         </div>
       </motion.div>
       
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

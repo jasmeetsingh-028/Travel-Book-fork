@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
-
 // Import the logo image
 import logo from "../../assets/images/logo.png";
 
@@ -180,7 +179,7 @@ const Login = () => {
             className="space-y-6"
           >
             <h4 className="text-2xl font-semibold mb-7 text-center text-gray-800 dark:text-white">
-              Welcome Back
+              Welcome back to your travel journal!
             </h4>
 
             {/* Email input with icon and validation */}
@@ -316,7 +315,14 @@ const Login = () => {
             </motion.button>
 
             <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
-              By signing in, you agree to our <Link to="/terms" className="text-cyan-500 hover:underline">Terms</Link> and <Link to="/privacy-policy" className="text-cyan-500 hover:underline">Privacy Policy</Link>
+              By signing in, you agree to our{" "}
+              <Link to="/terms" className="text-cyan-500 hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy-policy" className="text-cyan-500 hover:underline">
+                Privacy Policy
+              </Link>
             </p>
           </motion.form>
         </motion.div>

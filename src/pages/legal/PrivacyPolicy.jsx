@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
         <title>Privacy Policy | Travel Book</title>
       </Helmet>
       
-      <Navbar />
+      {/* <Navbar /> */}
       
       <motion.div 
         className="container mx-auto px-4 py-12 max-w-4xl"
@@ -127,7 +127,7 @@ const PrivacyPolicy = () => {
               <p>
                 If you have any questions about this privacy policy or our privacy practices, please contact us at:
                 <br />
-                <a href="mailto:privacy@travelbook.com" className="text-cyan-500 hover:underline">privacy@travelbook.com</a>
+                <a href="mailto:contact@sahilfolio.live" className="text-cyan-500 hover:underline">contact@sahilfolio.live</a>
               </p>
             </section>
           </div>
@@ -143,7 +143,7 @@ const PrivacyPolicy = () => {
         </div>
       </motion.div>
       
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
