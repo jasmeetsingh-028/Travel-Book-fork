@@ -348,7 +348,8 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                         
                         <div className="text-center mt-6">
                             <p className="text-gray-500 dark:text-gray-400 text-sm">
-                                You can add more photos to your travel story by editing it.
+                                {/* You can add more photos to your travel story by editing it. */}
+                                Currently, we're working on a feature that allows users to add more photos to their specific travel memories.
                             </p>
                             <button 
                                 className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
