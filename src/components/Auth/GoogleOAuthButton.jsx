@@ -1,58 +1,22 @@
-import React, { useState } from 'react';
-import { useSignIn, useAuth } from '@clerk/clerk-react';
+import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 const GoogleOAuthButton = ({ mode = 'sign-in', className = '' }) => {
-  const { signIn, isLoaded } = useSignIn();
-  const { isSignedIn, signOut } = useAuth();
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = React.useState(false);
 
   const handleGoogleSignIn = async () => {
-    if (!isLoaded || isAuthenticating) return;
-
     try {
       setIsAuthenticating(true);
-      
-      // Check if user is already signed in
-      if (isSignedIn) {
-        // Sign out the current user first
-        await signOut();
-        toast.info("Signed out of previous session");
-      }
-      
-      // Use the EXACT redirect URL that is configured in Google OAuth credentials
-      // Map origins to their corresponding Clerk callback URLs
-      const origin = window.location.origin;
-      const redirectMap = {
-        'http://localhost:5173': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback',
-        'https://travel-book-opal.vercel.app': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback',
-        'https://travelbook.sahilportfolio.me': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback',
-        'https://travelbook.sahilfolio.live': 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback'
-      };
-      
-      // Get the appropriate redirect URI for the current origin
-      const redirectUrl = redirectMap[origin] || 'https://clerk.travelbook.sahilfolio.live/v1/oauth_callback';
-      
-      console.log("Using redirect URL:", redirectUrl);
-      
-      // Now proceed with Google authentication
-      await signIn.authenticateWithRedirect({
-        strategy: 'oauth_google',
-        redirectUrl: redirectUrl,
-        // Remove redirectUrlComplete to avoid conflicts
-      });
+      toast.info("Google OAuth is currently disabled");
+      // Removed Clerk implementation
+      setTimeout(() => {
+        setIsAuthenticating(false);
+      }, 1000);
     } catch (error) {
       console.error('OAuth error:', error);
-      
-      // Display more specific error message based on the error
-      if (error.message && error.message.includes('single session mode')) {
-        toast.error('You need to sign out of your current account first');
-      } else {
-        toast.error('Authentication failed. Please try again.');
-      }
-      
+      toast.error('Authentication method not available');
       setIsAuthenticating(false);
     }
   };
@@ -66,7 +30,7 @@ const GoogleOAuthButton = ({ mode = 'sign-in', className = '' }) => {
       onClick={handleGoogleSignIn}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      disabled={!isLoaded || isAuthenticating}
+      disabled={isAuthenticating}
     >
       {isAuthenticating ? (
         <div className="w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin mr-2"></div>

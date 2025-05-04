@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import 'sonner/dist/styles.css'; 
+import { AuthProvider } from './utils/AuthContext';
+import ProtectedRoute from './utils/ProtectedRoute';
 
 // Lazy loaded components
 const Login = lazy(() => import('./pages/Auth/login.jsx'));
@@ -26,25 +28,28 @@ const App = () => {
     <div>
       <Toaster />
       <Router>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" exact element={<Hero />} />
-            <Route path="/dashboard" exact element={<Home />} />
-            <Route path="/login" exact element={<Login />} />
-            <Route path="/signup" exact element={<Signup />} />
-            <Route path="/oauth-callback" element={<OAuthCallback />} />
-            <Route path="/terms" exact element={<Terms />} />
-            <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
-            <Route path="*" exact element={<Mistake />} />
-            <Route path="/story/:id" element={<StoryDetails />} />
-          </Routes>
-        </Suspense>
+        <AuthProvider>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" exact element={<Hero />} />
+              <Route path="/dashboard" exact element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              } />
+              <Route path="/login" exact element={<Login />} />
+              <Route path="/signup" exact element={<Signup />} />
+              <Route path="/oauth-callback" element={<OAuthCallback />} />
+              <Route path="/terms" exact element={<Terms />} />
+              <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
+              <Route path="*" exact element={<Mistake />} />
+              <Route path="/story/:id" element={<StoryDetails />} />
+            </Routes>
+          </Suspense>
+        </AuthProvider>
       </Router>
     </div>
   );
 };
 
 export default App;
-
-// 770999757229-0a007poqie0vnie99a5hfc4qremon7jk.apps.googleusercontent.com client id
-// https://hardy-cat-12.clerk.accounts.dev/v1/oauth_callback redirect URI

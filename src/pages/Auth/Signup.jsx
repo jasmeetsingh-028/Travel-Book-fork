@@ -407,7 +407,7 @@ const Signup = () => {
             </div>
             
             {/* Google OAuth Button */}
-            <GoogleOAuthButton mode="sign-up" />
+            {/* <GoogleOAuthButton mode="sign-up" /> */}
 
             {/* Login button */}
             <motion.button
