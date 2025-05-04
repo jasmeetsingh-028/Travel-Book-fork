@@ -13,7 +13,8 @@ import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
 import { Toaster, toast } from 'sonner';
-import { Helmet } from "react-helmet";
+// Replace react-helmet with react-helmet-async
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import TravelAnalytics from '../../components/Cards/TravelAnalytics';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -172,7 +173,7 @@ const Home = () => {
   };
 
   const filterStoriesByDate = async (day) => {
-    if (!day.from || !day.to) return;
+    if (!day || !day.from || !day.to) return;
     
     setIsLoading(true);
     try {
@@ -257,7 +258,7 @@ const Home = () => {
   }, []);
 
   return (
-    <>
+    <HelmetProvider>
       <Helmet>
         <title>Dashboard | Travel Book</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -677,7 +678,7 @@ const Home = () => {
       `}</style>
 
       <Toaster position="bottom-right" toastOptions={{ duration: 3000 }} />
-    </>
+    </HelmetProvider>
   );
 };
 
