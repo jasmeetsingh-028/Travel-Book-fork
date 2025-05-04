@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaShieldAlt, FaArrowRight } from "react-icons/fa";
 // Import the logo image
 import logo from "../../assets/images/logo.png";
+// Import the OTP verification component
+import OTPVerification from "../../components/Auth/OTPVerification";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +22,11 @@ const Login = () => {
     password: false
   });
   const [rememberMe, setRememberMe] = useState(false);
+  // New states for OTP verification
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [otpError, setOtpError] = useState(null);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [otpMode, setOtpMode] = useState(false); // true: login with OTP, false: login with password
 
   const navigate = useNavigate();
 
@@ -32,13 +39,14 @@ const Login = () => {
     }
   }, []);
 
+  // Modified to handle two login modes
   const handleLogin = async (e) => {
     e.preventDefault();
 
     // Mark all fields as touched for validation
     setFormTouched({
       email: true,
-      password: true
+      password: !otpMode
     });
 
     if (!validateEmail(email)) {
@@ -46,7 +54,8 @@ const Login = () => {
       return;
     }
 
-    if (!password) {
+    // Only validate password in password mode
+    if (!otpMode && !password) {
       setError("Please enter your password");
       return;
     }
@@ -55,22 +64,36 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.post("/login", {
-        email: email,
-        password: password,
-      });
-
-      if (response.data && response.data.accessToken) {
-        // Remember email if checkbox is checked
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-        } else {
-          localStorage.removeItem("rememberedEmail");
-        }
+      // Different API calls for different login modes
+      if (otpMode) {
+        // OTP login - send OTP
+        const response = await axiosInstance.post("/send-login-otp", {
+          email: email
+        });
         
-        localStorage.setItem("token", response.data.accessToken);
-        toast.success("Successfully logged in! Welcome to your Travel Book!");
-        navigate("/dashboard");
+        if (response.data && !response.data.error) {
+          setShowOtpVerification(true);
+          toast.info("OTP sent to your email. Please verify to login.");
+        }
+      } else {
+        // Regular password login
+        const response = await axiosInstance.post("/login", {
+          email: email,
+          password: password,
+        });
+
+        if (response.data && response.data.accessToken) {
+          // Remember email if checkbox is checked
+          if (rememberMe) {
+            localStorage.setItem("rememberedEmail", email);
+          } else {
+            localStorage.removeItem("rememberedEmail");
+          }
+          
+          localStorage.setItem("token", response.data.accessToken);
+          toast.success("Successfully logged in! Welcome to your Travel Book!");
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       if (
@@ -87,6 +110,65 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle OTP verification
+  const handleVerifyOtp = async (otp) => {
+    setVerifyingOtp(true);
+    setOtpError(null);
+
+    try {
+      const response = await axiosInstance.post("/verify-login-otp", {
+        email,
+        otp
+      });
+
+      if (response.data && response.data.accessToken) {
+        // Remember email if checkbox is checked
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
+        
+        localStorage.setItem("token", response.data.accessToken);
+        toast.success("Login successful! Welcome to your Travel Book!");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setOtpError(error.response.data.message);
+      } else {
+        setOtpError(
+          "OTP verification failed. Please try again."
+        );
+      }
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
+  // Handle resend OTP
+  const handleResendOtp = async () => {
+    try {
+      await axiosInstance.post("/resend-otp", {
+        email,
+        isSignup: false
+      });
+      toast.info("New OTP sent to your email");
+    } catch (error) {
+      setOtpError("Failed to resend OTP. Please try again.");
+    }
+  };
+
+  // Toggle between password and OTP login modes
+  const toggleLoginMode = () => {
+    setOtpMode(!otpMode);
+    setError(null);
   };
 
   // Validate form on input change
@@ -159,170 +241,189 @@ const Login = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="w-full sm:w-2/4 lg:w-2/4 rounded-xl p-5 sm:p-10 lg:p-16 bg-white dark:bg-gray-800 shadow-xl dark:shadow-gray-900/20"
         >
-          {/* Logo Section */}
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-center mb-8"
-          >
-            <Link to="/" className="inline-block">
-              <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto hover:scale-105 transition-transform duration-300" />
-            </Link>
-          </motion.div>
+          {/* Show OTP verification or login form */}
+          {showOtpVerification ? (
+            <OTPVerification 
+              email={email}
+              onVerify={handleVerifyOtp}
+              onResend={handleResendOtp}
+              isSignup={false}
+              error={otpError}
+            />
+          ) : (
+            <>
+              {/* Logo Section */}
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-center mb-8"
+              >
+                <Link to="/" className="inline-block">
+                  <img src={logo} alt="Travel Book Logo" className="h-24 mx-auto hover:scale-105 transition-transform duration-300" />
+                </Link>
+              </motion.div>
 
-          <motion.form 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            onSubmit={handleLogin}
-            className="space-y-6"
-          >
-            <h4 className="text-2xl font-semibold mb-7 text-center text-gray-800 dark:text-white">
-              Welcome back to your travel journal!
-            </h4>
+              <motion.form 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                onSubmit={handleLogin}
+                className="space-y-6"
+              >
+                <h4 className="text-2xl font-semibold mb-7 text-center text-gray-800 dark:text-white">
+                  Welcome back to your travel journal!
+                </h4>
 
-            {/* Email input with icon and validation */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <FaEnvelope className="text-gray-400 dark:text-gray-500" />
-              </div>
-              <input
-                type="email"
-                placeholder="Email address"
-                className={`pl-10 pr-4 py-3 w-full rounded-lg bg-gray-50 dark:bg-gray-700 border ${
-                  formTouched.email && !validateEmail(email) 
-                    ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
-                    : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
-                } focus:border-transparent focus:ring-2 transition-all duration-200 outline-none text-gray-800 dark:text-white`}
-                value={email}
-                onChange={handleEmailChange}
-                onFocus={() => handleInputFocus('email')}
-              />
-              {formTouched.email && !validateEmail(email) && (
-                <motion.p 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1 text-xs text-red-500"
+                {/* Email input with icon and validation */}
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <FaEnvelope className="text-gray-400 dark:text-gray-500" />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    className={`pl-10 pr-4 py-3 w-full rounded-lg bg-gray-50 dark:bg-gray-700 border ${
+                      formTouched.email && !validateEmail(email) 
+                        ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
+                        : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
+                    } focus:border-transparent focus:ring-2 transition-all duration-200 outline-none text-gray-800 dark:text-white`}
+                    value={email}
+                    onChange={handleEmailChange}
+                    onFocus={() => handleInputFocus('email')}
+                  />
+                  {formTouched.email && !validateEmail(email) && (
+                    <motion.p 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-1 text-xs text-red-500"
+                    >
+                      Please enter a valid email address
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Only show password input in password mode */}
+                {!otpMode && (
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <FaShieldAlt className="text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <PasswordInput
+                      value={password}
+                      onChange={handlePasswordChange}
+                      onFocus={() => handleInputFocus('password')}
+                      className={`pl-10 ${
+                        formTouched.password && !password 
+                          ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
+                          : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
+                      }`}
+                    />
+                    {formTouched.password && !password && (
+                      <motion.p 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-1 text-xs text-red-500"
+                      >
+                        Password is required
+                      </motion.p>
+                    )}
+                  </div>
+                )}
+
+                {/* Remember me checkbox and OTP toggle */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="remember-me"
+                      checked={rememberMe}
+                      onChange={() => setRememberMe(!rememberMe)}
+                      className="h-4 w-4 text-cyan-500 focus:ring-cyan-400 border-gray-300 rounded"
+                    />
+                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                      Remember me
+                    </label>
+                  </div>
+                  <div className="text-sm">
+                    <button 
+                      type="button"
+                      onClick={toggleLoginMode}
+                      className="text-cyan-500 hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300 text-sm hover:underline"
+                    >
+                      {otpMode ? "Login with password" : "Login with OTP"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Error message with animation */}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                    >
+                      <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Login button with animation */}
+                <motion.button 
+                  type="submit" 
+                  className="btn-primary w-full py-3 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                  disabled={loading}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Please enter a valid email address
-                </motion.p>
-              )}
-            </div>
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>{otpMode ? "Sending OTP..." : "Signing in..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{otpMode ? "Send OTP" : "Sign In"}</span>
+                      <FaArrowRight />
+                    </>
+                  )}
+                </motion.button>
 
-            {/* Password input with animation */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <FaShieldAlt className="text-gray-400 dark:text-gray-500" />
-              </div>
-              <PasswordInput
-                value={password}
-                onChange={handlePasswordChange}
-                onFocus={() => handleInputFocus('password')}
-                className={`pl-10 ${
-                  formTouched.password && !password 
-                    ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
-                    : 'border-gray-200 dark:border-gray-600 focus:ring-cyan-500'
-                }`}
-              />
-              {formTouched.password && !password && (
-                <motion.p 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1 text-xs text-red-500"
+                <div className="relative flex items-center justify-center">
+                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                  <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
+                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                </div>
+
+                {/* Create account button */}
+                <motion.button
+                  type="button"
+                  className="w-full py-3 px-4 border border-cyan-500 dark:border-cyan-600 text-cyan-600 dark:text-cyan-400 rounded-lg font-medium hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-colors duration-300 flex items-center justify-center gap-2"
+                  onClick={() => navigate("/signUp")}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Password is required
-                </motion.p>
-              )}
-            </div>
+                  Create New Account
+                </motion.button>
 
-            {/* Remember me checkbox */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember-me"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                  className="h-4 w-4 text-cyan-500 focus:ring-cyan-400 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Remember me
-                </label>
-              </div>
-              <div className="text-sm">
-                <a href="#" className="text-cyan-500 hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300">
-                  {/* Forgot password? */}
-                </a>
-              </div>
-            </div>
-
-            {/* Error message with animation */}
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
-                >
-                  <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Login button with animation */}
-            <motion.button 
-              type="submit" 
-              className="btn-primary w-full py-3 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-              disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Signing in...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <FaArrowRight />
-                </>
-              )}
-            </motion.button>
-
-            <div className="relative flex items-center justify-center">
-              <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-              <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
-              <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-            </div>
-
-            {/* Create account button */}
-            <motion.button
-              type="button"
-              className="w-full py-3 px-4 border border-cyan-500 dark:border-cyan-600 text-cyan-600 dark:text-cyan-400 rounded-lg font-medium hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-colors duration-300 flex items-center justify-center gap-2"
-              onClick={() => navigate("/signUp")}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Create New Account
-            </motion.button>
-
-            <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
-              By signing in, you agree to our{" "}
-              <Link to="/terms" className="text-cyan-500 hover:underline">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link to="/privacy-policy" className="text-cyan-500 hover:underline">
-                Privacy Policy
-              </Link>
-            </p>
-          </motion.form>
+                <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
+                  By signing in, you agree to our{" "}
+                  <Link to="/terms" className="text-cyan-500 hover:underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy-policy" className="text-cyan-500 hover:underline">
+                    Privacy Policy
+                  </Link>
+                </p>
+              </motion.form>
+            </>
+          )}
         </motion.div>
       </div>
 
