@@ -2,13 +2,10 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import 'sonner/dist/styles.css'; 
-import { AuthProvider } from './utils/AuthContext';
-import ProtectedRoute from './utils/ProtectedRoute';
 
 // Lazy loaded components
 const Login = lazy(() => import('./pages/Auth/login.jsx'));
 const Signup = lazy(() => import('./pages/Auth/Signup.jsx'));
-const OAuthCallback = lazy(() => import('./pages/Auth/OAuthCallback.jsx'));
 const Home = lazy(() => import('./pages/home/Home.jsx'));
 const Hero = lazy(() => import('./../src/pages/hero/Hero.jsx'));
 const Mistake = lazy(() => import('./pages/mistake.jsx')); 
@@ -28,25 +25,18 @@ const App = () => {
     <div>
       <Toaster />
       <Router>
-        <AuthProvider>
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              <Route path="/" exact element={<Hero />} />
-              <Route path="/dashboard" exact element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              } />
-              <Route path="/login" exact element={<Login />} />
-              <Route path="/signup" exact element={<Signup />} />
-              <Route path="/oauth-callback" element={<OAuthCallback />} />
-              <Route path="/terms" exact element={<Terms />} />
-              <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
-              <Route path="*" exact element={<Mistake />} />
-              <Route path="/story/:id" element={<StoryDetails />} />
-            </Routes>
-          </Suspense>
-        </AuthProvider>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/" exact element={<Hero />} />
+            <Route path="/dashboard" exact element={<Home />} />
+            <Route path="/login" exact element={<Login />} />
+            <Route path="/signup" exact element={<Signup />} />
+            <Route path="/terms" exact element={<Terms />} />
+            <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
+            <Route path="*" exact element={<Mistake />} />
+            <Route path="/story/:id" element={<StoryDetails />} />
+          </Routes>
+        </Suspense>
       </Router>
     </div>
   );
