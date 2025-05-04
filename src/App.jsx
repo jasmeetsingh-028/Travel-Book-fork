@@ -6,6 +6,8 @@ import 'sonner/dist/styles.css';
 // Lazy loaded components
 const Login = lazy(() => import('./pages/Auth/login.jsx'));
 const Signup = lazy(() => import('./pages/Auth/Signup.jsx'));
+const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword.jsx'));
+const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword.jsx'));
 const Home = lazy(() => import('./pages/home/Home.jsx'));
 const Hero = lazy(() => import('./../src/pages/hero/Hero.jsx'));
 const Mistake = lazy(() => import('./pages/mistake.jsx')); 
@@ -31,6 +33,8 @@ const App = () => {
             <Route path="/dashboard" exact element={<Home />} />
             <Route path="/login" exact element={<Login />} />
             <Route path="/signup" exact element={<Signup />} />
+            <Route path="/forgot-password" exact element={<ForgotPassword />} />
+            <Route path="/reset-password" exact element={<ResetPassword />} />
             <Route path="/terms" exact element={<Terms />} />
             <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
             <Route path="*" exact element={<Mistake />} />

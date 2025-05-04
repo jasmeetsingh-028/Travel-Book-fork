@@ -345,7 +345,7 @@ const Login = () => {
                       Remember me
                     </label>
                   </div>
-                  <div className="text-sm">
+                  <div className="text-sm flex gap-3">
                     <button 
                       type="button"
                       onClick={toggleLoginMode}
@@ -354,6 +354,15 @@ const Login = () => {
                       {otpMode ? "Login with password" : "Login with OTP"}
                     </button>
                   </div>
+                </div>
+                
+                <div className="text-center mt-2">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-cyan-500 hover:text-cyan-600 dark:text-cyan-400 dark:hover:text-cyan-300 text-sm hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
 
                 {/* Error message with animation */}
