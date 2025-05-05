@@ -333,13 +333,16 @@ const Home = () => {
     try {
       if (isOnline) {
         // Online implementation
-        let queryParams = [];
-        
-        if (filters.location && filters.location.trim() !== '') {
-          queryParams.push(`query=${encodeURIComponent(filters.location)}`);
+        // If no location is provided, show all stories instead of searching
+        if (!filters.location || filters.location.trim() === '') {
+          await getAllTravelStories();
+          return;
         }
         
-        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        let queryParams = [];
+        queryParams.push(`query=${encodeURIComponent(filters.location)}`);
+        
+        const queryString = `?${queryParams.join('&')}`;
         const { data } = await axiosInstance.get(`/search${queryString}`);
         
         if (data.stories && data.stories.length > 0) {
@@ -355,6 +358,14 @@ const Home = () => {
         try {
           const offlineStories = await getStoriesFromIndexedDB();
           let filteredStories = [...offlineStories];
+          
+          // If no filters are provided, just return all stories
+          if ((!filters.location || filters.location.trim() === '') && 
+              (!filters.dateRange.start && !filters.dateRange.end)) {
+            setAllStories(filteredStories);
+            setFilterType('');
+            return;
+          }
           
           // Filter by location if provided
           if (filters.location && filters.location.trim() !== '') {
@@ -413,9 +424,9 @@ const Home = () => {
     
     try {
       if (isOnline) {
-        // Online implementation
-        const fromDate = moment(dataRange.from).startOf('day').toISOString();
-        const toDate = moment(dataRange.to).endOf('day').toISOString();
+        // Convert dates to ISO strings for the API
+        const fromDate = dataRange.from.toISOString();
+        const toDate = dataRange.to.toISOString();
         
         const { data } = await axiosInstance.get(`/travel-stories-filter?startDate=${fromDate}&endDate=${toDate}`);
         
@@ -568,10 +579,11 @@ const Home = () => {
   // Update favorite status
   const updateIsFavourite = async (story) => {
     try {
-      const updatedStory = { ...story, isFavourite: !story.isFavourite };
-      const { data } = await axiosInstance.put(`/update-travel-story/${story._id}`, updatedStory);
+      const { data } = await axiosInstance.put(`/update-is-favourite/${story._id}`, { 
+        isFavourite: !story.isFavourite 
+      });
       
-      if (data.success) {
+      if (data) {
         const updatedStories = allStories.map(item => 
           item._id === story._id ? { ...item, isFavourite: !item.isFavourite } : item
         );
