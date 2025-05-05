@@ -41,20 +41,52 @@ const LocationMap = ({ locations = [], location, title = "Travel Locations", cla
       try {
         const coordPromises = locationsToProcess.map(async (location) => {
           try {
-            const encodedLocation = encodeURIComponent(location);
+            // Properly clean and encode the location string
+            const cleanedLocation = location.replace(/'/g, "").trim();
+            const encodedLocation = encodeURIComponent(cleanedLocation);
+            
+            console.log(`Searching for location: ${cleanedLocation}`);
+            
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/search?format=json&q=${encodedLocation}`
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodedLocation}&limit=1`
             );
+            
+            if (!response.ok) {
+              throw new Error(`API returned status: ${response.status}`);
+            }
+            
             const data = await response.json();
             
-            if (data && data[0]) {
+            if (data && data.length > 0) {
               return {
                 name: location,
                 lat: parseFloat(data[0].lat),
                 lon: parseFloat(data[0].lon)
               };
+            } else {
+              console.warn(`No coordinates found for location: ${location}`);
+              // Try a more generic search by removing some specifics
+              if (location.includes(',')) {
+                const mainPart = location.split(',')[0].trim();
+                console.log(`Trying again with simplified location: ${mainPart}`);
+                
+                const retryResponse = await fetch(
+                  `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mainPart)}&limit=1`
+                );
+                
+                if (retryResponse.ok) {
+                  const retryData = await retryResponse.json();
+                  if (retryData && retryData.length > 0) {
+                    return {
+                      name: location,
+                      lat: parseFloat(retryData[0].lat),
+                      lon: parseFloat(retryData[0].lon)
+                    };
+                  }
+                }
+              }
+              return null;
             }
-            return null;
           } catch (err) {
             console.error(`Error fetching coordinates for ${location}:`, err);
             return null;
@@ -63,7 +95,12 @@ const LocationMap = ({ locations = [], location, title = "Travel Locations", cla
 
         const results = await Promise.all(coordPromises);
         const validCoordinates = results.filter(coord => coord !== null);
-        setCoordinates(validCoordinates);
+        
+        if (validCoordinates.length === 0 && locationsToProcess.length > 0) {
+          setError("Could not find coordinates for the specified locations");
+        } else {
+          setCoordinates(validCoordinates);
+        }
       } catch (err) {
         console.error("Error fetching coordinates:", err);
         setError("Failed to load map data");

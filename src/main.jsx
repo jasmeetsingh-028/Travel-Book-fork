@@ -32,6 +32,19 @@ const updateSW = registerSW({
   },
 })
 
+// Suppress specific UNSAFE lifecycle warnings in development
+// This helps with third-party libraries that haven't been updated
+if (process.env.NODE_ENV === 'development') {
+  const originalConsoleWarn = console.warn;
+  console.warn = function filterWarnings(msg, ...args) {
+    if (typeof msg === 'string' && msg.includes('UNSAFE_componentWillMount') && 
+        msg.includes('SideEffect(NullComponent2)')) {
+      return;
+    }
+    return originalConsoleWarn(msg, ...args);
+  };
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

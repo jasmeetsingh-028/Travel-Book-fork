@@ -12,7 +12,8 @@ const Navbar = ({
     searchQuery,    
     setSearchQuery,
     onSearchNote,
-    handleClearSearch
+    handleClearSearch,
+    onAdvancedSearch
 }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const mobileMenuRef = useRef(null);
@@ -37,6 +38,15 @@ const Navbar = ({
     const onClearSearch = () => {
         handleClearSearch();
         setSearchQuery("");
+    };
+
+    const handleAdvancedSearch = (filters) => {
+        if (onAdvancedSearch) {
+            onAdvancedSearch(filters);
+            if (window.innerWidth < 768) {
+                setMobileMenuOpen(false);
+            }
+        }
     };
 
     useEffect(() => {
@@ -73,6 +83,7 @@ const Navbar = ({
                             }}
                             handleSearch={handleSearch}
                             onClearSearch={onClearSearch}
+                            onAdvancedSearch={handleAdvancedSearch}
                         />
                     </div>
                     
@@ -106,6 +117,7 @@ const Navbar = ({
                                 }}
                                 handleSearch={handleSearch}
                                 onClearSearch={onClearSearch}
+                                onAdvancedSearch={handleAdvancedSearch}
                             />
                             <div className="flex items-center justify-between">
                                 <ThemeToggle />

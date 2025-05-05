@@ -12,7 +12,8 @@ import { DayPicker } from 'react-day-picker';
 import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
+import Toaster from '../../components/Toaster';
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
@@ -139,6 +140,44 @@ const Home = () => {
     openRequest.onsuccess = function(e) {
       const db = e.target.result;
       try {
+        // Check if the object store exists before proceeding
+        if (!db.objectStoreNames.contains('stories')) {
+          // Close the current database connection
+          db.close();
+          
+          // Increment the database version to trigger onupgradeneeded
+          const reopenRequest = indexedDB.open('TravelBookOfflineDB', 2);
+          
+          reopenRequest.onupgradeneeded = function(event) {
+            const newDb = event.target.result;
+            if (!newDb.objectStoreNames.contains('stories')) {
+              newDb.createObjectStore('stories', { keyPath: '_id' });
+            }
+          };
+          
+          reopenRequest.onsuccess = function(event) {
+            const newDb = event.target.result;
+            // Now we know the store exists, proceed with saving
+            const transaction = newDb.transaction('stories', 'readwrite');
+            const store = transaction.objectStore('stories');
+            
+            // Clear existing data then add all stories
+            store.clear();
+            
+            stories.forEach(story => {
+              store.add(story);
+            });
+
+            // Update state after transaction is complete
+            transaction.oncomplete = function() {
+              setHasOfflineData(stories.length > 0);
+            };
+          };
+          
+          return;
+        }
+        
+        // If store exists, proceed normally
         const transaction = db.transaction('stories', 'readwrite');
         const store = transaction.objectStore('stories');
         
@@ -149,10 +188,10 @@ const Home = () => {
           store.add(story);
         });
 
-        // Use setTimeout to avoid state updates during render
-        setTimeout(() => {
+        // Update state after transaction is complete
+        transaction.oncomplete = function() {
           setHasOfflineData(stories.length > 0);
-        }, 0);
+        };
       } catch (err) {
         console.error('IndexedDB transaction error:', err);
       }
@@ -287,26 +326,136 @@ const Home = () => {
     }
   };
 
+  // Handle advanced search
+  const handleAdvancedSearch = async (filters) => {
+    setIsLoading(true);
+    
+    try {
+      if (isOnline) {
+        // Online implementation
+        let queryParams = [];
+        
+        if (filters.location && filters.location.trim() !== '') {
+          queryParams.push(`query=${encodeURIComponent(filters.location)}`);
+        }
+        
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        const { data } = await axiosInstance.get(`/search${queryString}`);
+        
+        if (data.stories && data.stories.length > 0) {
+          setAllStories(data.stories);
+          setFilterType('advanced');
+        } else {
+          setAllStories([]);
+          setFilterType('no-results');
+          toast.info('No stories found matching your filters');
+        }
+      } else {
+        // Offline implementation
+        try {
+          const offlineStories = await getStoriesFromIndexedDB();
+          let filteredStories = [...offlineStories];
+          
+          // Filter by location if provided
+          if (filters.location && filters.location.trim() !== '') {
+            const locationLower = filters.location.toLowerCase();
+            filteredStories = filteredStories.filter(story => 
+              story.visitedLocation.some(loc => loc.toLowerCase().includes(locationLower))
+            );
+          }
+          
+          // Filter by date range if provided
+          if (filters.dateRange.start || filters.dateRange.end) {
+            if (filters.dateRange.start) {
+              filteredStories = filteredStories.filter(story => {
+                const storyDate = new Date(story.visitedDate);
+                return storyDate >= filters.dateRange.start;
+              });
+            }
+            
+            if (filters.dateRange.end) {
+              filteredStories = filteredStories.filter(story => {
+                const storyDate = new Date(story.visitedDate);
+                return storyDate <= filters.dateRange.end;
+              });
+            }
+          }
+          
+          if (filteredStories.length > 0) {
+            setAllStories(filteredStories);
+            setFilterType('advanced');
+          } else {
+            setAllStories([]);
+            setFilterType('no-results');
+            toast.info('No stories found matching your filters');
+          }
+        } catch (err) {
+          console.error('Error filtering offline stories with advanced search:', err);
+          toast.error('Failed to apply filters');
+        }
+      }
+    } catch (error) {
+      console.error('Error with advanced search:', error);
+      toast.error('Failed to apply filters');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Filter travel stories by date range
   const filterStoriesByDateRange = async () => {
-    if (!isOnline) {
-      if (!dataRange.from || !dataRange.to) {
-        toast.error('Please select a date range');
-        return;
-      }
-      
-      try {
-        const offlineStories = await getStoriesFromIndexedDB();
-        const filteredStories = offlineStories.filter(story => {
-          const storyDate = new Date(story.visitedDate);
-          return storyDate >= dataRange.from && storyDate <= dataRange.to;
-        });
+    if (!dataRange.from || !dataRange.to) {
+      toast.error('Please select a date range');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      if (isOnline) {
+        // Online implementation
+        const fromDate = moment(dataRange.from).startOf('day').toISOString();
+        const toDate = moment(dataRange.to).endOf('day').toISOString();
         
-        setAllStories(filteredStories);
-        setFilterType('date');
-      } catch (err) {
-        console.error('Error filtering offline stories by date:', err);
+        const { data } = await axiosInstance.get(`/travel-stories-filter?startDate=${fromDate}&endDate=${toDate}`);
+        
+        if (data.stories && data.stories.length > 0) {
+          setAllStories(data.stories);
+          setFilterType('date');
+          setShowCalendar(false);
+        } else {
+          setAllStories([]);
+          setFilterType('no-results');
+          toast.info('No stories found in the selected date range');
+        }
+      } else {
+        // Offline implementation
+        try {
+          const offlineStories = await getStoriesFromIndexedDB();
+          const filteredStories = offlineStories.filter(story => {
+            const storyDate = new Date(story.visitedDate);
+            return storyDate >= dataRange.from && storyDate <= dataRange.to;
+          });
+          
+          if (filteredStories.length > 0) {
+            setAllStories(filteredStories);
+            setFilterType('date');
+            setShowCalendar(false);
+          } else {
+            setAllStories([]);
+            setFilterType('no-results');
+            toast.info('No stories found in the selected date range');
+          }
+        } catch (err) {
+          console.error('Error filtering offline stories by date:', err);
+          toast.error('Failed to filter stories by date');
+        }
       }
+    } catch (error) {
+      console.error('Error filtering by date range:', error);
+      toast.error('Failed to filter stories by date');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -508,6 +657,7 @@ const Home = () => {
         handleClearSearch={() => {
           getAllTravelStories();
         }}
+        onAdvancedSearch={handleAdvancedSearch}
       />
       
       {/* Offline banner */}

@@ -4,7 +4,7 @@ import { IoMdClose } from 'react-icons/io'
 import { MdFilterList, MdOutlineLocationOn, MdCalendarToday, MdWifiOff, MdSearch } from 'react-icons/md'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const SearchBar = ({ value, onChange, handleSearch, onClearSearch }) => {
+const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSearch }) => {
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [location, setLocation] = useState('');
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
@@ -65,34 +65,30 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch }) => {
         }
     };
 
-    // Focus the input when component mounts or when advanced is closed
-    useEffect(() => {
-        if (isExpanded && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [isExpanded]);
-
-    // Toggle mobile search expansion
-    const toggleMobileSearch = () => {
-        setIsExpanded(!isExpanded);
-        if (!isExpanded) {
-            // Delay focus to allow animation to start
-            setTimeout(() => {
-                if (inputRef.current) inputRef.current.focus();
-            }, 100);
-        }
+    // Handle advanced search filters
+    const handleAdvancedSearch = () => {
+        onAdvancedSearch({
+            location: location,
+            dateRange: {
+                start: dateRange.start ? new Date(dateRange.start) : null,
+                end: dateRange.end ? new Date(dateRange.end) : null
+            }
+        });
+        
+        setShowAdvanced(false);
+        if (isMobile) setIsExpanded(false);
     };
 
     return (
-        <div ref={searchBarRef} className='relative w-full'>
-            {/* Mobile Search Button - Only visible on mobile */}
+        <div ref={searchBarRef} className='relative flex items-center'>
+            {/* Mobile search toggle */}
             {isMobile && !isExpanded && (
-                <motion.button
-                    className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-700 shadow-md"
-                    onClick={toggleMobileSearch}
+                <motion.button 
+                    className='flex items-center justify-center p-2 bg-slate-100 dark:bg-gray-700 rounded-full'
+                    onClick={() => setIsExpanded(true)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    aria-label="Open search"
+                    aria-label="Expand search"
                 >
                     <FaMagnifyingGlass className="text-cyan-500" />
                 </motion.button>
@@ -128,36 +124,11 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch }) => {
                             onKeyDown={handleKeyDown}
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
-                            aria-label="Search stories"
-                            disabled={!isOnline}
                         />
-
-                        <div className="flex items-center gap-1">
-                            {!isOnline && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex items-center text-amber-500"
-                                    title="Offline mode - local search only"
-                                >
-                                    <MdWifiOff className="text-lg" />
-                                </motion.div>
-                            )}
-                            
-                            {isMobile && (
-                                <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
-                                    className="p-1 text-gray-500 dark:text-gray-400 hover:text-cyan-500 dark:hover:text-cyan-400"
-                                    onClick={() => setIsExpanded(false)}
-                                    aria-label="Close search"
-                                >
-                                    <IoMdClose className='text-xl transition-colors' />
-                                </motion.button>
-                            )}
-                            
+                        
+                        <div className='flex items-center ml-2'>
                             {value && 
-                                <motion.button
+                                <motion.button 
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     className="p-1 text-gray-500 dark:text-gray-400 hover:text-cyan-500 dark:hover:text-cyan-400"
@@ -275,12 +246,8 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch }) => {
                                 className='text-xs bg-cyan-500 text-white px-3 py-2 rounded-md transition-colors'
                                 whileHover={{ backgroundColor: '#0891b2' }}
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => {
-                                    // Add location and date to search logic here
-                                    handleSearch();
-                                    setShowAdvanced(false);
-                                    if (isMobile) setIsExpanded(false);
-                                }}
+                                onClick={handleAdvancedSearch}
+                                disabled={(!location && !dateRange.start && !dateRange.end) || !isOnline}
                             >
                                 Apply Filters
                             </motion.button>
@@ -288,6 +255,16 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch }) => {
                     </motion.div>
                 )}
             </AnimatePresence>
+            
+            {!isOnline && (
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className='absolute bottom-full right-0 mb-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/70 text-amber-800 dark:text-amber-200 text-xs rounded-md flex items-center shadow-sm border border-amber-200 dark:border-amber-800'
+                >
+                    <MdWifiOff className='mr-1' /> Limited search while offline
+                </motion.div>
+            )}
         </div>
     )
 }

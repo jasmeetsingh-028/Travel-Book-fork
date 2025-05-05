@@ -5,7 +5,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      // Add this configuration to suppress the UNSAFE_componentWillMount warning
+      babel: {
+        parserOpts: {
+          plugins: ['decorators-legacy']
+        }
+      }
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],

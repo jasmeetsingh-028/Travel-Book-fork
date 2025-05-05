@@ -460,10 +460,18 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                         className="h-[400px] rounded-lg overflow-hidden"
                     >
                         {showMap && (
-                            <LocationMap 
-                                location={storyInfo.visitedLocation[0]} 
-                                className="w-full h-full rounded-lg"
-                            />
+                            <>
+                                <LocationMap 
+                                    locations={storyInfo.visitedLocation} 
+                                    className="w-full h-full rounded-lg"
+                                />
+                                {storyInfo.visitedLocation && storyInfo.visitedLocation.length > 0 && (
+                                    <div className="mt-4 text-sm text-center text-gray-500 dark:text-gray-400">
+                                        Showing {storyInfo.visitedLocation.length} location{storyInfo.visitedLocation.length > 1 ? 's' : ''}: 
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">{storyInfo.visitedLocation.join(', ')}</span>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </motion.div>
                 )}

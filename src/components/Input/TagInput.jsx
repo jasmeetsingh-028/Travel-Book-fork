@@ -57,8 +57,11 @@ const TagInput = ({ tags, setTags }) => {
     }, []);
 
     const addNewTag = (location = inputValue) => {
-        if (location.trim() !== "" && !tags.includes(location.trim())) {
-            setTags([...tags, location.trim()]);
+        // Sanitize and normalize the location string
+        const sanitizedLocation = location.trim();
+        
+        if (sanitizedLocation !== "" && !tags.includes(sanitizedLocation)) {
+            setTags([...tags, sanitizedLocation]);
             setInputValue("");
             setSuggestions([]);
         }
