@@ -424,11 +424,19 @@ const Home = () => {
     
     try {
       if (isOnline) {
-        // Convert dates to ISO strings for the API
-        const fromDate = dataRange.from.toISOString();
-        const toDate = dataRange.to.toISOString();
+        // Make sure we're sending dates in a consistent format for the API
+        // When converting to ISO string, set the time to start of day for from date and end of day for to date
+        const fromDate = new Date(dataRange.from);
+        fromDate.setHours(0, 0, 0, 0);
         
-        const { data } = await axiosInstance.get(`/travel-stories-filter?startDate=${fromDate}&endDate=${toDate}`);
+        const toDate = new Date(dataRange.to);
+        toDate.setHours(23, 59, 59, 999);
+        
+        // Format the dates consistently (ISO string is safest for API calls)
+        const formattedFromDate = fromDate.toISOString();
+        const formattedToDate = toDate.toISOString();
+        
+        const { data } = await axiosInstance.get(`/travel-stories-filter?startDate=${formattedFromDate}&endDate=${formattedToDate}`);
         
         if (data.stories && data.stories.length > 0) {
           setAllStories(data.stories);
@@ -445,7 +453,17 @@ const Home = () => {
           const offlineStories = await getStoriesFromIndexedDB();
           const filteredStories = offlineStories.filter(story => {
             const storyDate = new Date(story.visitedDate);
-            return storyDate >= dataRange.from && storyDate <= dataRange.to;
+            // Set story date to midnight for date-only comparison
+            storyDate.setHours(0, 0, 0, 0);
+            
+            // Set time boundaries for comparison
+            const fromDate = new Date(dataRange.from);
+            fromDate.setHours(0, 0, 0, 0);
+            
+            const toDate = new Date(dataRange.to);
+            toDate.setHours(23, 59, 59, 999);
+            
+            return storyDate >= fromDate && storyDate <= toDate;
           });
           
           if (filteredStories.length > 0) {
@@ -609,17 +627,15 @@ const Home = () => {
     
     if (window.confirm('Are you sure you want to delete this story?')) {
       try {
-        const { data } = await axiosInstance.delete(`/delete-travel-story/${story._id}`);
+        const { data } = await axiosInstance.delete(`/delete-story/${story._id}`);
         
-        if (data.success) {
-          setOpenViewModal({
-            isShown: false,
-            data: null,
-          });
-          
-          getAllTravelStories();
-          toast.success(data.message);
-        }
+        setOpenViewModal({
+          isShown: false,
+          data: null,
+        });
+        
+        getAllTravelStories();
+        toast.success("Travel Story deleted successfully!");
       } catch (error) {
         console.error('Error deleting story:', error);
         toast.error('Failed to delete the story');
