@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort } from 'react-icons/md';
+import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort, MdOfflinePin, MdRefresh, MdCloudOff } from 'react-icons/md';
 import Modal from 'react-modal';
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -13,10 +13,10 @@ import moment from 'moment';
 import FilterInfoTitle from '../../components/Cards/FilterInfoTitle';
 import { getEmptyCardMessage, getEmptyImg } from '../../utils/helper';
 import { Toaster, toast } from 'sonner';
-// Replace react-helmet with react-helmet-async
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import TravelAnalytics from '../../components/Cards/TravelAnalytics';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSwipeable } from 'react-swipeable';
+import TravelAnalytics from '../../components/Cards/TravelAnalytics';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -38,21 +38,452 @@ const Home = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
-  const [sortBy, setSortBy] = useState('newest');
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const [sortBy, setSortBy] = useState('newest');
   const [activeFilter, setActiveFilter] = useState('all');
-  const [recentDaysFilter, setRecentDaysFilter] = useState(30); // Default to 30 days for recent visits
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [hasOfflineData, setHasOfflineData] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const calendarRef = useRef(null);
-  const sortOptionsRef = useRef(null);
+  const sortRef = useRef(null);
+  const filterMenuRef = useRef(null);
 
+  // Handle online/offline status
+  useEffect(() => {
+    function handleOnline() {
+      setIsOnline(true);
+      toast.success('You are back online');
+      syncOfflineData();
+    }
+
+    function handleOffline() {
+      setIsOnline(false);
+      toast.error('You are currently offline. Limited functionality available.');
+    }
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Check if we have cached data
+    const checkOfflineData = async () => {
+      try {
+        if ('indexedDB' in window) {
+          const openRequest = indexedDB.open('TravelBookOfflineDB', 1);
+          
+          openRequest.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('stories')) {
+              db.createObjectStore('stories', { keyPath: '_id' });
+            }
+          };
+          
+          openRequest.onsuccess = function(e) {
+            const db = e.target.result;
+            // Only try to check the store if it exists
+            if (db.objectStoreNames.contains('stories')) {
+              const transaction = db.transaction('stories', 'readonly');
+              const store = transaction.objectStore('stories');
+              const countRequest = store.count();
+              
+              countRequest.onsuccess = function() {
+                setHasOfflineData(countRequest.result > 0);
+              };
+            } else {
+              setHasOfflineData(false);
+            }
+          };
+        }
+      } catch (err) {
+        console.error('Error checking offline data', err);
+        setHasOfflineData(false);
+      }
+    };
+
+    checkOfflineData();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Function to get user info
+  const getUserInfo = async () => {
+    try {
+      const user = await axiosInstance.get('/get-user');
+      setUserInfo(user.data.user);
+    } catch (error) {
+      localStorage.clear();
+      navigate('/login');
+    }
+  };
+
+  // Function to save stories to IndexedDB for offline access
+  const saveStoriesToIndexedDB = (stories) => {
+    if (!('indexedDB' in window)) {
+      console.log('IndexedDB not supported');
+      return;
+    }
+
+    const openRequest = indexedDB.open('TravelBookOfflineDB', 1);
+
+    openRequest.onupgradeneeded = function(e) {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('stories')) {
+        db.createObjectStore('stories', { keyPath: '_id' });
+      }
+    };
+
+    openRequest.onsuccess = function(e) {
+      const db = e.target.result;
+      try {
+        const transaction = db.transaction('stories', 'readwrite');
+        const store = transaction.objectStore('stories');
+        
+        // Clear existing data then add all stories
+        store.clear();
+        
+        stories.forEach(story => {
+          store.add(story);
+        });
+
+        // Use setTimeout to avoid state updates during render
+        setTimeout(() => {
+          setHasOfflineData(stories.length > 0);
+        }, 0);
+      } catch (err) {
+        console.error('IndexedDB transaction error:', err);
+      }
+    };
+
+    openRequest.onerror = function(e) {
+      console.error('IndexedDB error:', e.target.error);
+    };
+  };
+
+  // Function to get stories from IndexedDB when offline
+  const getStoriesFromIndexedDB = () => {
+    return new Promise((resolve, reject) => {
+      if (!('indexedDB' in window)) {
+        reject('IndexedDB not supported');
+        return;
+      }
+
+      const openRequest = indexedDB.open('TravelBookOfflineDB', 1);
+      
+      // Add the onupgradeneeded handler to ensure store exists
+      openRequest.onupgradeneeded = function(e) {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('stories')) {
+          db.createObjectStore('stories', { keyPath: '_id' });
+        }
+      };
+
+      openRequest.onsuccess = function(e) {
+        const db = e.target.result;
+        try {
+          // Check if the store exists before trying to access it
+          if (!db.objectStoreNames.contains('stories')) {
+            return resolve([]); // Return empty array if store doesn't exist
+          }
+          
+          const transaction = db.transaction('stories', 'readonly');
+          const store = transaction.objectStore('stories');
+          const request = store.getAll();
+
+          request.onsuccess = function() {
+            resolve(request.result);
+          };
+
+          request.onerror = function(e) {
+            reject(e.target.error);
+          };
+        } catch (err) {
+          console.error('Error accessing IndexedDB:', err);
+          resolve([]); // Resolve with empty array on error
+        }
+      };
+
+      openRequest.onerror = function(e) {
+        reject(e.target.error);
+      };
+    });
+  };
+
+  // Function to sync offline changes when back online
+  const syncOfflineData = async () => {
+    // In a real implementation, you would sync any offline changes 
+    // that were made while the user was offline
+    await getAllTravelStories();
+  };
+
+  // Function to get all travel stories
+  const getAllTravelStories = async () => {
+    setIsLoading(true);
+    try {
+      if (isOnline) {
+        const { data } = await axiosInstance.get('/get-all-stories');
+        setAllStories(data.stories);
+        setFilterType('');
+        
+        // Cache stories for offline use
+        saveStoriesToIndexedDB(data.stories);
+      } else {
+        // Use cached data when offline
+        try {
+          const offlineStories = await getStoriesFromIndexedDB();
+          setAllStories(offlineStories);
+          setFilterType('offline');
+        } catch (err) {
+          console.error('Error retrieving offline stories:', err);
+          setAllStories([]);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching stories:', error);
+      if (error.response && error.response.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // On search
+  const onSearchNote = async (query) => {
+    setIsLoading(true);
+    if (!query) {
+      await getAllTravelStories();
+      return;
+    }
+
+    try {
+      if (isOnline) {
+        const { data } = await axiosInstance.get(`/search?query=${query}`);
+        setAllStories(data.stories);
+        setFilterType('search');
+      } else {
+        // Search in cached data
+        try {
+          const offlineStories = await getStoriesFromIndexedDB();
+          const searchResults = offlineStories.filter(story => 
+            story.title.toLowerCase().includes(query.toLowerCase()) ||
+            story.story.toLowerCase().includes(query.toLowerCase()) ||
+            story.visitedLocation.some(loc => loc.toLowerCase().includes(query.toLowerCase()))
+          );
+          setAllStories(searchResults);
+          setFilterType(searchResults.length > 0 ? 'search' : 'no-results');
+        } catch (err) {
+          console.error('Error searching offline stories:', err);
+        }
+      }
+    } catch (error) {
+      console.error('Error searching:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Filter travel stories by date range
+  const filterStoriesByDateRange = async () => {
+    if (!isOnline) {
+      if (!dataRange.from || !dataRange.to) {
+        toast.error('Please select a date range');
+        return;
+      }
+      
+      try {
+        const offlineStories = await getStoriesFromIndexedDB();
+        const filteredStories = offlineStories.filter(story => {
+          const storyDate = new Date(story.visitedDate);
+          return storyDate >= dataRange.from && storyDate <= dataRange.to;
+        });
+        
+        setAllStories(filteredStories);
+        setFilterType('date');
+      } catch (err) {
+        console.error('Error filtering offline stories by date:', err);
+      }
+    }
+  };
+
+  // Function to handle showing favorite stories
+  const handleFavoriteFilter = async () => {
+    if (activeFilter === 'favorites') {
+      setActiveFilter('all');
+      getAllTravelStories();
+    } else {
+      setActiveFilter('favorites');
+      
+      if (isOnline) {
+        // Online implementation
+        const favoriteStories = allStories.filter(story => story.isFavourite);
+        setAllStories(favoriteStories);
+        setFilterType('favorites');
+      } else {
+        // Offline implementation
+        try {
+          const offlineStories = await getStoriesFromIndexedDB();
+          const favoriteStories = offlineStories.filter(story => story.isFavourite);
+          setAllStories(favoriteStories);
+          setFilterType('favorites');
+        } catch (err) {
+          console.error('Error filtering offline favorites:', err);
+        }
+      }
+    }
+  };
+
+  // Handle mobile swipe for traveling between tabs
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (activeFilter === 'all') setActiveFilter('favorites');
+      else if (activeFilter === 'favorites') setActiveFilter('recent');
+    },
+    onSwipedRight: () => {
+      if (activeFilter === 'recent') setActiveFilter('favorites');
+      else if (activeFilter === 'favorites') setActiveFilter('all');
+    },
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: false
+  });
+
+  // Function to handle add/edit travel story
+  const handleAddOrEditStory = () => {
+    if (!isOnline) {
+      toast.error('You need to be online to add or edit stories');
+      return;
+    }
+    
+    setOpenAddEditModal({
+      isShown: true,
+      type: 'add',
+      data: null,
+    });
+  };
+
+  // Get displayed stories based on current filters and sorting
+  const getDisplayedStories = () => {
+    let stories = [...allStories];
+    
+    // Filter by favorites if active
+    if (activeFilter === 'favorites') {
+      stories = stories.filter(story => story.isFavourite);
+    } else if (activeFilter === 'recent') {
+      // Show only recent stories (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      stories = stories.filter(story => new Date(story.visitedDate) >= thirtyDaysAgo);
+    }
+    
+    // Apply sorting
+    switch (sortBy) {
+      case 'newest':
+        return stories.sort((a, b) => new Date(b.visitedDate) - new Date(a.visitedDate));
+      case 'oldest':
+        return stories.sort((a, b) => new Date(a.visitedDate) - new Date(b.visitedDate));
+      case 'az':
+        return stories.sort((a, b) => a.title.localeCompare(b.title));
+      case 'za':
+        return stories.sort((a, b) => b.title.localeCompare(a.title));
+      default:
+        return stories;
+    }
+  };
+
+  // Handle day selection in the calendar
+  const handleDayClick = (selectedDay) => {
+    setDataRange(selectedDay);
+  };
+
+  // Handle view story
+  const handleViewStory = (story) => {
+    setOpenViewModal({
+      isShown: true,
+      data: story,
+    });
+  };
+
+  // Handle edit story
+  const handleEdit = (story) => {
+    setOpenAddEditModal({
+      isShown: true,
+      type: 'edit',
+      data: story,
+    });
+  };
+
+  // Update favorite status
+  const updateIsFavourite = async (story) => {
+    try {
+      const updatedStory = { ...story, isFavourite: !story.isFavourite };
+      const { data } = await axiosInstance.put(`/update-travel-story/${story._id}`, updatedStory);
+      
+      if (data.success) {
+        const updatedStories = allStories.map(item => 
+          item._id === story._id ? { ...item, isFavourite: !item.isFavourite } : item
+        );
+        setAllStories(updatedStories);
+        
+        // Update in IndexedDB as well
+        saveStoriesToIndexedDB(updatedStories);
+        
+        toast.success(data.message);
+      }
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+      toast.error('Failed to update favorite status');
+    }
+  };
+
+  // Delete travel story
+  const deleteTravelStory = async (story) => {
+    if (!isOnline) {
+      toast.error('You need to be online to delete stories');
+      return;
+    }
+    
+    if (window.confirm('Are you sure you want to delete this story?')) {
+      try {
+        const { data } = await axiosInstance.delete(`/delete-travel-story/${story._id}`);
+        
+        if (data.success) {
+          setOpenViewModal({
+            isShown: false,
+            data: null,
+          });
+          
+          getAllTravelStories();
+          toast.success(data.message);
+        }
+      } catch (error) {
+        console.error('Error deleting story:', error);
+        toast.error('Failed to delete the story');
+      }
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+    getAllTravelStories();
+  }, []);
+
+  // Handle clicks outside of menus
   useEffect(() => {
     function handleClickOutside(event) {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
         setShowCalendar(false);
       }
-      if (sortOptionsRef.current && !sortOptionsRef.current.contains(event.target)) {
+      
+      if (sortRef.current && !sortRef.current.contains(event.target)) {
         setShowSortOptions(false);
+      }
+      
+      if (filterMenuRef.current && !filterMenuRef.current.contains(event.target)) {
+        setShowFilterMenu(false);
       }
     }
     
@@ -62,222 +493,52 @@ const Home = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (showWelcomeMessage) {
-      const timer = setTimeout(() => {
-        setShowWelcomeMessage(false);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [showWelcomeMessage]);
-
-  const getUserInfo = async () => {
-    try {
-      const response = await axiosInstance.get('/get-user');
-      if (response.data && response.data.user) {
-        setUserInfo(response.data.user);
-      }
-    } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.clear();
-        navigate('/login');
-      }
-    }
-  };
-
-  const getAllTravelStories = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get('/get-all-stories');
-      if (response.data && response.data.stories) {
-        setAllStories(response.data.stories);
-      }
-    } catch (error) {
-      toast.error('Failed to load travel stories. Please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleEdit = (data) => {
-    setOpenAddEditModal({ isShown: true, type: 'edit', data: data });
-  };
-
-  const handleViewStory = (data) => {
-    setOpenViewModal({ isShown: true, data });
-  };
-
-  const updateIsFavourite = async (storyData) => {
-    const storyId = storyData._id;
-    try {
-      const response = await axiosInstance.put(`/update-is-favourite/${storyId}`, {
-        isFavourite: !storyData.isFavourite,
-      });
-      if (response.data && response.data.story) {
-        toast.success('Favourite Story Updated.');
-        if (filterType === 'search' && searchQuery) {
-          onSearchStory(searchQuery);
-        } else if (filterType === 'date') {
-          filterStoriesByDate(dataRange);
-        } else {
-          getAllTravelStories();
-        }
-      }
-    } catch (error) {
-      toast.error('Failed to update favorite status.');
-    }
-  };
-
-  const deleteTravelStory = async (data) => {
-    const storyId = data._id;
-    try {
-      const response = await axiosInstance.delete(`/delete-story/${storyId}`);
-      if (response.data && !response.data.error) {
-        toast.error('Story Deleted Successfully');
-        setOpenViewModal((prevState) => ({ ...prevState, isShown: false }));
-        getAllTravelStories();
-      }
-    } catch (error) {
-      toast.error('Failed to delete story.');
-    }
-  };
-
-  const onSearchStory = async (query) => {
-    if (!query.trim()) {
-      setFilterType('');
-      getAllTravelStories();
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get('/search', {
-        params: {
-          query,
-        },
-      });
-      if (response.data && response.data.stories) {
-        setFilterType('search');
-        setAllStories(response.data.stories);
-      }
-    } catch (error) {
-      toast.error('Search failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleClearSearch = () => {
-    setFilterType('');
-    getAllTravelStories();
-  };
-
-  const filterStoriesByDate = async (day) => {
-    if (!day || !day.from || !day.to) return;
-    
-    setIsLoading(true);
-    try {
-      const startDate = day.from ? moment(day.from).valueOf() : null;
-      const endDate = day.to ? moment(day.to).valueOf() : null;
-      if (startDate && endDate) {
-        const response = await axiosInstance.get('/travel-stories-filter', {
-          params: { startDate, endDate },
-        });
-        if (response.data && response.data.stories) {
-          setFilterType('date');
-          setAllStories(response.data.stories);
-          setShowCalendar(false);
-        }
-      }
-    } catch (error) {
-      toast.error('Failed to filter stories by date.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDayClick = (day) => {
-    setDataRange(day);
-    filterStoriesByDate(day);
-  };
-
-  const resetFilter = () => {
-    setDataRange({ from: null, to: null });
-    setFilterType('');
-    setActiveFilter('all');
-    getAllTravelStories();
-  };
-
-  const sortStories = (stories, sortType) => {
-    if (!stories || stories.length === 0) return [];
-    
-    const sorted = [...stories];
-    
-    switch (sortType) {
-      case 'newest':
-        return sorted.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-      case 'oldest':
-        return sorted.sort((a, b) => new Date(a.createdOn) - new Date(b.createdOn));
-      case 'az':
-        return sorted.sort((a, b) => a.title.localeCompare(b.title));
-      case 'za':
-        return sorted.sort((a, b) => b.title.localeCompare(a.title));
-      default:
-        return sorted;
-    }
-  };
-
-  const filterStories = (stories, filter) => {
-    if (!stories || stories.length === 0) return [];
-    if (filter === 'all') return stories;
-    
-    if (filter === 'favorites') {
-      return stories.filter(story => story.isFavourite);
-    }
-    
-    if (filter === 'recent') {
-      const recentDate = new Date();
-      recentDate.setDate(recentDate.getDate() - recentDaysFilter);
-      return stories.filter(story => {
-        const visitedDate = new Date(story.visitedDate);
-        return visitedDate >= recentDate;
-      });
-    }
-    
-    return stories;
-  };
-
-  const getDisplayedStories = () => {
-    const filtered = filterStories(allStories, activeFilter);
-    return sortStories(filtered, sortBy);
-  };
-
-  useEffect(() => {
-    getAllTravelStories();
-    getUserInfo();
-  }, []);
-
   return (
     <HelmetProvider>
       <Helmet>
-        <title>Dashboard | Travel Book</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>Your Travel Book</title>
+        <meta name="description" content="Your personal collection of travel memories" />
       </Helmet>
       
-      <Navbar 
-        userInfo={userInfo} 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        onSearchNote={onSearchStory} 
-        handleClearSearch={handleClearSearch} 
+      <Navbar
+        userInfo={userInfo}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearchNote={onSearchNote}
+        handleClearSearch={() => {
+          getAllTravelStories();
+        }}
       />
       
+      {/* Offline banner */}
+      <AnimatePresence>
+        {!isOnline && (
+          <motion.div 
+            className="bg-amber-500 text-white p-2 text-center"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -50, opacity: 0 }}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <MdCloudOff />
+              <span>You are offline. Some features may be limited.</span>
+              {hasOfflineData && (
+                <span className="ml-2 inline-flex items-center text-xs bg-amber-600 px-2 py-1 rounded-full">
+                  <MdOfflinePin className="mr-1" /> Using cached data
+                </span>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Welcome message for new users */}
       <AnimatePresence>
         {showWelcomeMessage && userInfo && (
           <motion.div 
-            className="fixed top-20 right-4 z-50 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg border-l-4 border-cyan-500 max-w-md"
-            initial={{ x: 300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mx-4 mt-4 shadow-sm"
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
             exit={{ x: 300, opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
@@ -292,6 +553,7 @@ const Home = () => {
               <button 
                 onClick={() => setShowWelcomeMessage(false)}
                 className="ml-auto text-gray-400 hover:text-gray-500"
+                aria-label="Close welcome message"
               >
                 <MdClose />
               </button>
@@ -301,128 +563,128 @@ const Home = () => {
       </AnimatePresence>
       
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        <div className="mb-4 sm:mb-6">
-          <FilterInfoTitle filterType={filterType} filterDates={dataRange} onClear={resetFilter} />
-          
-          <div className="overflow-x-auto pb-2 mt-4 hide-scrollbar">
-            <div className="flex space-x-2">
-              <button 
-                onClick={() => setActiveFilter('all')} 
-                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeFilter === 'all' 
-                    ? 'bg-cyan-500 text-white' 
-                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
-                }`}
-              >
-                All Stories
-              </button>
-              <button 
-                onClick={() => setActiveFilter('favorites')} 
-                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
-                  activeFilter === 'favorites' 
-                    ? 'bg-cyan-500 text-white' 
-                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
-                }`}
-              >
-                <MdFavorite className={activeFilter === 'favorites' ? "text-sm text-white" : "text-sm text-red-500"} />
-                Favorites
-              </button>
-              <button 
-                onClick={() => setActiveFilter('recent')}
-                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
-                  activeFilter === 'recent' 
-                    ? 'bg-cyan-500 text-white' 
-                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
-                }`}
-              >
-                <MdOutlineExplore className={activeFilter === 'recent' ? "text-sm text-white" : "text-sm text-cyan-500"} />
-                Recent Visits
-              </button>
-              {activeFilter === 'recent' && (
-                <div className="relative ml-2 flex items-center">
-                  <select 
-                    value={recentDaysFilter}
-                    onChange={(e) => setRecentDaysFilter(Number(e.target.value))}
-                    className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg text-sm py-1 px-2"
-                  >
-                    <option value={7}>Last 7 days</option>
-                    <option value={30}>Last 30 days</option>
-                    <option value={90}>Last 3 months</option>
-                    <option value={180}>Last 6 months</option>
-                  </select>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="mt-4 flex flex-wrap gap-3 sm:hidden">
-            <button 
-              onClick={() => setShowCalendar(!showCalendar)}
-              className="flex items-center justify-center gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm"
+        <AnimatePresence>
+          {filterType !== '' && (
+            <motion.div 
+              className="mb-4"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
             >
-              <MdCalendarMonth className="text-lg text-primary" />
-              <span>Filter by Date</span>
-            </button>
-            
-            <div className="relative">
-              <button 
-                onClick={() => setShowSortOptions(!showSortOptions)}
-                className="flex items-center justify-center gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm"
+              <FilterInfoTitle
+                type={filterType}
+                searchQuery={searchQuery}
+                onHandleClear={() => {
+                  getAllTravelStories();
+                  setDataRange({ from: null, to: null });
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Filters Button */}
+        <div className="mb-4 lg:hidden">
+          <button 
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="w-full py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg flex items-center justify-between"
+            aria-expanded={showMobileFilters}
+            aria-controls="mobile-filters"
+          >
+            <span className="flex items-center">
+              <MdFilterAlt className="mr-2" /> 
+              Filters & Sort
+            </span>
+            <span>{showMobileFilters ? '−' : '+'}</span>
+          </button>
+          
+          <AnimatePresence>
+            {showMobileFilters && (
+              <motion.div 
+                id="mobile-filters"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700"
+                {...swipeHandlers}
               >
-                <MdSort className="text-lg text-primary" />
-                <span>Sort</span>
-              </button>
-              
-              {showSortOptions && (
-                <div 
-                  ref={sortOptionsRef}
-                  className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-20 border border-gray-200 dark:border-gray-700"
-                >
-                  <button 
-                    onClick={() => {setSortBy('newest'); setShowSortOptions(false);}}
-                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'newest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                  >
-                    Newest First
-                  </button>
-                  <button 
-                    onClick={() => {setSortBy('oldest'); setShowSortOptions(false);}}
-                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'oldest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                  >
-                    Oldest First
-                  </button>
-                  <button 
-                    onClick={() => {setSortBy('az'); setShowSortOptions(false);}}
-                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'az' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                  >
-                    A-Z
-                  </button>
-                  <button 
-                    onClick={() => {setSortBy('za'); setShowSortOptions(false);}}
-                    className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'za' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                  >
-                    Z-A
-                  </button>
+                {/* Filter Tabs */}
+                <div className="flex flex-nowrap overflow-x-auto hide-scrollbar mb-4 pb-2">
+                  <div className="flex gap-2 w-full">
+                    <button 
+                      onClick={() => {
+                        setActiveFilter('all');
+                        getAllTravelStories();
+                      }}
+                      className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 flex-shrink-0 ${
+                        activeFilter === 'all' 
+                          ? 'bg-cyan-500 text-white' 
+                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
+                      }`}
+                    >
+                      All Stories
+                    </button>
+                    <button 
+                      onClick={handleFavoriteFilter}
+                      className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 flex-shrink-0 ${
+                        activeFilter === 'favorites' 
+                          ? 'bg-cyan-500 text-white' 
+                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
+                      }`}
+                    >
+                      <MdFavorite className={activeFilter === 'favorites' ? "text-sm text-white" : "text-sm text-red-500"} />
+                      Favorites
+                    </button>
+                    <button 
+                      onClick={() => setActiveFilter('recent')}
+                      className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 flex-shrink-0 ${
+                        activeFilter === 'recent' 
+                          ? 'bg-cyan-500 text-white' 
+                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600'
+                      }`}
+                    >
+                      <MdOutlineExplore className={activeFilter === 'recent' ? "text-sm text-white" : "text-sm text-cyan-500"} />
+                      Recent Visits
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
-            
-            {allStories.length > 0 && (
-              <button 
-                onClick={() => setShowAnalytics(true)}
-                className="flex items-center justify-center gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm"
-              >
-                <MdQueryStats className="text-lg text-primary" />
-                <span>Analytics</span>
-              </button>
+                
+                {/* Date Range and Sort */}
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={() => setShowCalendar(!showCalendar)}
+                    className="flex items-center justify-center gap-2 text-sm font-medium p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
+                  >
+                    <MdCalendarMonth className="text-cyan-500" />
+                    <span>Date Range</span>
+                  </button>
+                  
+                  <div className="relative">
+                    <button 
+                      onClick={() => setShowSortOptions(!showSortOptions)}
+                      className="w-full flex items-center justify-center gap-2 text-sm font-medium p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
+                    >
+                      <MdSort className="text-cyan-500" />
+                      <span>Sort By</span>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Swipe hint */}
+                <div className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+                  <span>← Swipe to switch between filters →</span>
+                </div>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
         </div>
         
+        {/* Calendar Popup */}
         <AnimatePresence>
           {showCalendar && (
             <motion.div 
               ref={calendarRef}
-              className="sm:hidden mb-6 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-lg rounded-lg p-3"
+              className="mb-6 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-lg rounded-lg p-3 z-30 absolute lg:relative"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -433,6 +695,7 @@ const Home = () => {
                 <button 
                   onClick={() => setShowCalendar(false)}
                   className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  aria-label="Close calendar"
                 >
                   <MdClose size={20} />
                 </button>
@@ -444,6 +707,16 @@ const Home = () => {
                 onSelect={handleDayClick} 
                 pagedNavigation 
               />
+              
+              <div className="mt-3 flex justify-end">
+                <button 
+                  onClick={filterStoriesByDateRange}
+                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg"
+                  disabled={!dataRange.from || !dataRange.to}
+                >
+                  Apply Filter
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -454,55 +727,74 @@ const Home = () => {
               <div className="text-sm text-gray-500 dark:text-gray-300">
                 {getDisplayedStories().length} {getDisplayedStories().length === 1 ? 'story' : 'stories'} 
                 {activeFilter === 'favorites' ? ' in favorites' : ''}
-                {activeFilter === 'recent' ? ` in the last ${recentDaysFilter} ${recentDaysFilter === 1 ? 'day' : 'days'}` : ''}
+                {activeFilter === 'recent' ? ' from recent visits' : ''}
               </div>
               
-              <div className="relative">
-                <button 
-                  onClick={() => setShowSortOptions(!showSortOptions)}
-                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200 py-1 px-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded"
-                >
-                  <span>Sort: </span>
-                  <span className="font-medium">
-                    {sortBy === 'newest' && 'Newest First'}
-                    {sortBy === 'oldest' && 'Oldest First'}
-                    {sortBy === 'az' && 'A-Z'}
-                    {sortBy === 'za' && 'Z-A'}
-                  </span>
-                  <MdSort />
-                </button>
-                
-                {showSortOptions && (
-                  <div 
-                    ref={sortOptionsRef}
-                    className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-20 border border-gray-200 dark:border-gray-700"
+              <div className="hidden lg:flex items-center space-x-2">
+                <div className="flex bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg divide-x divide-gray-200 dark:divide-gray-700">
+                  <button 
+                    onClick={() => {
+                      setActiveFilter('all');
+                      getAllTravelStories();
+                    }}
+                    className={`px-3 py-1.5 text-sm font-medium ${activeFilter === 'all' ? 'text-cyan-600 dark:text-cyan-400' : 'text-gray-600 dark:text-gray-300'}`}
                   >
-                    <button 
-                      onClick={() => {setSortBy('newest'); setShowSortOptions(false);}}
-                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'newest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                    All
+                  </button>
+                  <button 
+                    onClick={handleFavoriteFilter}
+                    className={`px-3 py-1.5 text-sm font-medium flex items-center ${activeFilter === 'favorites' ? 'text-cyan-600 dark:text-cyan-400' : 'text-gray-600 dark:text-gray-300'}`}
+                  >
+                    <MdFavorite className="mr-1 text-red-500" /> Favorites
+                  </button>
+                  <button 
+                    onClick={() => setActiveFilter('recent')}
+                    className={`px-3 py-1.5 text-sm font-medium flex items-center ${activeFilter === 'recent' ? 'text-cyan-600 dark:text-cyan-400' : 'text-gray-600 dark:text-gray-300'}`}
+                  >
+                    <MdOutlineExplore className="mr-1 text-cyan-500" /> Recent
+                  </button>
+                </div>
+                
+                <div className="relative" ref={sortRef}>
+                  <button 
+                    onClick={() => setShowSortOptions(!showSortOptions)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                  >
+                    <MdSort className="text-gray-500" />
+                    <span>Sort</span>
+                  </button>
+                  
+                  {showSortOptions && (
+                    <div 
+                      className="absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-20 border border-gray-200 dark:border-gray-700"
                     >
-                      Newest First
-                    </button>
-                    <button 
-                      onClick={() => {setSortBy('oldest'); setShowSortOptions(false);}}
-                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'oldest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                    >
-                      Oldest First
-                    </button>
-                    <button 
-                      onClick={() => {setSortBy('az'); setShowSortOptions(false);}}
-                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'az' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                    >
-                      A-Z
-                    </button>
-                    <button 
-                      onClick={() => {setSortBy('za'); setShowSortOptions(false);}}
-                      className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'za' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-                    >
-                      Z-A
-                    </button>
-                  </div>
-                )}
+                      <button 
+                        onClick={() => {setSortBy('newest'); setShowSortOptions(false);}}
+                        className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'newest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                      >
+                        Newest First
+                      </button>
+                      <button 
+                        onClick={() => {setSortBy('oldest'); setShowSortOptions(false);}}
+                        className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'oldest' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                      >
+                        Oldest First
+                      </button>
+                      <button 
+                        onClick={() => {setSortBy('az'); setShowSortOptions(false);}}
+                        className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'az' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                      >
+                        A-Z
+                      </button>
+                      <button 
+                        onClick={() => {setSortBy('za'); setShowSortOptions(false);}}
+                        className={`w-full text-left px-4 py-2 text-sm ${sortBy === 'za' ? 'bg-cyan-50 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                      >
+                        Z-A
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -529,7 +821,7 @@ const Home = () => {
                       visitedLocation={item.visitedLocation}
                       isFavourite={item.isFavourite}
                       onClick={() => handleViewStory(item)}
-                      onFavouriteClick={() => updateIsFavourite(item)}
+                      onFavouriteClick={() => isOnline ? updateIsFavourite(item) : toast.error('You need to be online to update favorites')}
                     />
                   </motion.div>
                 ))}
@@ -541,8 +833,11 @@ const Home = () => {
                   message={
                     activeFilter === 'favorites' && allStories.length > 0
                       ? "You haven't marked any stories as favorites yet."
+                      : activeFilter === 'recent' && allStories.length > 0
+                      ? "No travel stories from the last 30 days."
                       : getEmptyCardMessage(filterType)
                   } 
+                  onAddClick={isOnline ? () => handleAddOrEditStory() : null}
                 />
               </div>
             )}
@@ -562,36 +857,39 @@ const Home = () => {
             </div>
             
             {allStories.length > 0 && (
-              <button 
-                onClick={() => setShowAnalytics(true)}
-                className="mt-4 w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white py-3 px-4 rounded-lg transition-colors"
-              >
-                <MdQueryStats className="text-lg" />
-                <span>View Your Travel Analytics</span>
-              </button>
+              <div className="mt-6">
+                <button 
+                  onClick={() => isOnline ? setShowAnalytics(true) : toast.error('Analytics require an internet connection')}
+                  className="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-lg shadow-sm w-full"
+                >
+                  <MdQueryStats className="text-lg text-cyan-500" />
+                  <span>View Analytics</span>
+                </button>
+              </div>
             )}
             
-            <div className="mt-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg border border-cyan-100 dark:border-gray-600">
-              <h3 className="font-medium text-gray-800 dark:text-white text-lg mb-3">Travel Tips</h3>
-              <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
-                <li className="flex items-start">
-                  <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-600 dark:text-cyan-300 p-1 rounded mr-2 mt-0.5">•</span>
-                  <span>Use the "+" button to create new travel stories</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-600 dark:text-cyan-300 p-1 rounded mr-2 mt-0.5">•</span>
-                  <span>Mark stories as favorites for easy access</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-600 dark:text-cyan-300 p-1 rounded mr-2 mt-0.5">•</span>
-                  <span>Share your stories on Instagram or with a link</span>
-                </li>
-              </ul>
-            </div>
+            {!isOnline && hasOfflineData && (
+              <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <h4 className="font-medium text-amber-800 dark:text-amber-400 flex items-center">
+                  <MdOfflinePin className="mr-2" />
+                  Offline Mode
+                </h4>
+                <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                  You're viewing cached data. Some features are limited while offline.
+                </p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="mt-2 flex items-center text-xs text-amber-800 dark:text-amber-300"
+                >
+                  <MdRefresh className="mr-1" /> Try reconnecting
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
+      {/* Modals */}
       <Modal
         isOpen={openAddEditModal.isShown}
         onRequestClose={() => {}}
@@ -660,14 +958,20 @@ const Home = () => {
         className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-4 sm:right-10 bottom-6 sm:bottom-10 shadow-lg z-20"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        disabled={!isOnline}
         onClick={() => {
-          setOpenAddEditModal({ isShown: true, type: 'add', data: null });
+          if (isOnline) {
+            setOpenAddEditModal({ isShown: true, type: 'add', data: null });
+          } else {
+            toast.error('You need to be online to add new stories');
+          }
         }}
+        aria-label="Add new travel story"
       >
         <MdAdd className="text-[28px] sm:text-[32px] text-white" />
       </motion.button>
 
-      <style jsx="true">{`
+      <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }

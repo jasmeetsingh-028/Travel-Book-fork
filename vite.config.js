@@ -36,9 +36,18 @@ export default defineConfig({
             purpose: 'maskable'
           }
         ],
+        categories: ['travel', 'lifestyle', 'social'],
+        orientation: 'any',
+        screenshots: [
+          {
+            src: '/assets/images/app-screenshot-1.jpg',
+            sizes: '1280x720',
+            type: 'image/jpg'
+          }
+        ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,gif,webp,woff,woff2,ttf,eot}'],
         // Increase the maximum file size to cache (default is 2MB)
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
@@ -82,6 +91,79 @@ export default defineConfig({
               cacheableResponse: {
                 statuses: [0, 200]
               },
+            }
+          },
+          // Cache API responses
+          {
+            urlPattern: /\/api\/.*$/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              networkTimeoutSeconds: 10 // Fallback to cache if network request takes more than 10 seconds
+            }
+          },
+          // Cache all images
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          // Cache static assets
+          {
+            urlPattern: /\.(?:js|css)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              }
+            }
+          },
+          // Cache avatar images
+          {
+            urlPattern: /.*\.(?:jpg|jpeg|png|gif)/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'avatar-images',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          // Fallback strategy for other requests
+          {
+            urlPattern: /.*$/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'others',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 // 1 day
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
             }
           }
         ]

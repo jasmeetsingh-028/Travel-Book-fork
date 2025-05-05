@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { GrMapLocation } from "react-icons/gr";
-import { MdUpdate, MdDeleteOutline, MdClose, MdShare, MdImage, MdOutlineZoomIn, MdLocationOn, MdFavorite } from "react-icons/md";
+import { MdUpdate, MdDeleteOutline, MdClose, MdShare, MdImage, MdOutlineZoomIn, MdLocationOn, MdFavorite, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import moment from "moment";
 import { toast } from 'sonner'; // Import toast but not Toaster
 import { 
@@ -11,12 +11,29 @@ import {
 } from 'react-share';
 import { motion, AnimatePresence } from 'framer-motion';
 import LocationMap from "../../components/Cards/LocationMap";
+import { useSwipeable } from 'react-swipeable';
 
 const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => {
     const [showShareOptions, setShowShareOptions] = useState(false);
     const [showFullImage, setShowFullImage] = useState(false);
     const [showMap, setShowMap] = useState(false);
     const [activeTab, setActiveTab] = useState('story');
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
+    const imgRef = useRef(null);
+    
+    // Check for screen size on mount and resize
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsSmallScreen(window.innerWidth < 640);
+        };
+        
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        return () => {
+            window.removeEventListener('resize', checkScreenSize);
+        };
+    }, []);
     
     // Animation variants
     const containerVariants = {
@@ -47,6 +64,30 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
         setShowShareOptions(true);
     };
 
+    // Handle swipe for tab navigation
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => {
+            if (activeTab === 'story') setActiveTab('photos');
+            else if (activeTab === 'photos') {
+                setActiveTab('location');
+                setShowMap(true);
+            }
+        },
+        onSwipedRight: () => {
+            if (activeTab === 'location') setActiveTab('photos');
+            else if (activeTab === 'photos') setActiveTab('story');
+        },
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: false
+    });
+
+    // Handle pinch to zoom for images on mobile
+    const handleImageTouch = () => {
+        if (isSmallScreen && imgRef.current) {
+            setShowFullImage(true);
+        }
+    };
+
     // Auto-scroll to top when modal opens
     useEffect(() => {
         if (storyInfo) {
@@ -65,23 +106,34 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
             variants={containerVariants}
             initial="hidden"
             animate="visible"
+            {...swipeHandlers}
         >
-            {/* Full image view overlay */}
+            {/* Full image view overlay - Enhanced for mobile */}
             <AnimatePresence>
                 {showFullImage && (
                     <motion.div 
-                        className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center p-4"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setShowFullImage(false)}
                     >
-                        <button 
-                            className="absolute top-4 right-4 text-white bg-gray-800 rounded-full p-2"
-                            onClick={() => setShowFullImage(false)}
-                        >
-                            <MdClose className="text-2xl" />
-                        </button>
+                        <div className="absolute top-4 right-4 z-10 flex space-x-2">
+                            {isSmallScreen && (
+                                <div className="text-white text-xs bg-black bg-opacity-50 px-3 py-1 rounded-full">
+                                    Pinch to zoom
+                                </div>
+                            )}
+                            <button 
+                                className="text-white bg-gray-800 rounded-full p-2"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowFullImage(false);
+                                }}
+                            >
+                                <MdClose className="text-2xl" />
+                            </button>
+                        </div>
                         <motion.img 
                             src={storyInfo.imageUrl} 
                             alt={storyInfo.title}
@@ -89,42 +141,49 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                             initial={{ scale: 0.9 }}
                             animate={{ scale: 1 }}
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                            style={{ touchAction: 'pinch-zoom' }}
                         />
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Action buttons */}
+            {/* Action buttons - Improved for mobile */}
             <motion.div className="flex items-center justify-end mb-4" variants={itemVariants}>
-                <div>
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 bg-cyan-50 dark:bg-gray-700 p-2 rounded-lg">
-                        <button 
-                            className="btn-small flex items-center" 
-                            onClick={() => handleShare(storyInfo._id)}
-                        >
-                            <MdShare className="text-lg" /> 
-                            <span className="hidden sm:inline ml-1">Share</span>
-                        </button>
-                        
-                        <button 
-                            className="btn-small flex items-center" 
-                            onClick={onEditClick}
-                        >
-                            <MdUpdate className="text-lg" /> 
-                            <span className="hidden sm:inline ml-1">Edit</span>
-                        </button>
+                <div className="w-full">
+                    <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 bg-cyan-50 dark:bg-gray-700 p-2 rounded-lg">
+                        <div className="flex items-center gap-2">
+                            <button 
+                                className="btn-small flex items-center" 
+                                onClick={() => handleShare(storyInfo._id)}
+                                aria-label="Share story"
+                            >
+                                <MdShare className="text-lg" /> 
+                                <span className="hidden sm:inline ml-1">Share</span>
+                            </button>
+                            
+                            <button 
+                                className="btn-small flex items-center" 
+                                onClick={onEditClick}
+                                aria-label="Edit story"
+                            >
+                                <MdUpdate className="text-lg" /> 
+                                <span className="hidden sm:inline ml-1">Edit</span>
+                            </button>
 
-                        <button 
-                            className="btn-small btn-delete flex items-center" 
-                            onClick={onDeleteClick}
-                        >
-                            <MdDeleteOutline className="text-lg" /> 
-                            <span className="hidden sm:inline ml-1">Delete</span>
-                        </button>
+                            <button 
+                                className="btn-small btn-delete flex items-center" 
+                                onClick={onDeleteClick}
+                                aria-label="Delete story"
+                            >
+                                <MdDeleteOutline className="text-lg" /> 
+                                <span className="hidden sm:inline ml-1">Delete</span>
+                            </button>
+                        </div>
 
                         <button 
                             className="text-slate-400 hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-200 transition-colors" 
                             onClick={onClose}
+                            aria-label="Close"
                         >
                             <MdClose className="text-xl" />
                         </button>
@@ -147,17 +206,19 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                             <button 
                                 className="text-slate-400 hover:text-slate-500 dark:text-slate-300 dark:hover:text-slate-200 transition-colors"
                                 onClick={() => setShowShareOptions(false)}
+                                aria-label="Close share options"
                             >
                                 <MdClose className="text-xl" />
                             </button>
                         </div>
                         <div className="flex flex-wrap gap-3 justify-center">
+                            {/* Social share buttons - Fixed size for better mobile touch targets */}
                             <FacebookShareButton 
                                 url={`${window.location.origin}/story/${storyInfo._id}`}
                                 quote={`Check out my travel story: ${storyInfo.title}`}
                                 hashtag="#TravelBook"
                             >
-                                <FacebookIcon size={36} round />
+                                <FacebookIcon size={44} round />
                             </FacebookShareButton>
                             
                             <TwitterShareButton
@@ -165,14 +226,14 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                                 title={`Check out my travel story: ${storyInfo.title}`}
                                 hashtags={["TravelBook", "Travel", ...storyInfo.visitedLocation.slice(0, 2)]}
                             >
-                                <TwitterIcon size={36} round />
+                                <TwitterIcon size={44} round />
                             </TwitterShareButton>
                             
                             <WhatsappShareButton
                                 url={`${window.location.origin}/story/${storyInfo._id}`}
                                 title={`Check out my travel story: ${storyInfo.title}`}
                             >
-                                <WhatsappIcon size={36} round />
+                                <WhatsappIcon size={44} round />
                             </WhatsappShareButton>
                             
                             <LinkedinShareButton
@@ -181,7 +242,7 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                                 summary={storyInfo.story.substring(0, 100) + '...'}
                                 source="TravelBook"
                             >
-                                <LinkedinIcon size={36} round />
+                                <LinkedinIcon size={44} round />
                             </LinkedinShareButton>
                             
                             <EmailShareButton
@@ -189,14 +250,14 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                                 subject={`Check out my travel story: ${storyInfo.title}`}
                                 body={`I wanted to share my travel story with you:\n\n${storyInfo.story.substring(0, 150)}...\n\nRead more at:`}
                             >
-                                <EmailIcon size={36} round />
+                                <EmailIcon size={44} round />
                             </EmailShareButton>
                             
                             <TelegramShareButton
                                 url={`${window.location.origin}/story/${storyInfo._id}`}
                                 title={`Check out my travel story: ${storyInfo.title}`}
                             >
-                                <TelegramIcon size={36} round />
+                                <TelegramIcon size={44} round />
                             </TelegramShareButton>
                         </div>
                     </motion.div>
@@ -221,7 +282,7 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                             
                             {storyInfo.isFavourite && (
                                 <span className="inline-flex items-center text-xs text-red-500 bg-red-100 dark:bg-red-900/30 dark:text-red-300 px-2 py-1 rounded">
-                                    <MdFavorite className="h-3 w-3 mr-1" />
+                                    <MdFavorite className="h-3.5 w-3.5 mr-1" />
                                     Favorite
                                 </span>
                             )}
@@ -229,7 +290,10 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                         
                         <div 
                             className="inline-flex items-center gap-1 text-xs text-cyan-600 bg-cyan-100 dark:bg-cyan-900/40 dark:text-cyan-300 rounded px-2 py-1 cursor-pointer hover:bg-cyan-200 dark:hover:bg-cyan-800/50 transition-colors"
-                            onClick={() => setShowMap(true)}
+                            onClick={() => {
+                                setShowMap(true);
+                                setActiveTab('location');
+                            }}
                         >
                             <MdLocationOn className="text-sm"/>
                             {storyInfo.visitedLocation.map((item, index) => 
@@ -240,38 +304,53 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                 </div>
             </motion.div>
 
-            {/* Tabs */}
-            <motion.div className="flex border-b border-gray-200 dark:border-gray-700 mb-4" variants={itemVariants}>
-                <button
-                    className={`py-2 px-4 font-medium text-sm ${
-                        activeTab === 'story'
-                            ? 'text-cyan-600 dark:text-cyan-400 border-b-2 border-cyan-500'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400'
-                    }`}
-                    onClick={() => setActiveTab('story')}
-                >
-                    Story
-                </button>
-                <button
-                    className={`py-2 px-4 font-medium text-sm ${
-                        activeTab === 'photos'
-                            ? 'text-cyan-600 dark:text-cyan-400 border-b-2 border-cyan-500'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400'
-                    }`}
-                    onClick={() => setActiveTab('photos')}
-                >
-                    Photos
-                </button>
-                <button
-                    className={`py-2 px-4 font-medium text-sm ${
-                        activeTab === 'location'
-                            ? 'text-cyan-600 dark:text-cyan-400 border-b-2 border-cyan-500'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400'
-                    }`}
-                    onClick={() => {setActiveTab('location'); setShowMap(true);}}
-                >
-                    Location
-                </button>
+            {/* Tabs - Enhanced for mobile with swipe indicator */}
+            <motion.div className="relative" variants={itemVariants}>
+                <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
+                    <button
+                        className={`py-2 px-4 font-medium text-sm ${
+                            activeTab === 'story'
+                                ? 'text-cyan-600 dark:text-cyan-400 border-b-2 border-cyan-500'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400'
+                        }`}
+                        onClick={() => setActiveTab('story')}
+                    >
+                        Story
+                    </button>
+                    <button
+                        className={`py-2 px-4 font-medium text-sm ${
+                            activeTab === 'photos'
+                                ? 'text-cyan-600 dark:text-cyan-400 border-b-2 border-cyan-500'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400'
+                        }`}
+                        onClick={() => setActiveTab('photos')}
+                    >
+                        Photos
+                    </button>
+                    <button
+                        className={`py-2 px-4 font-medium text-sm ${
+                            activeTab === 'location'
+                                ? 'text-cyan-600 dark:text-cyan-400 border-b-2 border-cyan-500'
+                                : 'text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400'
+                        }`}
+                        onClick={() => {setActiveTab('location'); setShowMap(true);}}
+                    >
+                        Location
+                    </button>
+                </div>
+                
+                {isSmallScreen && (
+                    <div className="flex justify-between items-center mb-2 text-gray-400 text-xs">
+                        <div className="flex items-center">
+                            <MdChevronLeft />
+                            <span>Swipe</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span>Swipe</span>
+                            <MdChevronRight />
+                        </div>
+                    </div>
+                )}
             </motion.div>
 
             {/* Tab Content */}
@@ -283,12 +362,16 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
+                        className="relative"
                     >
                         <div className="relative w-full h-[250px] mb-4 group rounded-lg overflow-hidden">
                             <img 
+                                ref={imgRef}
                                 src={storyInfo.imageUrl} 
                                 alt="Travel story" 
                                 className="w-full h-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-105" 
+                                onClick={handleImageTouch}
+                                loading="lazy"
                             />
                             <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <button 
@@ -329,6 +412,8 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                                     src={storyInfo.imageUrl} 
                                     alt={storyInfo.title} 
                                     className="w-full h-[350px] object-cover" 
+                                    onClick={() => isSmallScreen && setShowFullImage(true)}
+                                    loading="lazy"
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <button 
@@ -338,6 +423,11 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                                         <MdOutlineZoomIn className="text-2xl text-gray-800" />
                                     </button>
                                 </div>
+                                {isSmallScreen && (
+                                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
+                                        Tap to enlarge
+                                    </div>
+                                )}
                             </div>
                             <div className="p-3 text-left">
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -348,11 +438,10 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                         
                         <div className="text-center mt-6">
                             <p className="text-gray-500 dark:text-gray-400 text-sm">
-                                {/* You can add more photos to your travel story by editing it. */}
                                 Currently, we're working on a feature that allows users to add more photos to their specific travel memories.
                             </p>
                             <button 
-                                className="mt-2 inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
+                                className="mt-4 inline-flex items-center gap-2 px-5 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
                                 onClick={onEditClick}
                             >
                                 <MdImage className="text-lg" /> Add More Photos

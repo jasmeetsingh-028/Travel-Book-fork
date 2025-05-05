@@ -283,6 +283,7 @@ const Login = () => {
                   <input
                     type="email"
                     placeholder="Email address"
+                    autoComplete="email"
                     className={`pl-10 pr-4 py-3 w-full rounded-lg bg-gray-50 dark:bg-gray-700 border ${
                       formTouched.email && !validateEmail(email) 
                         ? 'border-red-400 dark:border-red-600 focus:ring-red-500' 
@@ -437,7 +438,7 @@ const Login = () => {
       </div>
 
       {/* CSS for responsive design */}
-      <style jsx>{`
+      <style>{`
         @media (max-width: 640px) {
           .image-section {
             display: none;

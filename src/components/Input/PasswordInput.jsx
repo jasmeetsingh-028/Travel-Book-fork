@@ -16,6 +16,7 @@ const PasswordInput = ({ value, onChange, placeholder, onFocus, className = "" }
                 onFocus={onFocus}
                 placeholder={placeholder || "Password"}
                 type={isShowPassword ? "text" : "password"}
+                autoComplete="current-password"
                 className={`w-full pr-10 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all duration-200 outline-none text-gray-800 dark:text-white ${className}`}
             />
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
