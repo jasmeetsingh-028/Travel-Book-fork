@@ -66,6 +66,7 @@ const Navbar = ({
         <div className='bg-white dark:bg-gray-800 flex items-center justify-between px-4 sm:px-6 py-2 drop-shadow sticky top-0 z-30'>
             <motion.a 
                 href="/"
+                className="flex-shrink-0"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
             >
@@ -74,20 +75,22 @@ const Navbar = ({
 
             {isToken && (
                 <>
-                    {/* Desktop view */}
-                    <div className="hidden md:block flex-1 max-w-xl mx-4">
-                        <SearchBar 
-                            value={searchQuery}
-                            onChange={({ target }) => {
-                                setSearchQuery(target.value);
-                            }}
-                            handleSearch={handleSearch}
-                            onClearSearch={onClearSearch}
-                            onAdvancedSearch={handleAdvancedSearch}
-                        />
+                    {/* Desktop view with centered search */}
+                    <div className="hidden md:flex flex-1 justify-center max-w-3xl mx-auto px-4">
+                        <div className="w-full max-w-xl">
+                            <SearchBar 
+                                value={searchQuery}
+                                onChange={({ target }) => {
+                                    setSearchQuery(target.value);
+                                }}
+                                handleSearch={handleSearch}
+                                onClearSearch={onClearSearch}
+                                onAdvancedSearch={handleAdvancedSearch}
+                            />
+                        </div>
                     </div>
                     
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-4 flex-shrink-0">
                         <ThemeToggle />
                         <ProfileInfo userInfo={userInfo} onLogout={onLogout} /> 
                     </div>

@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { FaMagnifyingGlass } from 'react-icons/fa6'
 import { IoMdClose } from 'react-icons/io'
-import { MdFilterList, MdOutlineLocationOn, MdCalendarToday, MdWifiOff, MdSearch } from 'react-icons/md'
+import { MdFilterList, MdOutlineLocationOn, MdCalendarToday, MdWifiOff, MdSearch, MdTitle, MdSort, MdFavorite } from 'react-icons/md'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSearch }) => {
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [location, setLocation] = useState('');
+    const [title, setTitle] = useState('');
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
+    const [isFavourite, setIsFavourite] = useState(null);
+    const [sortBy, setSortBy] = useState('newest');
     const [isFocused, setIsFocused] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -69,10 +72,13 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSea
     const handleAdvancedSearch = () => {
         onAdvancedSearch({
             location: location,
+            title: title,
             dateRange: {
                 start: dateRange.start ? new Date(dateRange.start) : null,
                 end: dateRange.end ? new Date(dateRange.end) : null
-            }
+            },
+            isFavourite: isFavourite,
+            sortBy: sortBy
         });
         
         setShowAdvanced(false);
@@ -199,6 +205,22 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSea
                                 />
                             </div>
                         </div>
+
+                        <div className='mb-3'>
+                            <label className='block text-xs text-gray-600 dark:text-gray-300 mb-1'>Title</label>
+                            <div className='flex items-center border dark:border-gray-600 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500 focus-within:ring-opacity-50'>
+                                <span className='bg-cyan-50 dark:bg-cyan-900 p-2'>
+                                    <MdTitle className='text-cyan-500' />
+                                </span>
+                                <input
+                                    type="text"
+                                    placeholder="Filter by title"
+                                    className='w-full text-xs p-2 outline-none dark:bg-gray-700 dark:text-white'
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </div>
+                        </div>
                         
                         <div className='mb-4'>
                             <label className='block text-xs text-gray-600 dark:text-gray-300 mb-1'>Date Range</label>
@@ -229,6 +251,38 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSea
                                 </div>
                             </div>
                         </div>
+
+                        <div className='mb-3'>
+                            <label className='block text-xs text-gray-600 dark:text-gray-300 mb-1'>Favorites</label>
+                            <div className='flex items-center'>
+                                <motion.button
+                                    className={`p-2 rounded-md ${isFavourite === true ? 'bg-cyan-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setIsFavourite(isFavourite === true ? null : true)}
+                                >
+                                    <MdFavorite className='text-xl' />
+                                </motion.button>
+                            </div>
+                        </div>
+
+                        <div className='mb-3'>
+                            <label className='block text-xs text-gray-600 dark:text-gray-300 mb-1'>Sort By</label>
+                            <div className='flex items-center border dark:border-gray-600 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500 focus-within:ring-opacity-50'>
+                                <span className='bg-cyan-50 dark:bg-cyan-900 p-2'>
+                                    <MdSort className='text-cyan-500' />
+                                </span>
+                                <select
+                                    className='w-full text-xs p-2 outline-none dark:bg-gray-700 dark:text-white'
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                    <option value="newest">Newest</option>
+                                    <option value="oldest">Oldest</option>
+                                    <option value="popular">Most Popular</option>
+                                </select>
+                            </div>
+                        </div>
                         
                         <div className='flex justify-between'>
                             <motion.button 
@@ -237,7 +291,10 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSea
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => {
                                     setLocation('');
+                                    setTitle('');
                                     setDateRange({ start: '', end: '' });
+                                    setIsFavourite(null);
+                                    setSortBy('newest');
                                 }}
                             >
                                 Reset
@@ -247,7 +304,7 @@ const SearchBar = ({ value, onChange, handleSearch, onClearSearch, onAdvancedSea
                                 whileHover={{ backgroundColor: '#0891b2' }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleAdvancedSearch}
-                                disabled={(!location && !dateRange.start && !dateRange.end) || !isOnline}
+                                disabled={(!location && !title && !dateRange.start && !dateRange.end && isFavourite === null && !sortBy) || !isOnline}
                             >
                                 Apply Filters
                             </motion.button>

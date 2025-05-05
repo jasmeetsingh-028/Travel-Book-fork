@@ -342,42 +342,45 @@ const Home = () => {
     
     try {
       if (isOnline) {
-        // Online implementation
-        // If no location is provided, show all stories instead of searching
-        if (!filters.location || filters.location.trim() === '') {
-          await getAllTravelStories();
-          return;
-        }
+        // Prepare data for our new advanced search API
+        const searchData = {
+          title: filters.title || '',
+          location: filters.location || '',
+          dateRange: {
+            startDate: filters.dateRange.start ? filters.dateRange.start : null,
+            endDate: filters.dateRange.end ? filters.dateRange.end : null
+          },
+          isFavourite: filters.isFavourite,
+          sortBy: filters.sortBy || 'newest'
+        };
         
-        let queryParams = [];
-        queryParams.push(`query=${encodeURIComponent(filters.location)}`);
-        
-        const queryString = `?${queryParams.join('&')}`;
-        const { data } = await axiosInstance.get(`/search${queryString}`);
+        // Use our new advanced search API endpoint
+        const { data } = await axiosInstance.post('/advanced-search', searchData);
         
         if (data.stories && data.stories.length > 0) {
           setAllStories(data.stories);
           setFilterType('advanced');
+          toast.success(`Found ${data.stories.length} matching stories`);
         } else {
           setAllStories([]);
           setFilterType('no-results');
           toast.info('No stories found matching your filters');
         }
       } else {
-        // Offline implementation
+        // Offline implementation using IndexedDB
         try {
           const offlineStories = await getStoriesFromIndexedDB();
           let filteredStories = [...offlineStories];
           
-          // If no filters are provided, just return all stories
-          if ((!filters.location || filters.location.trim() === '') && 
-              (!filters.dateRange.start && !filters.dateRange.end)) {
-            setAllStories(filteredStories);
-            setFilterType('');
-            return;
+          // Apply title filter if provided
+          if (filters.title && filters.title.trim() !== '') {
+            const titleLower = filters.title.toLowerCase();
+            filteredStories = filteredStories.filter(story => 
+              story.title.toLowerCase().includes(titleLower)
+            );
           }
           
-          // Filter by location if provided
+          // Apply location filter if provided
           if (filters.location && filters.location.trim() !== '') {
             const locationLower = filters.location.toLowerCase();
             filteredStories = filteredStories.filter(story => 
@@ -385,26 +388,62 @@ const Home = () => {
             );
           }
           
-          // Filter by date range if provided
+          // Apply favorite filter if provided
+          if (filters.isFavourite !== null && filters.isFavourite !== undefined) {
+            filteredStories = filteredStories.filter(story => 
+              story.isFavourite === filters.isFavourite
+            );
+          }
+          
+          // Apply date range filter if provided
           if (filters.dateRange.start || filters.dateRange.end) {
             if (filters.dateRange.start) {
+              const startDate = new Date(filters.dateRange.start);
               filteredStories = filteredStories.filter(story => {
                 const storyDate = new Date(story.visitedDate);
-                return storyDate >= filters.dateRange.start;
+                return storyDate >= startDate;
               });
             }
             
             if (filters.dateRange.end) {
+              const endDate = new Date(filters.dateRange.end);
+              // Set time to end of day for inclusive filtering
+              endDate.setHours(23, 59, 59, 999);
               filteredStories = filteredStories.filter(story => {
                 const storyDate = new Date(story.visitedDate);
-                return storyDate <= filters.dateRange.end;
+                return storyDate <= endDate;
               });
             }
+          }
+          
+          // Apply sorting
+          switch (filters.sortBy) {
+            case 'newest':
+              filteredStories.sort((a, b) => new Date(b.visitedDate) - new Date(a.visitedDate));
+              break;
+            case 'oldest':
+              filteredStories.sort((a, b) => new Date(a.visitedDate) - new Date(b.visitedDate));
+              break;
+            case 'a-z':
+              filteredStories.sort((a, b) => a.title.localeCompare(b.title));
+              break;
+            case 'z-a':
+              filteredStories.sort((a, b) => b.title.localeCompare(a.title));
+              break;
+            // Default sorting - by favorite status and then by date
+            default:
+              filteredStories.sort((a, b) => {
+                if (a.isFavourite !== b.isFavourite) {
+                  return b.isFavourite ? 1 : -1;
+                }
+                return new Date(b.visitedDate) - new Date(a.visitedDate);
+              });
           }
           
           if (filteredStories.length > 0) {
             setAllStories(filteredStories);
             setFilterType('advanced');
+            toast.success(`Found ${filteredStories.length} matching stories (offline)`);
           } else {
             setAllStories([]);
             setFilterType('no-results');
