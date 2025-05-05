@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort, MdOfflinePin, MdRefresh, MdCloudOff, MdEdit, MdDeleteOutline, MdWarning, MdInfo } from 'react-icons/md';
+import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort, 
+  MdOfflinePin, MdRefresh, MdCloudOff, MdEdit, MdDeleteOutline, MdWarning, MdInfo, MdMap, MdGridView, MdShare, MdDownload, MdBookmark, MdNotifications, MdTimeline } from 'react-icons/md';
 import Modal from 'react-modal';
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -18,6 +19,9 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
 import TravelAnalytics from '../../components/Cards/TravelAnalytics';
+
+// Import the Map component dynamically to improve initial loading performance
+const TravelMap = lazy(() => import('../../components/Cards/LocationMap'));
 
 const Home = () => {
   const navigate = useNavigate();
@@ -55,6 +59,22 @@ const Home = () => {
   const [editConfirmation, setEditConfirmation] = useState({
     isOpen: false,
     story: null
+  });
+  
+  // Add state for view type (grid/map)
+  const [viewType, setViewType] = useState('grid'); // 'grid' or 'map'
+  const [mapLoaded, setMapLoaded] = useState(false);
+  
+  // State for share modal
+  const [shareModal, setShareModal] = useState({
+    isOpen: false,
+    story: null
+  });
+  
+  // State for export options
+  const [exportOptions, setExportOptions] = useState({
+    isOpen: false,
+    format: 'pdf'
   });
   
   const calendarRef = useRef(null);
@@ -712,6 +732,35 @@ const Home = () => {
     }
   };
 
+  // Handle export story
+  const handleExportStory = (story, format) => {
+    const fileName = `${story.title.replace(/\s+/g, '_')}.${format}`;
+    let fileContent = '';
+
+    switch (format) {
+      case 'pdf':
+        // Generate PDF content (using a library like jsPDF)
+        toast.info('PDF export is not implemented yet.');
+        return;
+      case 'txt':
+        fileContent = `Title: ${story.title}\nDate: ${moment(story.visitedDate).format('MMMM D, YYYY')}\n\n${story.story}`;
+        break;
+      case 'json':
+        fileContent = JSON.stringify(story, null, 2);
+        break;
+      default:
+        toast.error('Unsupported export format');
+        return;
+    }
+
+    const blob = new Blob([fileContent], { type: format === 'json' ? 'application/json' : 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    toast.success(`Story exported as ${format.toUpperCase()}`);
+  };
+
   useEffect(() => {
     getUserInfo();
     getAllTravelStories();
@@ -971,10 +1020,50 @@ const Home = () => {
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           <div className="flex-1 order-2 lg:order-1">
             <div className="hidden sm:flex justify-between items-center mb-4">
-              <div className="text-sm text-gray-500 dark:text-gray-300">
-                {getDisplayedStories().length} {getDisplayedStories().length === 1 ? 'story' : 'stories'} 
-                {activeFilter === 'favorites' ? ' in favorites' : ''}
-                {activeFilter === 'recent' ? ' from recent visits' : ''}
+              <div className="flex items-center">
+                <div className="text-sm text-gray-500 dark:text-gray-300 mr-4">
+                  {getDisplayedStories().length} {getDisplayedStories().length === 1 ? 'story' : 'stories'} 
+                  {activeFilter === 'favorites' ? ' in favorites' : ''}
+                  {activeFilter === 'recent' ? ' from recent visits' : ''}
+                </div>
+                
+                {/* View Type Toggle (Grid/Map) */}
+                {getDisplayedStories().length > 0 && (
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-md p-1 flex">
+                    <button
+                      className={`px-3 py-1 rounded flex items-center text-xs font-medium ${
+                        viewType === 'grid' 
+                          ? 'bg-white dark:bg-gray-600 shadow-sm text-cyan-600 dark:text-cyan-400' 
+                          : 'text-gray-500 dark:text-gray-300'
+                      }`}
+                      onClick={() => setViewType('grid')}
+                      aria-label="Grid view"
+                    >
+                      <MdGridView className={`mr-1 ${viewType === 'grid' ? 'text-cyan-500' : ''}`} />
+                      Grid
+                    </button>
+                    <button
+                      className={`px-3 py-1 rounded flex items-center text-xs font-medium ${
+                        viewType === 'map' 
+                          ? 'bg-white dark:bg-gray-600 shadow-sm text-cyan-600 dark:text-cyan-400' 
+                          : 'text-gray-500 dark:text-gray-300'
+                      }`}
+                      onClick={() => {
+                        if (!isOnline) {
+                          toast.error('Map view requires an internet connection');
+                          return;
+                        }
+                        setViewType('map');
+                        setMapLoaded(true);
+                      }}
+                      disabled={!isOnline}
+                      aria-label="Map view"
+                    >
+                      <MdMap className={`mr-1 ${viewType === 'map' ? 'text-cyan-500' : ''}`} />
+                      Map
+                    </button>
+                  </div>
+                )}
               </div>
               
               <div className="hidden lg:flex items-center space-x-2">
@@ -1050,29 +1139,39 @@ const Home = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               </div>
             ) : getDisplayedStories().length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {getDisplayedStories().map((item) => (
-                  <motion.div
-                    key={item._id}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <TravelStoryCard
-                      imgUrl={item.imageUrl}
-                      title={item.title}
-                      story={item.story}
-                      date={item.visitedDate}
-                      visitedLocation={item.visitedLocation}
-                      isFavourite={item.isFavourite}
-                      onClick={() => handleViewStory(item)}
-                      onFavouriteClick={() => isOnline ? updateIsFavourite(item) : toast.error('You need to be online to update favorites')}
-                    />
-                  </motion.div>
-                ))}
-              </div>
+              viewType === 'grid' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                  {getDisplayedStories().map((item) => (
+                    <motion.div
+                      key={item._id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <TravelStoryCard
+                        imgUrl={item.imageUrl}
+                        title={item.title}
+                        story={item.story}
+                        date={item.visitedDate}
+                        visitedLocation={item.visitedLocation}
+                        isFavourite={item.isFavourite}
+                        onClick={() => handleViewStory(item)}
+                        onFavouriteClick={() => isOnline ? updateIsFavourite(item) : toast.error('You need to be online to update favorites')}
+                        onShareClick={() => setShareModal({ isOpen: true, story: item })}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <Suspense fallback={<div className="flex justify-center items-center h-48"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
+                  <TravelMap 
+                    stories={getDisplayedStories()} 
+                    onViewStory={(story) => handleViewStory(story)} 
+                  />
+                </Suspense>
+              )
             ) : (
               <div className="flex justify-center">
                 <EmptyCard 
@@ -1352,6 +1451,193 @@ const Home = () => {
                 <MdEdit className="mr-1" /> Edit
               </motion.button>
             </div>
+          </div>
+        </motion.div>
+      </Modal>
+
+      {/* Share Modal */}
+      <Modal
+        isOpen={shareModal.isOpen}
+        onRequestClose={() => setShareModal({ isOpen: false, story: null })}
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          },
+          content: {
+            position: 'relative',
+            top: 'auto',
+            left: 'auto',
+            right: 'auto',
+            bottom: 'auto',
+            maxWidth: '500px',
+            width: '100%',
+            padding: 0,
+            border: 'none',
+            background: 'transparent',
+            overflow: 'visible'
+          }
+        }}
+        appElement={document.getElementById('root')}
+        className="model-box max-w-lg mx-auto"
+      >
+        <motion.div 
+          className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
+                  <MdShare className="text-2xl text-cyan-600 dark:text-cyan-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Share Travel Story</h3>
+              </div>
+              <button
+                onClick={() => setShareModal({ isOpen: false, story: null })}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <MdClose size={24} />
+              </button>
+            </div>
+            
+            {shareModal.story && (
+              <>
+                <div className="mb-6">
+                  <div className="flex items-center mb-3">
+                    <img 
+                      src={shareModal.story.imageUrl} 
+                      alt={shareModal.story.title}
+                      className="w-16 h-16 object-cover rounded-md mr-3"
+                    />
+                    <div>
+                      <h4 className="font-medium text-gray-900 dark:text-white">{shareModal.story.title}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {moment(shareModal.story.visitedDate).format('MMMM D, YYYY')}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md mb-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Story Link</label>
+                    <div className="flex">
+                      <input
+                        type="text"
+                        readOnly
+                        value={`${window.location.origin}/story/${shareModal.story._id}`}
+                        className="flex-1 p-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-l-md focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      />
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/story/${shareModal.story._id}`);
+                          toast.success('Link copied to clipboard!');
+                        }}
+                        className="px-3 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-r-md"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3">Share via</h4>
+                  <div className="grid grid-cols-4 gap-3">
+                    <button
+                      onClick={() => {
+                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/story/${shareModal.story._id}`)}`, '_blank');
+                      }}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                          <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                        </svg>
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Facebook</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out my travel story: ${shareModal.story.title}`)}&url=${encodeURIComponent(`${window.location.origin}/story/${shareModal.story._id}`)}`, '_blank');
+                      }}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                          <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                        </svg>
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Twitter</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`${window.location.origin}/story/${shareModal.story._id}`)}&title=${encodeURIComponent(`My Travel Story: ${shareModal.story.title}`)}&summary=${encodeURIComponent(shareModal.story.story.substring(0, 100) + '...')}`, '_blank');
+                      }}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                          <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+                        </svg>
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">LinkedIn</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        window.open(`mailto:?subject=${encodeURIComponent(`My Travel Story: ${shareModal.story.title}`)}&body=${encodeURIComponent(`Check out my travel story: ${shareModal.story.title}\n\n${shareModal.story.story.substring(0, 200)}...\n\nRead more: ${window.location.origin}/story/${shareModal.story._id}`)}`, '_blank');
+                      }}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                          <path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817h-18.779l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z"/>
+                        </svg>
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Email</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <h4 className="font-medium text-gray-900 dark:text-white mb-3">Export as</h4>
+                  <div className="grid grid-cols-3 gap-3">
+                    <button
+                      onClick={() => handleExportStory(shareModal.story, 'pdf')}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center mb-2">
+                        <MdDownload className="text-white text-xl" />
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">PDF</span>
+                    </button>
+                    <button
+                      onClick={() => handleExportStory(shareModal.story, 'txt')}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center mb-2">
+                        <MdDownload className="text-white text-xl" />
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Text</span>
+                    </button>
+                    <button
+                      onClick={() => handleExportStory(shareModal.story, 'json')}
+                      className="flex flex-col items-center p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center mb-2">
+                        <MdDownload className="text-white text-xl" />
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">JSON</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </motion.div>
       </Modal>

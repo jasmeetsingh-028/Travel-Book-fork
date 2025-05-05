@@ -2,7 +2,7 @@ import moment from 'moment/moment';
 import React, { useState } from 'react'
 import {FaHeart, FaRegCalendarAlt} from "react-icons/fa";
 import {GrMapLocation} from "react-icons/gr"
-import { MdOutlineLocationOn } from "react-icons/md"
+import { MdOutlineLocationOn, MdShare } from "react-icons/md"
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TravelStoryCard = ({
@@ -14,6 +14,7 @@ const TravelStoryCard = ({
     isFavourite,
     onFavouriteClick,
     onClick,
+    onShareClick
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const hasLocation = visitedLocation && visitedLocation.length > 0;
@@ -73,6 +74,22 @@ const TravelStoryCard = ({
                     </motion.div>
                 </AnimatePresence>
             </motion.button>
+
+            {/* Share button */}
+            {onShareClick && (
+                <motion.button 
+                    className='w-10 h-10 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-full border border-white/30 absolute top-3 left-3 z-10 shadow-md' 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onShareClick();
+                    }}
+                    whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+                    whileTap={{ scale: 0.9 }}
+                    aria-label="Share this story"
+                >
+                    <MdShare className="text-lg text-gray-600 dark:text-gray-800" />
+                </motion.button>
+            )}
 
             {date && (
                 <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent py-1.5 px-3 w-full transform translate-y-0">
