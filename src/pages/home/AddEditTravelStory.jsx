@@ -847,59 +847,57 @@ const AddEditTravelStory = ({
                         }}
                     >
                         <motion.div 
-                            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl max-w-md w-full"
+                            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl max-w-md aspect-square w-full"
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
                             transition={{ type: "spring", damping: 25, stiffness: 300 }}
                         >
-                            <div className="p-6">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
-                                        <MdEdit className="text-2xl text-cyan-500 dark:text-cyan-400" />
+                            <div className="p-6 flex flex-col h-full justify-between">
+                                <div>
+                                    <div className="flex items-center mb-4">
+                                        <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
+                                            <MdEdit className="text-2xl text-cyan-500 dark:text-cyan-400" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">Save Changes?</h3>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Save Changes?</h3>
-                                </div>
-                                
-                                <div className="mb-6">
-                                    <p className="text-gray-700 dark:text-gray-300 mb-3">
-                                        You're about to update "<span className="font-semibold text-gray-900 dark:text-white">{title}</span>". 
-                                    </p>
                                     
-                                    <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-3 mb-3">
-                                        <p className="text-cyan-700 dark:text-cyan-300 text-sm flex items-start">
-                                            <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
-                                            The following information will be updated:
+                                    <div>
+                                        <p className="text-gray-700 dark:text-gray-300 mb-3">
+                                            You're about to update "<span className="font-semibold text-gray-900 dark:text-white">{title}</span>". 
                                         </p>
-                                        <ul className="mt-2 ml-6 text-sm text-cyan-700 dark:text-cyan-300 space-y-1 list-disc">
-                                            <li>Title and date of visit</li>
-                                            <li>Your travel story content</li>
-                                            <li>Locations you visited</li>
-                                            {typeof storyImg === "object" && <li>The story image</li>}
-                                        </ul>
+                                        
+                                        <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-3 mb-3">
+                                            <p className="text-cyan-700 dark:text-cyan-300 text-sm flex items-start">
+                                                <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
+                                                Updated content:
+                                            </p>
+                                            <ul className="mt-2 ml-6 text-sm text-cyan-700 dark:text-cyan-300 space-y-1 list-disc">
+                                                <li>Title and date</li>
+                                                <li>Story content</li>
+                                                {typeof storyImg === "object" && <li>Image</li>}
+                                                <li>Locations</li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Are you sure you want to save these changes?
-                                    </p>
                                 </div>
                                 
-                                <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3">
+                                <div className="flex justify-end gap-3 mt-auto">
                                     <motion.button 
-                                        className="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600 font-medium flex items-center justify-center"
+                                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600"
                                         onClick={() => setShowEditConfirmation(false)}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >
-                                        <MdClose className="mr-2" /> Cancel
+                                        Cancel
                                     </motion.button>
                                     <motion.button 
-                                        className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg font-medium flex items-center justify-center shadow-sm"
+                                        className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg flex items-center shadow-sm"
                                         onClick={proceedWithUpdate}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >
-                                        <MdUpdate className="mr-2" /> Save Changes
+                                        <MdUpdate className="mr-1" /> Save
                                     </motion.button>
                                 </div>
                             </div>
@@ -923,55 +921,53 @@ const AddEditTravelStory = ({
                         }}
                     >
                         <motion.div 
-                            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl max-w-md w-full"
+                            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl max-w-md aspect-square w-full"
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
                             transition={{ type: "spring", damping: 25, stiffness: 300 }}
                         >
-                            <div className="p-6">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
-                                        <MdSave className="text-2xl text-cyan-500 dark:text-cyan-400" />
+                            <div className="p-6 flex flex-col h-full justify-between">
+                                <div>
+                                    <div className="flex items-center mb-4">
+                                        <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
+                                            <MdSave className="text-2xl text-cyan-500 dark:text-cyan-400" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">Save Memory?</h3>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Save Travel Memory?</h3>
-                                </div>
-                                
-                                <div className="mb-6">
-                                    <p className="text-gray-700 dark:text-gray-300 mb-3">
-                                        You're about to save "<span className="font-semibold text-gray-900 dark:text-white">{title}</span>" to your travel memories collection.
-                                    </p>
                                     
-                                    <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-3 mb-3">
-                                        <div className="flex items-start">
-                                            <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
-                                            <p className="text-cyan-700 dark:text-cyan-300 text-sm">
-                                                You can always edit or delete this memory later from your travel stories dashboard.
-                                            </p>
+                                    <div>
+                                        <p className="text-gray-700 dark:text-gray-300 mb-3">
+                                            You're about to save "<span className="font-semibold text-gray-900 dark:text-white">{title}</span>" to your travel collection.
+                                        </p>
+                                        
+                                        <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-3">
+                                            <div className="flex items-start">
+                                                <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
+                                                <p className="text-cyan-700 dark:text-cyan-300 text-sm">
+                                                    You can edit or delete this memory later from your dashboard.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Ready to save this travel memory?
-                                    </p>
                                 </div>
                                 
-                                <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3">
+                                <div className="flex justify-end gap-3 mt-auto">
                                     <motion.button 
-                                        className="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600 font-medium flex items-center justify-center"
+                                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600"
                                         onClick={() => setShowSaveConfirmation(false)}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >
-                                        <MdClose className="mr-2" /> Cancel
+                                        Cancel
                                     </motion.button>
                                     <motion.button 
-                                        className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg font-medium flex items-center justify-center shadow-sm"
+                                        className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg flex items-center shadow-sm"
                                         onClick={proceedWithAdd}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >
-                                        <MdAdd className="mr-2" /> Create Memory
+                                        <MdAdd className="mr-1" /> Create
                                     </motion.button>
                                 </div>
                             </div>
