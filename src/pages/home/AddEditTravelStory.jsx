@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdAdd, MdClose, MdDeleteOutline, MdUpdate, MdShare, MdLocationOn, MdCalendarToday, MdTitle, MdDescription, MdImage, MdEdit, MdCheck, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdDone } from 'react-icons/md';
+import { MdAdd, MdClose, MdDeleteOutline, MdUpdate, MdShare, MdLocationOn, MdCalendarToday, MdTitle, MdDescription, MdImage, MdEdit, MdCheck, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdDone, MdInfoOutline, MdSave, MdWarning, MdInfo } from 'react-icons/md';
 import { FiCheckCircle } from 'react-icons/fi';
 import DataSelector from '../../components/Input/DataSelector';
 import ImageSelector from '../../components/Input/ImageSelector';
@@ -34,6 +34,10 @@ const AddEditTravelStory = ({
         location: !!(storyInfo?.visitedLocation && storyInfo?.visitedLocation.length > 0),
         date: !!storyInfo?.visitedDate
     });
+    
+    // New state for confirmation modals
+    const [showEditConfirmation, setShowEditConfirmation] = useState(false);
+    const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
 
     const [showMobileNav, setShowMobileNav] = useState(false);
     const [touchStart, setTouchStart] = useState(0);
@@ -152,6 +156,7 @@ const AddEditTravelStory = ({
         }
     };
 
+    // Modify the handleAddOrUpdateClick function to show confirmation dialog
     const handleAddOrUpdateClick = () => {
         if (!title) {
             setError("Please enter the title of your story!");
@@ -166,11 +171,24 @@ const AddEditTravelStory = ({
 
         setError("");
 
+        // Show appropriate confirmation dialog based on operation type
         if (type === "edit") {
-            updateTravelStory();
+            setShowEditConfirmation(true);
         } else {
-            addNewTravelStory();
+            setShowSaveConfirmation(true);
         }
+    };
+
+    // Function to proceed with update after confirmation
+    const proceedWithUpdate = () => {
+        setShowEditConfirmation(false);
+        updateTravelStory();
+    };
+
+    // Function to proceed with adding after confirmation
+    const proceedWithAdd = () => {
+        setShowSaveConfirmation(false);
+        addNewTravelStory();
     };
 
     const handleDeleteStoryImg = async () => {
@@ -813,6 +831,154 @@ const AddEditTravelStory = ({
                     </AnimatePresence>
                 </div>
             </div>
+
+            {/* Edit Confirmation Dialog */}
+            <AnimatePresence>
+                {showEditConfirmation && (
+                    <motion.div 
+                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                setShowEditConfirmation(false);
+                            }
+                        }}
+                    >
+                        <motion.div 
+                            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl max-w-md w-full"
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        >
+                            <div className="p-6">
+                                <div className="flex items-center mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
+                                        <MdEdit className="text-2xl text-cyan-500 dark:text-cyan-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Save Changes?</h3>
+                                </div>
+                                
+                                <div className="mb-6">
+                                    <p className="text-gray-700 dark:text-gray-300 mb-3">
+                                        You're about to update "<span className="font-semibold text-gray-900 dark:text-white">{title}</span>". 
+                                    </p>
+                                    
+                                    <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-3 mb-3">
+                                        <p className="text-cyan-700 dark:text-cyan-300 text-sm flex items-start">
+                                            <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
+                                            The following information will be updated:
+                                        </p>
+                                        <ul className="mt-2 ml-6 text-sm text-cyan-700 dark:text-cyan-300 space-y-1 list-disc">
+                                            <li>Title and date of visit</li>
+                                            <li>Your travel story content</li>
+                                            <li>Locations you visited</li>
+                                            {typeof storyImg === "object" && <li>The story image</li>}
+                                        </ul>
+                                    </div>
+                                    
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                        Are you sure you want to save these changes?
+                                    </p>
+                                </div>
+                                
+                                <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3">
+                                    <motion.button 
+                                        className="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600 font-medium flex items-center justify-center"
+                                        onClick={() => setShowEditConfirmation(false)}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        <MdClose className="mr-2" /> Cancel
+                                    </motion.button>
+                                    <motion.button 
+                                        className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg font-medium flex items-center justify-center shadow-sm"
+                                        onClick={proceedWithUpdate}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        <MdUpdate className="mr-2" /> Save Changes
+                                    </motion.button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Create Confirmation Dialog */}
+            <AnimatePresence>
+                {showSaveConfirmation && (
+                    <motion.div 
+                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                setShowSaveConfirmation(false);
+                            }
+                        }}
+                    >
+                        <motion.div 
+                            className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl max-w-md w-full"
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        >
+                            <div className="p-6">
+                                <div className="flex items-center mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
+                                        <MdSave className="text-2xl text-cyan-500 dark:text-cyan-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Save Travel Memory?</h3>
+                                </div>
+                                
+                                <div className="mb-6">
+                                    <p className="text-gray-700 dark:text-gray-300 mb-3">
+                                        You're about to save "<span className="font-semibold text-gray-900 dark:text-white">{title}</span>" to your travel memories collection.
+                                    </p>
+                                    
+                                    <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-3 mb-3">
+                                        <div className="flex items-start">
+                                            <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
+                                            <p className="text-cyan-700 dark:text-cyan-300 text-sm">
+                                                You can always edit or delete this memory later from your travel stories dashboard.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                        Ready to save this travel memory?
+                                    </p>
+                                </div>
+                                
+                                <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3">
+                                    <motion.button 
+                                        className="w-full sm:w-auto px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600 font-medium flex items-center justify-center"
+                                        onClick={() => setShowSaveConfirmation(false)}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        <MdClose className="mr-2" /> Cancel
+                                    </motion.button>
+                                    <motion.button 
+                                        className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg font-medium flex items-center justify-center shadow-sm"
+                                        onClick={proceedWithAdd}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        <MdAdd className="mr-2" /> Create Memory
+                                    </motion.button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }

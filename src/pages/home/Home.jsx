@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import TravelStoryCard from '../../components/Cards/TravelStoryCard';
-import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort, MdOfflinePin, MdRefresh, MdCloudOff } from 'react-icons/md';
+import { MdAdd, MdQueryStats, MdFilterAlt, MdClose, MdCalendarMonth, MdWavingHand, MdOutlineExplore, MdFavorite, MdSort, MdOfflinePin, MdRefresh, MdCloudOff, MdEdit, MdDeleteOutline, MdWarning, MdInfo } from 'react-icons/md';
 import Modal from 'react-modal';
 import AddEditTravelStory from './AddEditTravelStory';
 import ViewTravelStory from './ViewTravelStory';
@@ -46,6 +46,16 @@ const Home = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [hasOfflineData, setHasOfflineData] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  
+  // New state variables for confirmation dialogs
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    isOpen: false,
+    story: null
+  });
+  const [editConfirmation, setEditConfirmation] = useState({
+    isOpen: false,
+    story: null
+  });
   
   const calendarRef = useRef(null);
   const sortRef = useRef(null);
@@ -585,61 +595,81 @@ const Home = () => {
     });
   };
 
-  // Handle edit story
-  const handleEdit = (story) => {
-    setOpenAddEditModal({
-      isShown: true,
-      type: 'edit',
-      data: story,
+  // Handle edit story confirmation
+  const handleEditClick = (story) => {
+    if (!isOnline) {
+      toast.error('You need to be online to edit stories');
+      return;
+    }
+    
+    // Show confirmation dialog
+    setEditConfirmation({
+      isOpen: true,
+      story: story
     });
   };
 
-  // Update favorite status
-  const updateIsFavourite = async (story) => {
-    try {
-      const { data } = await axiosInstance.put(`/update-is-favourite/${story._id}`, { 
-        isFavourite: !story.isFavourite 
-      });
-      
-      if (data) {
-        const updatedStories = allStories.map(item => 
-          item._id === story._id ? { ...item, isFavourite: !item.isFavourite } : item
-        );
-        setAllStories(updatedStories);
-        
-        // Update in IndexedDB as well
-        saveStoriesToIndexedDB(updatedStories);
-        
-        toast.success(data.message);
-      }
-    } catch (error) {
-      console.error('Error updating favorite status:', error);
-      toast.error('Failed to update favorite status');
-    }
+  // Proceed with edit after confirmation
+  const confirmEdit = () => {
+    setOpenViewModal({
+      isShown: false,
+      data: null,
+    });
+    
+    setOpenAddEditModal({
+      isShown: true,
+      type: 'edit',
+      data: editConfirmation.story,
+    });
+    
+    // Close the confirmation dialog
+    setEditConfirmation({
+      isOpen: false,
+      story: null
+    });
   };
 
-  // Delete travel story
-  const deleteTravelStory = async (story) => {
+  // Handle delete story confirmation
+  const handleDeleteClick = (story) => {
     if (!isOnline) {
       toast.error('You need to be online to delete stories');
       return;
     }
     
-    if (window.confirm('Are you sure you want to delete this story?')) {
-      try {
-        const { data } = await axiosInstance.delete(`/delete-story/${story._id}`);
-        
-        setOpenViewModal({
-          isShown: false,
-          data: null,
-        });
-        
-        getAllTravelStories();
-        toast.success("Travel Story deleted successfully!");
-      } catch (error) {
-        console.error('Error deleting story:', error);
-        toast.error('Failed to delete the story');
-      }
+    // Show confirmation dialog
+    setDeleteConfirmation({
+      isOpen: true,
+      story: story
+    });
+  };
+
+  // Proceed with delete after confirmation
+  const confirmDelete = async () => {
+    try {
+      const { data } = await axiosInstance.delete(`/delete-story/${deleteConfirmation.story._id}`);
+      
+      setOpenViewModal({
+        isShown: false,
+        data: null,
+      });
+      
+      // Close the confirmation dialog
+      setDeleteConfirmation({
+        isOpen: false,
+        story: null
+      });
+      
+      getAllTravelStories();
+      toast.success("Travel Story deleted successfully!");
+    } catch (error) {
+      console.error('Error deleting story:', error);
+      toast.error('Failed to delete the story');
+      
+      // Close the confirmation dialog even on error
+      setDeleteConfirmation({
+        isOpen: false,
+        story: null
+      });
     }
   };
 
@@ -1107,13 +1137,8 @@ const Home = () => {
           onClose={() => {
             setOpenViewModal((prevState) => ({ ...prevState, isShown: false }));
           }}
-          onEditClick={() => {
-            setOpenViewModal((prevState) => ({ ...prevState, isShown: false }));
-            handleEdit(openViewModal.data || null);
-          }}
-          onDeleteClick={() => {
-            deleteTravelStory(openViewModal.data || null);
-          }}
+          onEditClick={() => handleEditClick(openViewModal.data || null)}
+          onDeleteClick={() => handleDeleteClick(openViewModal.data || null)}
         />
       </Modal>
       
@@ -1130,6 +1155,130 @@ const Home = () => {
         className="model-box max-w-3xl mx-auto"
       >
         <TravelAnalytics onClose={() => setShowAnalytics(false)} />
+      </Modal>
+      
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteConfirmation.isOpen}
+        onRequestClose={() => setDeleteConfirmation({ isOpen: false, story: null })}
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+          },
+        }}
+        appElement={document.getElementById('root')}
+        className="model-box max-w-md mx-auto"
+      >
+        <motion.div 
+          className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                <MdDeleteOutline className="text-2xl text-red-600 dark:text-red-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Delete Travel Story</h3>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                Are you sure you want to delete "<span className="font-medium text-gray-800 dark:text-white">{deleteConfirmation.story?.title}</span>"? 
+              </p>
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md p-3 flex items-start">
+                <MdWarning className="text-amber-500 mr-2 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  This action cannot be undone. This will permanently delete your travel story and remove all of its data.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3">
+              <motion.button 
+                onClick={() => setDeleteConfirmation({ isOpen: false, story: null })}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Cancel
+              </motion.button>
+              <motion.button 
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center shadow-sm"
+                whileHover={{ scale: 1.02, backgroundColor: "#ef4444" }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <MdDeleteOutline className="mr-1" /> Delete Story
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </Modal>
+
+      {/* Edit Confirmation Modal */}
+      <Modal
+        isOpen={editConfirmation.isOpen}
+        onRequestClose={() => setEditConfirmation({ isOpen: false, story: null })}
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+          },
+        }}
+        appElement={document.getElementById('root')}
+        className="model-box max-w-md mx-auto"
+      >
+        <motion.div 
+          className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center mr-4">
+                <MdEdit className="text-2xl text-cyan-600 dark:text-cyan-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Travel Story</h3>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                You're about to edit "<span className="font-medium text-gray-800 dark:text-white">{editConfirmation.story?.title}</span>"
+              </p>
+              <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-md p-3 flex items-start">
+                <MdInfo className="text-cyan-500 mr-2 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-cyan-700 dark:text-cyan-300">
+                  You'll be able to modify all aspects of your travel story, including photos, locations, and details.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3">
+              <motion.button 
+                onClick={() => setEditConfirmation({ isOpen: false, story: null })}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-600"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Cancel
+              </motion.button>
+              <motion.button 
+                onClick={confirmEdit}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white rounded-lg flex items-center shadow-sm"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <MdEdit className="mr-1" /> Edit Story
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
       </Modal>
       
       <motion.button 
