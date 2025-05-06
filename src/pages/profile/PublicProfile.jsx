@@ -278,8 +278,13 @@ const PublicProfile = () => {
                     <div className="grid grid-cols-1 gap-4">
                       {recentStories.map(story => (
                         <TravelStoryCard 
-                          key={story._id} 
-                          story={story}
+                          key={story._id}
+                          imgUrl={story.imageUrl}
+                          title={story.title}
+                          date={story.visitedDate}
+                          story={story.story}
+                          visitedLocation={story.visitedLocation}
+                          isFavourite={story.isFavourite}
                           isPublicView={true}
                         />
                       ))}
