@@ -2,12 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import Navbar from '../../components/Navbar';
+// Remove Navbar import
 import Toaster from '../../components/Toaster';
+import ShareProfileModal from '../../components/Modals/ShareProfileModal'; // Add ShareProfileModal import
 import axiosInstance from '../../utils/axiosInstance';
 import { MdEdit, MdSave, MdCancel, MdCameraAlt, MdLocationOn, MdLink, MdPhone, MdEmail, 
   MdFavorite, MdMap, MdLibraryBooks, MdPublic, MdVisibility, MdVisibilityOff, 
-  MdNotifications, MdNotificationsOff, MdFacebook, MdOutlineMailOutline } from 'react-icons/md';
+  MdNotifications, MdNotificationsOff, MdFacebook, MdOutlineMailOutline, MdShare } from 'react-icons/md';
 import { FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
@@ -17,6 +18,7 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [stats, setStats] = useState({ stories: 0, locations: 0, favorites: 0 });
   const [isEditing, setIsEditing] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false); // Add state for share modal
   const [formData, setFormData] = useState({
     fullName: '',
     bio: '',
@@ -267,8 +269,6 @@ const Profile = () => {
         <meta name="description" content="Manage your Travel Book profile and account settings" />
       </Helmet>
       
-      <Navbar />
-      
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -360,6 +360,17 @@ const Profile = () => {
                     <p className="text-gray-500 dark:text-gray-400 mb-4">
                       {profileData?.email || 'email@example.com'}
                     </p>
+                    
+                    {/* Share Profile Button */}
+                    {!isEditing && profileData?._id && formData.preferences.privacySettings.profileVisibility === 'public' && (
+                      <button
+                        onClick={() => setIsShareModalOpen(true)}
+                        className="flex items-center px-3 py-1 mb-4 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg shadow-sm transition duration-200"
+                      >
+                        <MdShare className="mr-1" />
+                        Share Profile
+                      </button>
+                    )}
                     
                     {!isEditing ? (
                       <div className="text-center mb-4">
@@ -854,7 +865,15 @@ const Profile = () => {
         )}
       </div>
       
-      <Toaster position="bottom-right" toastOptions={{ duration: 3000 }} />
+      <Toaster />
+      
+      {/* Render ShareProfileModal */}
+      <ShareProfileModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        profileId={profileData?._id}
+        userName={profileData?.fullName || 'User'}
+      />
       
       <style>{`
         .toggle-checkbox:checked {

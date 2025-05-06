@@ -47,7 +47,7 @@ const App = () => {
                 <Route path="/terms" exact element={<Terms />} />
                 <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
                 <Route path="/profile" exact element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/profile/:username" exact element={<PublicProfile />} />
+                <Route path="/public-profile/:userId" exact element={<PublicProfile />} />
                 <Route path="*" exact element={<Mistake />} />
                 <Route path="/story/:id" element={<StoryDetails />} />
               </Routes>
