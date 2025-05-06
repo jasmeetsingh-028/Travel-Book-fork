@@ -6,15 +6,30 @@ const ProfileInfo = ({ userInfo, onLogout }) => {
     return (
         userInfo && (
             <div className='flex items-center gap-3'>
-                <Link to="/profile" className="w-12 h-12 flex items-center justify-center rounded-full text-slate-950 font-medium bg-slate-100 hover:bg-slate-200 transition-colors">
-                    {userInfo && userInfo.fullName && getInitials(userInfo.fullName)}
+                <Link to="/profile" className="w-12 h-12 flex items-center justify-center rounded-full text-slate-950 font-medium bg-slate-100 hover:bg-slate-200 transition-colors overflow-hidden">
+                    {userInfo.profileImage ? (
+                        <img 
+                            src={userInfo.profileImage} 
+                            alt={userInfo.fullName || "User"} 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                            }}
+                        />
+                    ) : (
+                        <span className="flex items-center justify-center w-full h-full">
+                            {userInfo && userInfo.fullName && getInitials(userInfo.fullName)}
+                        </span>
+                    )}
                 </Link>
 
                 <div>
                     <Link to="/profile" className="text-sm font-medium hover:text-cyan-600 transition-colors">
                         {userInfo && userInfo.fullName ? userInfo.fullName : ""}
                     </Link>
-                    <button className="block text-sm text-slate-700 underline" onClick={onLogout}>
+                    <button className="block text-sm text-slate-700 dark:text-slate-300 underline" onClick={onLogout}>
                         Logout
                     </button>
                 </div>
