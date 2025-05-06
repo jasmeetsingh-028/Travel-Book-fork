@@ -48,7 +48,7 @@ const EmptyCard = ({ imgSrc, message, onAddClick }) => {
           {message}
         </motion.p>
         
-        {onAddClick && (
+        {onAddClick && typeof onAddClick === 'function' && (
           <motion.button
             className='inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-medium rounded-full transition-colors duration-200'
             whileHover={{ scale: 1.05 }}
@@ -56,7 +56,7 @@ const EmptyCard = ({ imgSrc, message, onAddClick }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.3 }}
-            onClick={onAddClick}
+            onClick={() => onAddClick()}
           >
             <MdAddCircleOutline className="text-lg" />
             <span>Add Your First Story</span>
