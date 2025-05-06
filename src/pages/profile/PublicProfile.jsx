@@ -20,7 +20,7 @@ const PublicProfile = () => {
     const fetchPublicProfile = async () => {
       setLoading(true);
       try {
-        const { data } = await axiosInstance.get(`/public-profile/${userId}`);
+        const { data } = await axiosInstance.get(`/api/public-profile/${userId}`);
         if (data.user) {
           setProfileData(data.user);
           setStats(data.stats || { stories: 0, locations: 0, favorites: 0 });
