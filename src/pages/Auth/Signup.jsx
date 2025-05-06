@@ -5,7 +5,7 @@ import { validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import logo from "../../assets/images/logo.png";
 import { toast } from "sonner"; 
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaShieldAlt, FaUser, FaArrowRight, FaCheck } from "react-icons/fa";
 import OTPVerification from "../../components/Auth/OTPVerification";
@@ -204,9 +204,11 @@ const Signup = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden relative flex items-center justify-center"
     >
-      <Helmet>
-        <title>Create Account | Travel Book</title>
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>Create Account | Travel Book</title>
+        </Helmet>
+      </HelmetProvider>
       
       <div className="container min-h-screen flex flex-col sm:flex-row items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
         

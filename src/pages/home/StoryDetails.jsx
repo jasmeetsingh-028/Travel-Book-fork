@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { toast, Toaster } from 'sonner';
 import html2canvas from "html2canvas";
 import { motion, AnimatePresence } from "framer-motion";
@@ -143,7 +143,7 @@ const StoryDetails = () => {
   }
 
   return (
-    <>
+    <HelmetProvider>
       <Toaster position="top-center" />
       
       {/* Meta tags for sharing */}
@@ -393,7 +393,7 @@ const StoryDetails = () => {
           </div>
         </div>
       </div>
-    </>
+    </HelmetProvider>
   );
 };
 

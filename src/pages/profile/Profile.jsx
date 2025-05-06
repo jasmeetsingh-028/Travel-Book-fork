@@ -276,6 +276,19 @@ const Profile = () => {
           </div>
         ) : (
           <>
+            {/* Back to Dashboard Button */}
+            <div className="mb-4">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg transition duration-200"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
+                Back to Dashboard
+              </button>
+            </div>
+            
             <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-2 md:mb-0">
                 Profile & Settings
@@ -335,7 +348,7 @@ const Profile = () => {
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = '/public/avatar-default.png';
+                            e.target.src = '/avatar-default.png';
                           }}
                         />
                       </div>
