@@ -21,14 +21,16 @@ const PublicProfile = () => {
       setLoading(true);
       try {
         const { data } = await axiosInstance.get(`/api/public-profile/${userId}`);
-        if (data.user) {
-          setProfileData(data.user);
+        if (data.profile) {
+          setProfileData(data.profile);
           setStats(data.stats || { stories: 0, locations: 0, favorites: 0 });
           setRecentStories(data.recentStories || []);
+        } else {
+          toast.error('Could not load profile data correctly');
         }
       } catch (error) {
         console.error('Error fetching public profile:', error);
-        toast.error('Failed to load profile data');
+        toast.error('Failed to load profile. The profile may not exist or is private.');
       } finally {
         setLoading(false);
       }
