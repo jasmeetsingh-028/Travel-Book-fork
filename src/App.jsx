@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import 'sonner/dist/styles.css'; 
+import { AuthProvider } from './utils/AuthContext';
+import ProtectedRoute from './utils/ProtectedRoute';
 
 // Lazy loaded components
 const Login = lazy(() => import('./pages/Auth/login.jsx'));
@@ -14,6 +16,7 @@ const Mistake = lazy(() => import('./pages/mistake.jsx'));
 const StoryDetails = lazy(() => import('./../src/pages/home/StoryDetails.jsx'));
 const Terms = lazy(() => import('./pages/legal/Terms.jsx'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy.jsx'));
+const Profile = lazy(() => import('./pages/profile/Profile.jsx'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -27,20 +30,23 @@ const App = () => {
     <div>
       <Toaster />
       <Router>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" exact element={<Hero />} />
-            <Route path="/dashboard" exact element={<Home />} />
-            <Route path="/login" exact element={<Login />} />
-            <Route path="/signup" exact element={<Signup />} />
-            <Route path="/forgot-password" exact element={<ForgotPassword />} />
-            <Route path="/reset-password" exact element={<ResetPassword />} />
-            <Route path="/terms" exact element={<Terms />} />
-            <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
-            <Route path="*" exact element={<Mistake />} />
-            <Route path="/story/:id" element={<StoryDetails />} />
-          </Routes>
-        </Suspense>
+        <AuthProvider>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" exact element={<Hero />} />
+              <Route path="/dashboard" exact element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/login" exact element={<Login />} />
+              <Route path="/signup" exact element={<Signup />} />
+              <Route path="/forgot-password" exact element={<ForgotPassword />} />
+              <Route path="/reset-password" exact element={<ResetPassword />} />
+              <Route path="/terms" exact element={<Terms />} />
+              <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
+              <Route path="/profile" exact element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="*" exact element={<Mistake />} />
+              <Route path="/story/:id" element={<StoryDetails />} />
+            </Routes>
+          </Suspense>
+        </AuthProvider>
       </Router>
     </div>
   );

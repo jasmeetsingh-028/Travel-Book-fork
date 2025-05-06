@@ -321,6 +321,55 @@ const Home = () => {
     }
   };
 
+  // Handle updating favorite status
+  const updateIsFavourite = async (story) => {
+    try {
+      const { data } = await axiosInstance.put(`/update-is-favourite/${story._id}`, {
+        isFavourite: !story.isFavourite
+      });
+      
+      if (data.story) {
+        // Update the story in the local state
+        setAllStories(prevStories => 
+          prevStories.map(s => 
+            s._id === story._id ? { ...s, isFavourite: !s.isFavourite } : s
+          )
+        );
+        
+        // Also update in IndexedDB for offline access
+        if ('indexedDB' in window) {
+          const openRequest = indexedDB.open('TravelBookOfflineDB', 1);
+          
+          openRequest.onsuccess = function(e) {
+            const db = e.target.result;
+            if (db.objectStoreNames.contains('stories')) {
+              const transaction = db.transaction('stories', 'readwrite');
+              const store = transaction.objectStore('stories');
+              
+              // Get the current story from IndexedDB
+              const getRequest = store.get(story._id);
+              
+              getRequest.onsuccess = function() {
+                if (getRequest.result) {
+                  // Update the story
+                  const updatedStory = { ...getRequest.result, isFavourite: !story.isFavourite };
+                  store.put(updatedStory);
+                }
+              };
+            }
+          };
+        }
+        
+        toast.success(story.isFavourite ? 'Removed from favorites' : 'Added to favorites');
+      } else {
+        toast.error('Failed to update favorite status');
+      }
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+      toast.error('Failed to update favorite status');
+    }
+  };
+
   // On search
   const onSearchNote = async (query) => {
     setIsLoading(true);
