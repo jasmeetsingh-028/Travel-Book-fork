@@ -45,7 +45,7 @@ const getMapOptions = (isDarkMode) => ({
   ] : []
 });
 
-const LocationMap = ({ stories, onViewStory }) => {
+const LocationMap = ({ stories, locations, location, onViewStory, className }) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [center, setCenter] = useState(defaultCenter);
   const [markers, setMarkers] = useState([]);
@@ -81,7 +81,7 @@ const LocationMap = ({ stories, onViewStory }) => {
   
   // Process stories to get markers safely after map is loaded
   useEffect(() => {
-    if (!stories || stories.length === 0 || !isMapLoaded || !window.google || !window.google.maps) return;
+    if (!isMapLoaded || !window.google || !window.google.maps) return;
     
     try {
       const processedMarkers = [];
@@ -90,60 +90,138 @@ const LocationMap = ({ stories, onViewStory }) => {
       // Keep track of processed locations to avoid duplicates
       const processedLocations = new Set();
       
-      stories.forEach((story) => {
-        // Skip if no location
-        if (!story.visitedLocation || story.visitedLocation.length === 0) return;
-        
-        story.visitedLocation.forEach((location, index) => {
-          // Skip if location is empty or already processed
-          if (!location || processedLocations.has(location)) return;
+      // Handle case where stories array is provided
+      if (stories && stories.length > 0) {
+        stories.forEach((story) => {
+          // Skip if no location
+          if (!story.visitedLocation || story.visitedLocation.length === 0) return;
           
-          processedLocations.add(location);
+          story.visitedLocation.forEach((loc, index) => {
+            // Skip if location is empty or already processed
+            if (!loc || processedLocations.has(loc)) return;
+            
+            processedLocations.add(loc);
+            
+            // Geocode the location
+            geocoder.geocode({ address: loc }, (results, status) => {
+              if (status === 'OK' && results[0]) {
+                const position = {
+                  lat: results[0].geometry.location.lat(),
+                  lng: results[0].geometry.location.lng(),
+                };
+                
+                // Add marker with story details
+                processedMarkers.push({
+                  id: `${story._id}-${index}`,
+                  story,
+                  position,
+                  location: loc,
+                });
+                
+                // Update markers state
+                setMarkers([...processedMarkers]);
+                
+                // If this is the first marker, center the map on it
+                if (processedMarkers.length === 1) {
+                  setCenter(position);
+                }
+              } else {
+                console.warn(`Geocoding failed for location: ${loc}. Status: ${status}`);
+              }
+            });
+          });
+        });
+      }
+      // Handle case where locations array is provided (from ViewTravelStory)
+      else if (locations && locations.length > 0) {
+        locations.forEach((loc, index) => {
+          if (!loc || processedLocations.has(loc)) return;
           
-          // Geocode the location
-          geocoder.geocode({ address: location }, (results, status) => {
+          processedLocations.add(loc);
+          
+          geocoder.geocode({ address: loc }, (results, status) => {
             if (status === 'OK' && results[0]) {
               const position = {
                 lat: results[0].geometry.location.lat(),
                 lng: results[0].geometry.location.lng(),
               };
               
-              // Add marker with story details
               processedMarkers.push({
-                id: `${story._id}-${index}`,
-                story,
+                id: `location-${index}`,
                 position,
-                location,
+                location: loc,
+                // Create a simple placeholder for the story
+                story: {
+                  title: loc,
+                  visitedDate: new Date(),
+                  isFavourite: false
+                }
               });
               
-              // Update markers state
               setMarkers([...processedMarkers]);
               
-              // If this is the first marker, center the map on it
               if (processedMarkers.length === 1) {
                 setCenter(position);
               }
             } else {
-              console.warn(`Geocoding failed for location: ${location}. Status: ${status}`);
+              console.warn(`Geocoding failed for location: ${loc}. Status: ${status}`);
             }
           });
         });
-      });
+      }
+      // Handle case where a single location string is provided (from StoryDetails)
+      else if (location) {
+        geocoder.geocode({ address: location }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            const position = {
+              lat: results[0].geometry.location.lat(),
+              lng: results[0].geometry.location.lng(),
+            };
+            
+            processedMarkers.push({
+              id: 'single-location',
+              position,
+              location,
+              // Create a simple placeholder for the story
+              story: {
+                title: location,
+                visitedDate: new Date(),
+                isFavourite: false
+              }
+            });
+            
+            setMarkers([...processedMarkers]);
+            setCenter(position);
+          } else {
+            console.warn(`Geocoding failed for location: ${location}. Status: ${status}`);
+          }
+        });
+      }
     } catch (error) {
       console.error('Error processing location data:', error);
       setLoadError(error);
     }
-  }, [stories, isMapLoaded]);
+  }, [stories, locations, location, isMapLoaded]);
   
   // Format date for display
-  const formatDate = (date) => {
-    return moment(date).format('MMMM D, YYYY');
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return moment(dateString).format('MMMM D, YYYY');
+  };
+  
+  // Get custom map container style with dynamic height
+  const getCustomMapContainerStyle = () => {
+    const style = {...mapContainerStyle};
+    if (className?.includes('h-full')) {
+      style.height = '100%';
+    }
+    return style;
   };
   
   // If there's a load error, show error message
   if (loadError) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+      <div className={`bg-white dark:bg-gray-800 rounded-lg p-6 text-center border border-gray-200 dark:border-gray-700 ${className || ''}`}>
         <div className="flex flex-col items-center justify-center">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
             <MdInfo className="text-red-500 text-3xl" />
@@ -164,7 +242,7 @@ const LocationMap = ({ stories, onViewStory }) => {
   
   return (
     <motion.div 
-      className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md border border-gray-200 dark:border-gray-700"
+      className={`bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md border border-gray-200 dark:border-gray-700 ${className || ''}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -175,7 +253,7 @@ const LocationMap = ({ stories, onViewStory }) => {
         onError={handleMapLoadError}
       >
         <GoogleMap
-          mapContainerStyle={mapContainerStyle}
+          mapContainerStyle={getCustomMapContainerStyle()}
           center={center}
           zoom={markers.length === 1 ? 10 : 2}
           options={getMapOptions(isDarkMode)}
@@ -187,7 +265,7 @@ const LocationMap = ({ stories, onViewStory }) => {
               position={marker.position}
               icon={{
                 url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="${marker.story.isFavourite ? '#f87171' : '#06b6d4'}" stroke="${marker.story.isFavourite ? '#ef4444' : '#0891b2'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="${marker.story?.isFavourite ? '#f87171' : '#06b6d4'}" stroke="${marker.story?.isFavourite ? '#ef4444' : '#0891b2'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3" fill="white"></circle>
                   </svg>
@@ -206,33 +284,37 @@ const LocationMap = ({ stories, onViewStory }) => {
               onCloseClick={() => setSelectedMarker(null)}
             >
               <div className="p-2 max-w-sm">
-                <div 
-                  className="w-full h-32 bg-cover bg-center rounded-t-md mb-2"
-                  style={{ backgroundImage: `url(${selectedMarker.story.imageUrl})` }}
-                />
-                <h3 className="font-medium text-lg mb-1">{selectedMarker.story.title}</h3>
+                {selectedMarker.story?.imageUrl && (
+                  <div 
+                    className="w-full h-32 bg-cover bg-center rounded-t-md mb-2"
+                    style={{ backgroundImage: `url(${selectedMarker.story.imageUrl})` }}
+                  />
+                )}
+                <h3 className="font-medium text-lg mb-1">{selectedMarker.story?.title || selectedMarker.location}</h3>
                 <div className="flex items-center text-sm text-gray-500 mb-1">
                   <MdPlace className="mr-1" />
                   <span>{selectedMarker.location}</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                  <MdDateRange className="mr-1" />
-                  <span>{formatDate(selectedMarker.story.visitedDate)}</span>
-                </div>
-                <p className="text-sm text-gray-600 line-clamp-3">
-                  {selectedMarker.story.story.slice(0, 150)}
-                  {selectedMarker.story.story.length > 150 ? '...' : ''}
-                </p>
-                <button 
-                  className="mt-2 w-full py-1.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded text-sm"
-                  onClick={() => {
-                    if (onViewStory) {
-                      onViewStory(selectedMarker.story);
-                    }
-                  }}
-                >
-                  View Story
-                </button>
+                {selectedMarker.story?.visitedDate && (
+                  <div className="flex items-center text-sm text-gray-500 mb-2">
+                    <MdDateRange className="mr-1" />
+                    <span>{formatDate(selectedMarker.story.visitedDate)}</span>
+                  </div>
+                )}
+                {selectedMarker.story?.story && (
+                  <p className="text-sm text-gray-600 line-clamp-3">
+                    {selectedMarker.story.story.slice(0, 150)}
+                    {selectedMarker.story.story.length > 150 ? '...' : ''}
+                  </p>
+                )}
+                {onViewStory && selectedMarker.story && (
+                  <button 
+                    className="mt-2 w-full py-1.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded text-sm"
+                    onClick={() => onViewStory(selectedMarker.story)}
+                  >
+                    View Story
+                  </button>
+                )}
               </div>
             </InfoWindow>
           )}
