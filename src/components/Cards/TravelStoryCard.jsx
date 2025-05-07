@@ -2,7 +2,7 @@ import moment from 'moment/moment';
 import React, { useState } from 'react'
 import {FaHeart, FaRegCalendarAlt} from "react-icons/fa";
 import {GrMapLocation} from "react-icons/gr"
-import { MdOutlineLocationOn, MdShare } from "react-icons/md"
+import { MdOutlineLocationOn, MdShare, MdPersonPin } from "react-icons/md"
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TravelStoryCard = ({
@@ -12,7 +12,9 @@ const TravelStoryCard = ({
     story,  
     visitedLocation,
     isFavourite,
+    showOnProfile,
     onFavouriteClick,
+    onProfileToggleClick,
     onClick,
     onShareClick
 }) => {
@@ -75,6 +77,32 @@ const TravelStoryCard = ({
                 </AnimatePresence>
             </motion.button>
 
+            {/* Profile showcase toggle button */}
+            {onProfileToggleClick && (
+                <motion.button 
+                    className='w-10 h-10 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-full border border-white/30 absolute top-16 right-3 z-10 shadow-md' 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onProfileToggleClick();
+                    }}
+                    whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+                    whileTap={{ scale: 0.9 }}
+                    aria-label={showOnProfile ? "Remove from public profile" : "Add to public profile"}
+                >
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={showOnProfile ? 'profileShow' : 'profileHide'}
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.5, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <MdPersonPin className={`text-xl ${showOnProfile ? "text-green-500" : "text-gray-400"}`}/>
+                        </motion.div>
+                    </AnimatePresence>
+                </motion.button>
+            )}
+
             {/* Share button */}
             {onShareClick && (
                 <motion.button 
@@ -112,19 +140,28 @@ const TravelStoryCard = ({
                 {story || "No description provided"}
             </p>
 
-            {hasLocation ? (
-                <div className='inline-flex items-center gap-2 text-xs bg-cyan-50 dark:bg-cyan-900/40 text-cyan-600 dark:text-cyan-400 rounded-full px-3 py-1.5 mt-auto'>
-                    <MdOutlineLocationOn className='text-sm'/>
-                    <span className="truncate max-w-[200px]">
-                        {visitedLocation.join(', ')}
-                    </span>
-                </div>
-            ) : (
-                <div className='inline-flex items-center gap-2 text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-full px-3 py-1.5 mt-auto'>
-                    <MdOutlineLocationOn className='text-sm'/>
-                    <span>No location specified</span>
-                </div>
-            )}
+            <div className='flex gap-2 mt-auto'>
+                {hasLocation ? (
+                    <div className='inline-flex items-center gap-2 text-xs bg-cyan-50 dark:bg-cyan-900/40 text-cyan-600 dark:text-cyan-400 rounded-full px-3 py-1.5'>
+                        <MdOutlineLocationOn className='text-sm'/>
+                        <span className="truncate max-w-[200px]">
+                            {visitedLocation.join(', ')}
+                        </span>
+                    </div>
+                ) : (
+                    <div className='inline-flex items-center gap-2 text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-full px-3 py-1.5'>
+                        <MdOutlineLocationOn className='text-sm'/>
+                        <span>No location specified</span>
+                    </div>
+                )}
+                
+                {showOnProfile && (
+                    <div className='inline-flex items-center gap-2 text-xs bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded-full px-3 py-1.5'>
+                        <MdPersonPin className='text-sm'/>
+                        <span>Public</span>
+                    </div>
+                )}
+            </div>
         </div>
     </motion.div>
   )

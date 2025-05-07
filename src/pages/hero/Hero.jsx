@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-scroll";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../utils/AuthContext";
+import { motion } from "framer-motion"; // Import motion from framer-motion
 import logo from "../../assets/images/logo.png";
 import preview from "../../assets/images/preview.png";
 import HowItWorks from "./HowItWorks";
@@ -7,8 +10,17 @@ import Stats from "./Stats";
 import About from "./About";
 import Footer from "./Footer";
 import { AiOutlineCloudServer } from "react-icons/ai";
+import { FiArrowRight } from "react-icons/fi"; // Import arrow icon for the button
 
 const Hero = () => {
+    const { isAuthenticated, loading } = useAuth();
+    const navigate = useNavigate();
+
+    // Function to handle navigation to dashboard
+    const goToDashboard = () => {
+        navigate('/dashboard');
+    };
+
     return (
         <div className="bg-gray-50">
             <header className="py-4 md:py-6">
@@ -27,26 +39,6 @@ const Hero = () => {
                                 </a>
                             </Link>
                         </div>
-
-                        {/* Mobile Hamburger Icon */}
-                        {/* <div className="flex lg:hidden">
-                            <button type="button" className="text-gray-900">
-                                <svg
-                                    className="w-7 h-7"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="1.5"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    ></path>
-                                </svg>
-                            </button>
-                        </div> */}
 
                         {/* Navbar items - Desktop */}
                         <div className="hidden lg:flex lg:ml-10 xl:ml-16 lg:items-center lg:justify-center lg:space-x-8 xl:space-x-16">
@@ -81,18 +73,7 @@ const Hero = () => {
                             </Link>
                         </div>
 
-                        {/* Navbar items - Mobile */}
-                        <div className="hidden lg:flex lg:ml-auto lg:items-center lg:space-x-8 xl:space-x-12">
-                            <a
-                                href="/login" // Updated to relative URL
-                                className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
-                            >
-                                {/* Sign in */}
-                            </a>
-                        </div>
-
                         <div className="flex items-center">
-
                             <a
                                 href="https://stats.uptimerobot.com/4klrGTjcP6"
                                 target="_blank"
@@ -108,7 +89,7 @@ const Hero = () => {
                                 rel="noopener noreferrer"
                                 className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
                             >
-                                <i class="bi bi-journal-code"></i>
+                                <i className="bi bi-journal-code"></i>
                             </a>
 
                             <a
@@ -117,7 +98,7 @@ const Hero = () => {
                                 rel="noopener noreferrer"
                                 className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
                             >
-                                <i class="bi bi-journal-richtext"></i>
+                                <i className="bi bi-journal-richtext"></i>
                             </a>
 
                             <a
@@ -129,7 +110,6 @@ const Hero = () => {
                                 <i className="bi bi-github"></i>
                             </a>
                         </div>
-
                     </div>
                 </div>
             </header>
@@ -148,30 +128,62 @@ const Hero = () => {
                                     and story is preserved forever.
                                 </p>
 
-                                {/* New button above the original button */}
                                 <div className="mt-6 sm:mt-6">
                                     <div className="flex flex-col sm:flex-row sm:relative items-center justify-center gap-3 sm:gap-0 sm:h-14">
-                                        <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
-                                            <a
-                                                href="/signUp"
-                                                className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
-                                            >
-                                                Create Free Account
-                                            </a>
-                                        </div>
+                                        {!loading && isAuthenticated ? (
+                                            <div className="w-full sm:w-auto sm:flex sm:items-center">
+                                                <motion.button
+                                                    onClick={goToDashboard}
+                                                    className="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3.5 text-lg font-bold text-white 
+                                                    bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700
+                                                    rounded-lg shadow-lg shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2
+                                                    font-pj transition-all duration-300"
+                                                    whileHover={{ scale: 1.03 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ 
+                                                        type: "spring", 
+                                                        stiffness: 400, 
+                                                        damping: 10 
+                                                    }}
+                                                >
+                                                    <motion.div 
+                                                        className="flex items-center"
+                                                        initial={{ gap: "0.5rem" }}
+                                                        whileHover={{ gap: "0.75rem" }}
+                                                    >
+                                                        <i className="bi bi-speedometer2 text-xl"></i>
+                                                        <span>Go to Your Dashboard</span>
+                                                        <FiArrowRight className="ml-1" />
+                                                    </motion.div>
+                                                </motion.button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
+                                                    <a
+                                                        href="/signUp"
+                                                        className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                                    >
+                                                        Create Free Account
+                                                    </a>
+                                                </div>
 
-                                        <div className="sm:absolute sm:inset-y-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 flex items-center text-gray-600 font-inter sm:mt-0 z-20">
-                                            <span className="mx-2">OR</span>
-                                        </div>
+                                                <div className="sm:absolute sm:inset-y-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 flex items-center text-gray-600 font-inter sm:mt-0 z-20">
+                                                    <span className="mx-2">OR</span>
+                                                </div>
 
-                                        <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
-                                            <a
-                                                href="/login"
-                                                className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
-                                            >
-                                                Log In
-                                            </a>
-                                        </div>
+                                                <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
+                                                    <a
+                                                        href="/login"
+                                                        className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                                    >
+                                                        Log In
+                                                    </a>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -291,7 +303,6 @@ const Hero = () => {
                             </p>
                         </div>
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                            {/* Service Cards */}
                             <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
                                 <img
                                     alt="Travel Logging"

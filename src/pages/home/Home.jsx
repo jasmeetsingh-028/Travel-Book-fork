@@ -370,6 +370,57 @@ const Home = () => {
     }
   };
 
+  // Handle updating showOnProfile status
+  const updateShowOnProfile = async (story) => {
+    try {
+      const { data } = await axiosInstance.put(`/toggle-show-on-profile/${story._id}`, {
+        showOnProfile: !story.showOnProfile
+      });
+      
+      if (data.story) {
+        // Update the story in the local state
+        setAllStories(prevStories => 
+          prevStories.map(s => 
+            s._id === story._id ? { ...s, showOnProfile: !s.showOnProfile } : s
+          )
+        );
+        
+        // Also update in IndexedDB for offline access
+        if ('indexedDB' in window) {
+          const openRequest = indexedDB.open('TravelBookOfflineDB', 1);
+          
+          openRequest.onsuccess = function(e) {
+            const db = e.target.result;
+            if (db.objectStoreNames.contains('stories')) {
+              const transaction = db.transaction('stories', 'readwrite');
+              const store = transaction.objectStore('stories');
+              
+              // Get the current story from IndexedDB
+              const getRequest = store.get(story._id);
+              
+              getRequest.onsuccess = function() {
+                if (getRequest.result) {
+                  // Update the story
+                  const updatedStory = { ...getRequest.result, showOnProfile: !story.showOnProfile };
+                  store.put(updatedStory);
+                }
+              };
+            }
+          };
+        }
+        
+        toast.success(story.showOnProfile ? 
+          'Story removed from your public profile' : 
+          'Story will now appear on your public profile');
+      } else {
+        toast.error('Failed to update profile visibility');
+      }
+    } catch (error) {
+      console.error('Error updating profile visibility:', error);
+      toast.error('Failed to update profile visibility');
+    }
+  };
+
   // On search
   const onSearchNote = async (query) => {
     setIsLoading(true);
@@ -1206,8 +1257,10 @@ const Home = () => {
                         date={item.visitedDate}
                         visitedLocation={item.visitedLocation}
                         isFavourite={item.isFavourite}
+                        showOnProfile={item.showOnProfile}
                         onClick={() => handleViewStory(item)}
                         onFavouriteClick={() => isOnline ? updateIsFavourite(item) : toast.error('You need to be online to update favorites')}
+                        onProfileToggleClick={() => isOnline ? updateShowOnProfile(item) : toast.error('You need to be online to update profile visibility')}
                         onShareClick={() => setShareModal({ isOpen: true, story: item })}
                       />
                     </motion.div>

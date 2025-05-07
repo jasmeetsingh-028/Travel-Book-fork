@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // Import motion from framer-motion
 // Remove Navbar import
 import Toaster from '../../components/Toaster';
 import ShareProfileModal from '../../components/Modals/ShareProfileModal'; // Add ShareProfileModal import
 import axiosInstance from '../../utils/axiosInstance';
 import { MdEdit, MdSave, MdCancel, MdCameraAlt, MdLocationOn, MdLink, MdPhone, MdEmail, 
   MdFavorite, MdMap, MdLibraryBooks, MdPublic, MdVisibility, MdVisibilityOff, 
-  MdNotifications, MdNotificationsOff, MdFacebook, MdOutlineMailOutline, MdShare } from 'react-icons/md';
+  MdNotifications, MdNotificationsOff, MdFacebook, MdOutlineMailOutline, MdShare, MdDashboard } from 'react-icons/md';
 import { FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FiArrowLeft } from 'react-icons/fi';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const Profile = () => {
@@ -276,17 +277,24 @@ const Profile = () => {
           </div>
         ) : (
           <>
-            {/* Back to Dashboard Button */}
+            {/* Enhanced Back to Dashboard Button */}
             <div className="mb-4">
-              <button
+              <motion.button
                 onClick={() => navigate('/dashboard')}
-                className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg transition duration-200"
+                className="flex items-center px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700
+                text-white rounded-lg shadow-md shadow-cyan-500/20 transition-all duration-300"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                </svg>
-                Back to Dashboard
-              </button>
+                <motion.div 
+                  className="flex items-center"
+                  initial={{ gap: "0.5rem" }}
+                  whileHover={{ gap: "0.75rem" }}
+                >
+                  <MdDashboard className="text-xl" />
+                  <span>Back to Dashboard</span>
+                </motion.div>
+              </motion.button>
             </div>
             
             <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
