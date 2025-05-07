@@ -90,9 +90,16 @@ const Login = () => {
             localStorage.removeItem("rememberedEmail");
           }
           
+          // Store the token first
           localStorage.setItem("token", response.data.accessToken);
+          
+          // Show success message
           toast.success("Successfully logged in! Welcome to your Travel Book!");
-          navigate("/dashboard");
+          
+          // Use a slight delay to ensure the token is properly stored before navigation
+          setTimeout(() => {
+            navigate("/dashboard", { replace: true });
+          }, 300);
         }
       }
     } catch (error) {
@@ -131,9 +138,16 @@ const Login = () => {
           localStorage.removeItem("rememberedEmail");
         }
         
+        // Store the token first
         localStorage.setItem("token", response.data.accessToken);
+        
+        // Show success message
         toast.success("Login successful! Welcome to your Travel Book!");
-        navigate("/dashboard");
+        
+        // Use a slight delay to ensure the token is properly stored before navigation
+        setTimeout(() => {
+          navigate("/dashboard", { replace: true });
+        }, 300);
       }
     } catch (error) {
       if (
