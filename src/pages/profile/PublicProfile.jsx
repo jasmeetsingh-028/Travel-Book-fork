@@ -270,8 +270,7 @@ const PublicProfile = () => {
                   
                   {recentStories.length === 0 ? (
                     <EmptyCard 
-                      icon={<MdLibraryBooks className="w-12 h-12 text-gray-400" />}
-                      title="No stories yet"
+                      imgSrc="/avatar-.png"
                       message={`${profileData.fullName || 'This user'} hasn't shared any travel stories yet.`}
                     />
                   ) : (
