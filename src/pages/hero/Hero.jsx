@@ -34,9 +34,13 @@ const Hero = () => {
                                 offset={-50} // Adjust the scroll position a little
                                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
                             >
-                                <a href="/">
-                                    <img className="w-auto h-12" src={logo} alt="logo" />
-                                </a>
+                                {/* Replaced nested <a> with direct image to prevent nesting error */}
+                                <img 
+                                    className="w-auto h-12 cursor-pointer" 
+                                    src={logo} 
+                                    alt="logo" 
+                                    onClick={() => navigate('/')}
+                                />
                             </Link>
                         </div>
 
