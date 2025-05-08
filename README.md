@@ -1,5 +1,5 @@
 # [Travel-Book](https://travelbook.sahilfolio.live/)
-![preview img](src/assets/images/overview.png)
+![preview img](src/assets/images/github.png)
 
 ### To check the status of the servers (Frontend server and Backend server) - [Click here](https://stats.uptimerobot.com/4klrGTjcP6)
 
