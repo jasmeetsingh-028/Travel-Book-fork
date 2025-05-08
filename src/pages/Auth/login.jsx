@@ -98,7 +98,7 @@ const Login = () => {
           
           // Use a slight delay to ensure the token is properly stored before navigation
           setTimeout(() => {
-            navigate("/home", { replace: true });
+            navigate("/dashboard", { replace: true });
           }, 300);
         }
       }
@@ -146,7 +146,7 @@ const Login = () => {
         
         // Use a slight delay to ensure the token is properly stored before navigation
         setTimeout(() => {
-          navigate("/home", { replace: true });
+          navigate("/dashboard", { replace: true });
         }, 300);
       }
     } catch (error) {
