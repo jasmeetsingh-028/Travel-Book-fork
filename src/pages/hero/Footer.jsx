@@ -63,11 +63,19 @@ const Footer = () => {
 
                         <ul className="mt-6 space-y-4">
                              <li>
-                                <a href="/signUp" title="" className="flex text-base text-black dark:text-white transition-all duration-200 hover:text-blue-600 dark:hover:text-blue-400 focus:text-blue-600"> Create Free Account </a>
+                                <a href="/signUp" title="" className="flex text-base text-black dark:text-white transition-all duration-200 hover:text-blue-600 dark:hover:text-blue-400 focus:text-blue-600"> Create Account </a>
                             </li>
 
                              <li>
                                 <a href="/login" title="" className="flex text-base text-black dark:text-white transition-all duration-200 hover:text-blue-600 dark:hover:text-blue-400 focus:text-blue-600"> Login </a>
+                            </li>
+
+                            <li>
+                                <a href="/terms" title="" className="flex text-base text-black dark:text-white transition-all duration-200 hover:text-blue-600 dark:hover:text-blue-400 focus:text-blue-600"> Terms of Services </a>
+                            </li>
+
+                            <li>
+                                <a href="/privacy-policy" title="" className="flex text-base text-black dark:text-white transition-all duration-200 hover:text-blue-600 dark:hover:text-blue-400 focus:text-blue-600"> Privacy Policy </a>
                             </li>
                             
                         </ul>

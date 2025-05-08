@@ -11,6 +11,8 @@ import { FaEnvelope, FaShieldAlt, FaArrowRight } from "react-icons/fa";
 import logo from "../../assets/images/logo.png";
 // Import the OTP verification component
 import OTPVerification from "../../components/Auth/OTPVerification";
+// Import useAuth hook
+import { useAuth } from "../../utils/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -29,6 +31,8 @@ const Login = () => {
   const [otpMode, setOtpMode] = useState(false); // true: login with OTP, false: login with password
 
   const navigate = useNavigate();
+  // Add the auth context
+  const { login: authLogin } = useAuth();
 
   // Load saved email if available
   useEffect(() => {
@@ -39,7 +43,6 @@ const Login = () => {
     }
   }, []);
 
-  // Modified to handle two login modes
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -90,16 +93,13 @@ const Login = () => {
             localStorage.removeItem("rememberedEmail");
           }
           
-          // Store the token first
-          localStorage.setItem("token", response.data.accessToken);
+          // Let authLogin handle the token storage and navigation
+          // The login function will navigate to dashboard automatically
+          authLogin(response.data.accessToken, response.data.user);
           
           // Show success message
           toast.success("Successfully logged in! Welcome to your Travel Book!");
-          
-          // Use a slight delay to ensure the token is properly stored before navigation
-          setTimeout(() => {
-            navigate("/dashboard", { replace: true });
-          }, 300);
+          // Remove explicit navigation - let AuthContext handle it
         }
       }
     } catch (error) {
@@ -121,13 +121,16 @@ const Login = () => {
 
   // Handle OTP verification
   const handleVerifyOtp = async (otp) => {
-    setVerifyingOtp(true);
-    setOtpError(null);
+    if (!otp || otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
 
+    setLoading(true);
     try {
       const response = await axiosInstance.post("/verify-login-otp", {
-        email,
-        otp
+        email: email,
+        otp: otp
       });
 
       if (response.data && response.data.accessToken) {
@@ -138,16 +141,12 @@ const Login = () => {
           localStorage.removeItem("rememberedEmail");
         }
         
-        // Store the token first
-        localStorage.setItem("token", response.data.accessToken);
+        // Let authLogin handle the token storage and navigation
+        authLogin(response.data.accessToken, response.data.user);
         
         // Show success message
-        toast.success("Login successful! Welcome to your Travel Book!");
-        
-        // Use a slight delay to ensure the token is properly stored before navigation
-        setTimeout(() => {
-          navigate("/dashboard", { replace: true });
-        }, 300);
+        toast.success("Successfully logged in! Welcome to your Travel Book!");
+        // Remove explicit navigation - let AuthContext handle it
       }
     } catch (error) {
       if (
@@ -162,7 +161,7 @@ const Login = () => {
         );
       }
     } finally {
-      setVerifyingOtp(false);
+      setLoading(false);
     }
   };
 
@@ -399,7 +398,7 @@ const Login = () => {
                 {/* Login button with animation */}
                 <motion.button 
                   type="submit" 
-                  className="btn-primary w-full py-3 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="btn-primary w-full py-3 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 dark:from-cyan-600 dark:to-cyan-700 dark:hover:from-cyan-700 dark:hover:to-cyan-800 text-white font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                   disabled={loading}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -429,7 +428,7 @@ const Login = () => {
                 {/* Create account button */}
                 <motion.button
                   type="button"
-                  className="w-full py-3 px-4 border border-cyan-500 dark:border-cyan-600 text-cyan-600 dark:text-cyan-400 rounded-lg font-medium hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-colors duration-300 flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 border border-cyan-500 dark:border-cyan-600 text-cyan-600 dark:text-cyan-400 rounded-lg font-medium hover:bg-cyan-50 dark:hover:bg-cyan-900/20 bg-transparent dark:bg-gray-700 transition-colors duration-300 flex items-center justify-center gap-2"
                   onClick={() => navigate("/signUp")}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

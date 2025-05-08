@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from './axiosInstance';
 import { toast } from 'sonner';
@@ -49,11 +49,17 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (token, user) => {
+  // Update login function to be a callback that can handle navigation
+  const login = useCallback((token, user, redirectPath = '/dashboard') => {
     localStorage.setItem('token', token);
     setCurrentUser(user);
     setIsAuthenticated(true);
-  };
+    
+    // Use a small timeout to ensure state is updated before navigation
+    setTimeout(() => {
+      navigate(redirectPath);
+    }, 300); // Increased from 100ms to 300ms
+  }, [navigate]);
 
   const logout = () => {
     localStorage.removeItem('token');
