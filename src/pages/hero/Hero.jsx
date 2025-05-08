@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-scroll";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
-import { motion } from "framer-motion"; // Import motion from framer-motion
+import { motion } from "framer-motion";
 import logo from "../../assets/images/logo.png";
 import preview from "../../assets/images/preview.png";
 import HowItWorks from "./HowItWorks";
@@ -10,7 +10,8 @@ import Stats from "./Stats";
 import About from "./About";
 import Footer from "./Footer";
 import { AiOutlineCloudServer } from "react-icons/ai";
-import { FiArrowRight } from "react-icons/fi"; // Import arrow icon for the button
+import { FiArrowRight } from "react-icons/fi";
+import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
 
 const Hero = () => {
     const { isAuthenticated, loading } = useAuth();
@@ -22,7 +23,7 @@ const Hero = () => {
     };
 
     return (
-        <div className="bg-gray-50">
+        <div className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
             <header className="py-4 md:py-6">
                 <div className="container px-4 mx-auto sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
@@ -32,7 +33,7 @@ const Hero = () => {
                                 smooth={true}
                                 duration={500}
                                 offset={-50} // Adjust the scroll position a little
-                                className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
+                                className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2"
                             >
                                 {/* Replaced nested <a> with direct image to prevent nesting error */}
                                 <img 
@@ -51,7 +52,7 @@ const Hero = () => {
                                 smooth={true}
                                 duration={500}
                                 offset={-50}
-                                className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
+                                className="cursor-pointer text-base font-medium text-gray-900 dark:text-gray-100 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2"
                             >
                                 About Travel-Book
                             </Link>
@@ -61,7 +62,7 @@ const Hero = () => {
                                 smooth={true}
                                 duration={500}
                                 offset={-50}
-                                className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
+                                className="cursor-pointer text-base font-medium text-gray-900 dark:text-gray-100 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2"
                             >
                                 How does it work?
                             </Link>
@@ -71,19 +72,20 @@ const Hero = () => {
                                 smooth={true}
                                 duration={500}
                                 offset={-50}
-                                className="cursor-pointer text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"
+                                className="cursor-pointer text-base font-medium text-gray-900 dark:text-gray-100 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2"
                             >
                                 Our Services
                             </Link>
                         </div>
 
                         <div className="flex items-center">
+                            <ThemeToggle /> {/* Added ThemeToggle component */}
                             <a
                                 href="https://stats.uptimerobot.com/4klrGTjcP6"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title="Server Status"
-                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <AiOutlineCloudServer className="w-8 h-8" />
                             </a>
@@ -91,7 +93,7 @@ const Hero = () => {
                                 href="https://travel-book-api-docs.hashnode.dev/travel-book-api-documentation"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <i className="bi bi-journal-code"></i>
                             </a>
@@ -100,7 +102,7 @@ const Hero = () => {
                                 href="https://medium.com/@sa_hilll94/travel-book-d9435771e23e"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <i className="bi bi-journal-richtext"></i>
                             </a>
@@ -109,7 +111,7 @@ const Hero = () => {
                                 href="https://github.com/Sahilll94/Travel-Book"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="ml-6 text-gray-900 hover:text-gray-600 text-2xl"
+                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <i className="bi bi-github"></i>
                             </a>
@@ -123,11 +125,11 @@ const Hero = () => {
                     <div className="grid max-w-lg grid-cols-1 mx-auto lg:max-w-full lg:items-center lg:grid-cols-2 gap-y-12 lg:gap-x-16">
                         <div>
                             <div className="text-center lg:text-left">
-                                <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:leading-tight lg:text-6xl font-pj">
+                                <h1 className="text-4xl font-bold leading-tight text-gray-900 dark:text-gray-100 sm:text-5xl sm:leading-tight lg:leading-tight lg:text-6xl font-pj">
                                     Share Your Journey Today with <b>TravelBook</b>, Where
                                     Adventures are preserved!
                                 </h1>
-                                <p className="mt-6 text-lg text-gray-600 sm:mt-6 font-inter">
+                                <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 sm:mt-6 font-inter">
                                     Record your travels with TravelBook: where each place, image,
                                     and story is preserved forever.
                                 </p>
@@ -174,7 +176,7 @@ const Hero = () => {
                                                     </a>
                                                 </div>
 
-                                                <div className="sm:absolute sm:inset-y-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 flex items-center text-gray-600 font-inter sm:mt-0 z-20">
+                                                <div className="sm:absolute sm:inset-y-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 flex items-center text-gray-600 dark:text-gray-300 font-inter sm:mt-0 z-20">
                                                     <span className="mx-2">OR</span>
                                                 </div>
 
@@ -194,10 +196,10 @@ const Hero = () => {
 
                             <div className="flex items-center justify-center mt-16 space-x-6 lg:justify-start sm:space-x-8">
                                 <div className="flex items-center">
-                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">
+                                    <p className="text-3xl font-medium text-gray-900 dark:text-gray-100 sm:text-4xl font-pj">
                                         294
                                     </p>
-                                    <p className="ml-3 text-sm text-gray-900 font-pj">
+                                    <p className="ml-3 text-sm text-gray-900 dark:text-gray-100 font-pj">
                                         Memories
                                         <br /> Delivered
                                     </p>
@@ -205,7 +207,7 @@ const Hero = () => {
 
                                 <div className="hidden sm:block">
                                     <svg
-                                        className="text-gray-400"
+                                        className="text-gray-400 dark:text-gray-600"
                                         width="16"
                                         height="39"
                                         viewBox="0 0 16 39"
@@ -247,10 +249,10 @@ const Hero = () => {
                                 </div>
 
                                 <div className="flex items-center">
-                                    <p className="text-3xl font-medium text-gray-900 sm:text-4xl font-pj">
+                                    <p className="text-3xl font-medium text-gray-900 dark:text-gray-100 sm:text-4xl font-pj">
                                         400+
                                     </p>
-                                    <p className="ml-3 text-sm text-gray-900 font-pj">
+                                    <p className="ml-3 text-sm text-gray-900 dark:text-gray-100 font-pj">
                                         Happy
                                         <br /> Traveller
                                     </p>
@@ -273,7 +275,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">Hey Travellers!</span>
+                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">Hey Travellers!</span>
             </span>
 
             <section id="about">
@@ -283,7 +285,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">How is it going?</span>
+                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">How is it going?</span>
             </span>
 
             <section id="how-it-works">
@@ -293,15 +295,15 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">How have you been?</span>
+                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">How have you been?</span>
             </span>
 
             <section id="services">
                 <div className="py-12">
                     <div className="container px-4 mx-auto sm:px-6 lg:px-8">
                         <div className="text-center">
-                            <h2 className="text-3xl font-bold text-gray-900">Our Services</h2>
-                            <p className="mt-4 text-lg text-gray-600">
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Our Services</h2>
+                            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
                                 TravelBook offers a range of services to make documenting your
                                 travels easy and enjoyable:
                             </p>
@@ -314,10 +316,10 @@ const Hero = () => {
                                     className="w-full h-72 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">
+                                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                                         Travel Logging
                                     </h3>
-                                    <p className="mt-2 text-base text-gray-600">
+                                    <p className="mt-2 text-base text-gray-600 dark:text-gray-300">
                                         Record each step of your journey with rich media and
                                         detailed entries.
                                     </p>
@@ -330,10 +332,10 @@ const Hero = () => {
                                     className="w-full h-72 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">
+                                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                                         Travel Sharing
                                     </h3>
-                                    <p className="mt-2 text-base text-gray-600">
+                                    <p className="mt-2 text-base text-gray-600 dark:text-gray-300">
                                         Share your journeys with friends and family instantly with
                                         TravelBook.
                                     </p>
@@ -346,10 +348,10 @@ const Hero = () => {
                                     className="w-full h-72 object-cover"
                                 />
                                 <div className="p-4">
-                                    <h3 className="text-lg font-medium text-gray-900">
+                                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                                         Travel Collaboration
                                     </h3>
-                                    <p className="mt-2 text-base text-gray-600">
+                                    <p className="mt-2 text-base text-gray-600 dark:text-gray-300">
                                         Collaborate on travel logs with fellow travelers to share
                                         your experiences.
                                     </p>
@@ -363,7 +365,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">
+                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">
                     Oh, So do you like the design?
                 </span>
             </span>
@@ -375,7 +377,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white px-6">
+                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">
                     Sign in to save your memories!
                 </span>
             </span>
