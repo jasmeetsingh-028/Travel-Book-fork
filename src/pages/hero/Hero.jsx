@@ -275,7 +275,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">Hey Travellers!</span>
+                <span className="relative z-10 bg-white dark:bg-gray-900 px-6">Hey Travellers!</span>
             </span>
 
             <section id="about">
@@ -285,7 +285,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">How is it going?</span>
+                <span className="relative z-10 bg-white dark:bg-gray-900 px-6">How is it going?</span>
             </span>
 
             <section id="how-it-works">
@@ -295,7 +295,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">How have you been?</span>
+                <span className="relative z-10 bg-white dark:bg-gray-900 px-6">How have you been?</span>
             </span>
 
             <section id="services">
@@ -365,7 +365,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">
+                <span className="relative z-10 bg-white dark:bg-gray-900 px-6">
                     Oh, So do you like the design?
                 </span>
             </span>
@@ -377,7 +377,7 @@ const Hero = () => {
             <span className="relative flex justify-center">
                 <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"></div>
 
-                <span className="relative z-10 bg-white dark:bg-gray-800 px-6">
+                <span className="relative z-10 bg-white dark:bg-gray-900 px-6">
                     Sign in to save your memories!
                 </span>
             </span>
