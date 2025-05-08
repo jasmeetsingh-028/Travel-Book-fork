@@ -9,11 +9,14 @@ import { registerSW } from 'virtual:pwa-register'
 // Initialize dark mode based on local storage preference
 const initializeDarkMode = () => {
   const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark' || 
-      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  if (savedTheme === 'dark') {
     document.documentElement.classList.add('dark');
   } else {
+    // Default to light mode
     document.documentElement.classList.remove('dark');
+    if (!savedTheme) {
+      localStorage.setItem('theme', 'light');
+    }
   }
 };
 
