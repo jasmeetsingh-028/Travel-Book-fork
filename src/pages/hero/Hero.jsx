@@ -197,7 +197,7 @@ const Hero = () => {
                             <div className="flex items-center justify-center mt-16 space-x-6 lg:justify-start sm:space-x-8">
                                 <div className="flex items-center">
                                     <p className="text-3xl font-medium text-gray-900 dark:text-gray-100 sm:text-4xl font-pj">
-                                        294
+                                        100
                                     </p>
                                     <p className="ml-3 text-sm text-gray-900 dark:text-gray-100 font-pj">
                                         Memories
@@ -250,7 +250,7 @@ const Hero = () => {
 
                                 <div className="flex items-center">
                                     <p className="text-3xl font-medium text-gray-900 dark:text-gray-100 sm:text-4xl font-pj">
-                                        400+
+                                        120+
                                     </p>
                                     <p className="ml-3 text-sm text-gray-900 dark:text-gray-100 font-pj">
                                         Happy
