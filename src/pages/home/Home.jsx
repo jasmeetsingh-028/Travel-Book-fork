@@ -18,6 +18,7 @@ import Toaster from '../../components/Toaster';
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
+import jsPDF from 'jspdf';
 import TravelAnalytics from '../../components/Cards/TravelAnalytics';
 
 // Import the Map component dynamically to improve initial loading performance
@@ -837,10 +838,72 @@ const Home = () => {
     const fileName = `${story.title.replace(/\s+/g, '_')}.${format}`;
     let fileContent = '';
 
-    switch (format) {
-      case 'pdf':
-        // Generate PDF content (using a library like jsPDF)
-        toast.info('PDF export is not implemented yet.');
+    switch (format) {      case 'pdf':
+        try {
+          const doc = new jsPDF();
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
+          const pageMargins = 20;
+          const textWidth = pageWidth - (pageMargins * 2);
+
+          let currentY = 20; // Starting Y position
+
+          // Add title
+          doc.setFontSize(20);
+          doc.setFont("helvetica", "bold");
+          const titleLines = doc.splitTextToSize(story.title, textWidth);
+          doc.text(titleLines, pageMargins, currentY);
+          currentY += 10 + (titleLines.length * 10); // Add spacing after title
+
+          // Add metadata
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "normal");
+          doc.text(`Location: ${story.visitedLocation.join(', ')}`, pageMargins, currentY);
+          currentY += 10;
+          doc.text(`Visit Date: ${moment(story.visitedDate).format("MMMM Do YYYY")}`, pageMargins, currentY);
+          currentY += 20;
+
+          // Add image
+          const imageWidth = textWidth;
+          const imageHeight = 100;
+          try {
+            doc.addImage(
+              story.imageUrl,
+              'JPEG',
+              pageMargins,
+              currentY,
+              imageWidth,
+              imageHeight,
+              undefined,
+              'FAST'
+            );
+            currentY += imageHeight + 20; // Add spacing after image
+          } catch (imgError) {
+            console.error('Error adding image to PDF:', imgError);
+            // Continue without image if there's an error
+            currentY += 10;
+          }
+
+          // Add story content
+          doc.setFontSize(12);
+          const storyLines = doc.splitTextToSize(story.story, textWidth);
+          
+          // Check if we need a new page for the content
+          if (currentY + (storyLines.length * 5) > pageHeight - pageMargins) {
+            doc.addPage();
+            currentY = pageMargins;
+          }
+
+          doc.text(storyLines, pageMargins, currentY);
+
+          // Save the PDF
+          const fileName = `${story.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_travel_story.pdf`;
+          doc.save(fileName);
+          toast.success('Travel story exported as PDF! 📄✨');
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+          toast.error('Failed to export PDF. Please try again.');
+        }
         return;
       case 'txt':
         fileContent = `Title: ${story.title}\nDate: ${moment(story.visitedDate).format('MMMM D, YYYY')}\n\n${story.story}`;

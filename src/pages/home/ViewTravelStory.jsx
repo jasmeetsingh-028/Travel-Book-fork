@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { GrMapLocation } from "react-icons/gr";
 import { MdUpdate, MdDeleteOutline, MdClose, MdShare, MdImage, MdOutlineZoomIn, MdLocationOn, MdFavorite, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import moment from "moment";
-import { toast } from 'sonner'; // Import toast but not Toaster
+import { toast } from 'sonner';
 import { 
     FacebookShareButton, TwitterShareButton, WhatsappShareButton, 
     LinkedinShareButton, EmailShareButton, TelegramShareButton,
@@ -19,8 +19,8 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
     const [showMap, setShowMap] = useState(false);
     const [activeTab, setActiveTab] = useState('story');
     const [isSmallScreen, setIsSmallScreen] = useState(false);
-    const imgRef = useRef(null);
-    
+    const imgRef = useRef(null);    // Check for screen size on mount and resize
+
     // Check for screen size on mount and resize
     useEffect(() => {
         const checkScreenSize = () => {
@@ -170,7 +170,7 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                                 <span className="hidden sm:inline ml-1">Edit</span>
                             </button>
 
-                            <button 
+                        <button 
                                 className="btn-small btn-delete flex items-center" 
                                 onClick={onDeleteClick}
                                 aria-label="Delete story"
@@ -252,12 +252,10 @@ const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => 
                             >
                                 <EmailIcon size={44} round />
                             </EmailShareButton>
-                            
-                            <TelegramShareButton
+                              <TelegramShareButton
                                 url={`${window.location.origin}/story/${storyInfo._id}`}
                                 title={`Check out my travel story: ${storyInfo.title}`}
-                            >
-                                <TelegramIcon size={44} round />
+                            >                                <TelegramIcon size={44} round />
                             </TelegramShareButton>
                         </div>
                     </motion.div>
