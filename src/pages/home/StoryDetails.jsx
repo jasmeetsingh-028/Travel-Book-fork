@@ -175,7 +175,7 @@ const StoryDetails = () => {
               exit={{ scale: 0.9, y: 20 }}
             >
               <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
-                <h3 className="text-lg font-medium dark:text-white">Instagram Story Preview (9:16)</h3>
+                <h3 className="text-lg font-medium dark:text-white">Just take a quick screenshot and post it to your story!</h3>
                 <button 
                   onClick={() => setShowInstagramPreview(false)}
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
