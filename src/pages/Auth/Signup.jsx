@@ -9,6 +9,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaShieldAlt, FaUser, FaArrowRight, FaCheck } from "react-icons/fa";
 import OTPVerification from "../../components/Auth/OTPVerification";
+import GoogleOAuthButton from "../../components/Auth/GoogleOAuthButtonNew";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -435,13 +436,21 @@ const Signup = () => {
                       <FaArrowRight />
                     </>
                   )}
-                </motion.button>
-
-                <div className="relative flex items-center justify-center">
+                </motion.button>                <div className="relative flex items-center justify-center">
                   <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
                   <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
                   <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
                 </div>
+                
+                {/* Google OAuth Button */}
+                <motion.div 
+                  className="mt-4 mb-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.3 }}
+                >
+                  <GoogleOAuthButton redirectPath="/dashboard" isSignUp={true} />
+                </motion.div>
 
                 <motion.button
                   type="button"

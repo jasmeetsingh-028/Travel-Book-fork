@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from './axiosInstance';
 import { toast } from 'sonner';
+import { onAuthStateChangedListener, signOutUser } from './firebase';
 
 const AuthContext = createContext(null);
 
@@ -61,13 +62,15 @@ export const AuthProvider = ({ children }) => {
     }, 300); // Increased from 100ms to 300ms
   }, [navigate]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     setCurrentUser(null);
     setIsAuthenticated(false);
+    // Also sign out from Firebase if the user was authenticated with Google
+    signOutUser().catch(error => console.error("Firebase sign out error:", error));
     navigate('/login');
     toast.info("You have been logged out");
-  };
+  }, [navigate]);
 
   const authValue = {
     currentUser,

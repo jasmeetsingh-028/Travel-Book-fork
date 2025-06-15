@@ -36,6 +36,7 @@ const GoogleOAuthButton = ({ redirectPath = '/dashboard', isSignUp = false }) =>
       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" 
     }
   };
+
   const handleGoogleSignIn = async (e) => {
     if (isLoading) return;
     
@@ -85,8 +86,10 @@ const GoogleOAuthButton = ({ redirectPath = '/dashboard', isSignUp = false }) =>
       setIsLoading(false);
     }
   };
-    return (
+  
+  return (
     <motion.button
+      ref={buttonRef}
       onClick={handleGoogleSignIn}
       disabled={isLoading}
       className="w-full py-3.5 flex items-center justify-center gap-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-white font-medium shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 overflow-hidden relative group"
@@ -94,11 +97,35 @@ const GoogleOAuthButton = ({ redirectPath = '/dashboard', isSignUp = false }) =>
       initial="initial"
       whileHover="hover"
       whileTap="tap"
-      ref={buttonRef}
     >
       {/* Background hover effect */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        {/* Loading spinner or Google icon */}
+      
+      {/* Ripple effect */}
+      <AnimatePresence>
+        {ripples.map(ripple => (
+          <motion.span
+            key={ripple.id}
+            initial={{ opacity: 0.7, scale: 0 }}
+            animate={{ opacity: 0, scale: 4 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            style={{ 
+              position: 'absolute', 
+              top: ripple.y, 
+              left: ripple.x, 
+              transform: 'translate(-50%, -50%)',
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(6, 182, 212, 0.3)',
+              zIndex: 5
+            }}
+          />
+        ))}
+      </AnimatePresence>
+      
+      {/* Loading spinner or Google icon */}
       <div className="relative z-10 flex items-center justify-center">
         {isLoading ? (
           <div className="flex items-center justify-center">
@@ -112,7 +139,8 @@ const GoogleOAuthButton = ({ redirectPath = '/dashboard', isSignUp = false }) =>
               <span className="text-cyan-600 dark:text-cyan-400 text-sm font-medium">Connecting...</span>
             </motion.div>
           </div>
-        ) : (<div className="flex items-center justify-center bg-white rounded-full w-7 h-7 shadow-md transition-transform duration-300 group-hover:scale-110">
+        ) : (
+          <div className="flex items-center justify-center bg-white rounded-full w-7 h-7 shadow-md transition-transform duration-300 group-hover:scale-110">
             {/* Google "G" logo with official colors */}
             <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -123,14 +151,16 @@ const GoogleOAuthButton = ({ redirectPath = '/dashboard', isSignUp = false }) =>
           </div>
         )}
       </div>
-        {/* Button text */}
+      
+      {/* Button text */}
       <span className={`text-base font-medium relative z-10 transition-all duration-300 ${isLoading ? 'opacity-0' : 'group-hover:translate-x-1'}`}>
         {isSignUp 
           ? 'Sign up with Google' 
           : 'Sign in with Google'
         }
       </span>
-        {/* Subtle right arrow icon that appears on hover */}
+      
+      {/* Subtle right arrow icon that appears on hover */}
       <motion.span 
         className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
         initial={{ x: -5 }}
@@ -138,28 +168,6 @@ const GoogleOAuthButton = ({ redirectPath = '/dashboard', isSignUp = false }) =>
       >
         →
       </motion.span>
-      {/* Render ripples */}
-      <div className="absolute inset-0 pointer-events-none">
-        <AnimatePresence>
-          {ripples.map((ripple) => (
-            <motion.span
-              key={ripple.id}
-              className="absolute rounded-full bg-cyan-500 opacity-75"
-              style={{
-                left: ripple.x,
-                top: ripple.y,
-                width: 100,
-                height: 100,
-                translate: '-50% -50%',
-              }}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1, opacity: 0 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ duration: 0.6 }}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
     </motion.button>
   );
 };

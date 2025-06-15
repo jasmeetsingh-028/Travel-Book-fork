@@ -19,6 +19,7 @@
     "daisyui": "^4.12.23",
     "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.5",
+    "firebase": "^11.9.1",
     "framer-motion": "^12.9.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
