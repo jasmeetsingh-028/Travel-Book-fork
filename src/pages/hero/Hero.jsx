@@ -90,7 +90,7 @@ const Hero = () => {
                                 <AiOutlineCloudServer className="w-8 h-8" />
                             </a>
                             <a
-                                href="https://travel-book-api-docs.hashnode.dev/travel-book-api-documentation"
+                                href="http://docs.travelbook.sahilfolio.live/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
@@ -99,7 +99,7 @@ const Hero = () => {
                             </a>
 
                             <a
-                                href="https://medium.com/@sa_hilll94/travel-book-d9435771e23e"
+                                href="http://medium.travelbook.sahilfolio.live/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
