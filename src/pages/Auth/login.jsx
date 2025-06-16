@@ -11,8 +11,8 @@ import { FaEnvelope, FaShieldAlt, FaArrowRight } from "react-icons/fa";
 import logo from "../../assets/images/logo.png";
 // Import the OTP verification component
 import OTPVerification from "../../components/Auth/OTPVerification";
-// Import GoogleOAuthButton component
-import GoogleOAuthButton from "../../components/Auth/GoogleOAuthButtonNew";
+// Import Social Login Buttons component
+import SocialLoginButtons from "../../components/Auth/SocialLoginButtons";
 // Import useAuth hook
 import { useAuth } from "../../utils/AuthContext";
 
@@ -381,9 +381,7 @@ const Login = () => {
                   >
                     Forgot password?
                   </Link>
-                </div>
-
-                {/* Error message with animation */}
+                </div>                {/* Error message with animation */}
                 <AnimatePresence>
                   {error && (
                     <motion.div
@@ -419,20 +417,16 @@ const Login = () => {
                       <FaArrowRight />
                     </>
                   )}
-                </motion.button>                <div className="relative flex items-center justify-center">
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                  <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                </div>
+                </motion.button>
 
-                {/* Google OAuth Button */}
+                {/* Social Login Buttons */}
                 <motion.div 
-                  className="mt-4"
+                  className="mt-6 mb-6"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.3 }}
                 >
-                  <GoogleOAuthButton redirectPath="/dashboard" isSignUp={false} />
+                  <SocialLoginButtons redirectPath="/dashboard" isSignUp={false} />
                 </motion.div>
 
                 {/* Create account button */}

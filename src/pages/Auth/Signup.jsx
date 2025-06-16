@@ -9,7 +9,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaShieldAlt, FaUser, FaArrowRight, FaCheck } from "react-icons/fa";
 import OTPVerification from "../../components/Auth/OTPVerification";
-import GoogleOAuthButton from "../../components/Auth/GoogleOAuthButtonNew";
+import SocialLoginButtons from "../../components/Auth/SocialLoginButtons";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -427,8 +427,7 @@ const Signup = () => {
                       <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span>Creating account...</span>
+                      </svg>                      <span>Creating account...</span>
                     </>
                   ) : (
                     <>
@@ -436,20 +435,16 @@ const Signup = () => {
                       <FaArrowRight />
                     </>
                   )}
-                </motion.button>                <div className="relative flex items-center justify-center">
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                  <span className="flex-shrink mx-4 text-sm text-gray-500 dark:text-gray-400">or</span>
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                </div>
+                </motion.button>
                 
-                {/* Google OAuth Button */}
+                {/* Social Login Buttons */}
                 <motion.div 
-                  className="mt-4 mb-4"
+                  className="mt-6 mb-6"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.3 }}
                 >
-                  <GoogleOAuthButton redirectPath="/dashboard" isSignUp={true} />
+                  <SocialLoginButtons redirectPath="/dashboard" isSignUp={true} />
                 </motion.div>
 
                 <motion.button

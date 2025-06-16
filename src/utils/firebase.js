@@ -3,9 +3,13 @@ import { initializeApp } from 'firebase/app';
 import { 
   getAuth, 
   GoogleAuthProvider, 
+  GithubAuthProvider,
   signInWithPopup, 
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
+  EmailAuthProvider
 } from 'firebase/auth';
 
 // Your Firebase configuration
@@ -25,25 +29,99 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 // Configure Google provider (optional settings)
 googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
 
+// Configure GitHub provider (optional settings)
+githubProvider.setCustomParameters({
+  allow_signup: 'true'
+});
+
+// Add scopes to GitHub provider
+githubProvider.addScope('user:email');
+githubProvider.addScope('read:user');
+
 // Google sign-in function
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    
+    // Get the Firebase ID token
+    const idToken = await user.getIdToken();
+    
     // The user info from Google
     return {
-      user: result.user,
+      user,
+      idToken,
       // The Google OAuth access token (can be used to access Google APIs)
       credential: GoogleAuthProvider.credentialFromResult(result)
     };
   } catch (error) {
     // Handle Errors here.
     console.error("Google sign-in error:", error);
+    
+    // If the error is about accounts with different credentials,
+    // store the pending credential for later linking
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      const pendingCred = GoogleAuthProvider.credentialFromError(error);
+      
+      // Store for later use if needed
+      if (pendingCred) {
+        sessionStorage.setItem('pendingCredential', JSON.stringify({
+          providerId: pendingCred.providerId,
+          signInMethod: pendingCred.signInMethod,
+          email: error.customData?.email
+        }));
+      }
+    }
+    
+    throw error;
+  }
+};
+
+// GitHub sign-in function
+export const signInWithGithub = async () => {
+  try {
+    // Configure GitHub provider to get email
+    githubProvider.addScope('user:email');
+    
+    const result = await signInWithPopup(auth, githubProvider);
+    const user = result.user;
+    
+    // Get the Firebase ID token
+    const idToken = await user.getIdToken();
+    
+    // The user info from GitHub
+    return {
+      user,
+      idToken,
+      // The GitHub OAuth access token (can be used to access GitHub APIs)
+      credential: GithubAuthProvider.credentialFromResult(result)
+    };
+  } catch (error) {
+    // Handle Errors here.
+    console.error("GitHub sign-in error:", error);
+    
+    // If the error is about accounts with different credentials,
+    // store the pending credential for later linking
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      const pendingCred = GithubAuthProvider.credentialFromError(error);
+      
+      // Store for later use if needed
+      if (pendingCred) {
+        sessionStorage.setItem('pendingCredential', JSON.stringify({
+          providerId: pendingCred.providerId,
+          signInMethod: pendingCred.signInMethod,
+          email: error.customData?.email
+        }));
+      }
+    }
+    
     throw error;
   }
 };
@@ -64,4 +142,92 @@ export const onAuthStateChangedListener = (callback) => {
   return onAuthStateChanged(auth, callback);
 };
 
-export { auth, googleProvider };
+// Function to check if an email already exists and return sign-in methods
+export const checkExistingAccount = async (email) => {
+  try {
+    const methods = await fetchSignInMethodsForEmail(auth, email);
+    return methods;
+  } catch (error) {
+    console.error("Error checking existing account:", error);
+    throw error;
+  }
+};
+
+/**
+ * Gets the provider name from the sign-in method string
+ * @param {string} method - The sign-in method string from Firebase
+ * @returns {string} The provider name (Google, GitHub, Email, etc.)
+ */
+export const getProviderFromMethod = (method) => {
+  switch(method) {
+    case 'google.com':
+      return 'Google';
+    case 'github.com':
+      return 'GitHub';
+    case 'password':
+      return 'Email/Password';
+    case 'phone':
+      return 'Phone';
+    default:
+      return method;
+  }
+};
+
+/**
+ * Attempt to link a new provider to an existing account
+ * This is useful when a user has accounts with different providers but the same email
+ * @param {object} currentUser - The currently logged-in Firebase user
+ * @param {object} credential - The credential from the new provider
+ * @returns {Promise<object>} The linked user account
+ */
+export const linkAccounts = async (currentUser, credential) => {
+  try {
+    const result = await linkWithCredential(currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error("Error linking accounts:", error);
+    throw error;
+  }
+};
+
+/**
+ * Link GitHub provider to an existing Google account
+ * @param {Object} credential - The GitHub auth credential
+ * @returns {Promise<Object>} - Promise resolving to the linked user
+ */
+export const linkGithubToGoogleAccount = async (credential) => {
+  try {
+    if (!auth.currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    // Link the GitHub credential to the current user
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error('Error linking GitHub account:', error);
+    throw error;
+  }
+};
+
+/**
+ * Link Google provider to an existing GitHub account
+ * @param {Object} credential - The Google auth credential
+ * @returns {Promise<Object>} - Promise resolving to the linked user
+ */
+export const linkGoogleToGithubAccount = async (credential) => {
+  try {
+    if (!auth.currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    // Link the Google credential to the current user
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error('Error linking Google account:', error);
+    throw error;
+  }
+};
+
+export { auth, googleProvider, githubProvider };
