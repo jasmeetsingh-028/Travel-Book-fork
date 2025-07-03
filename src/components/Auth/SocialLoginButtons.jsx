@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import SocialButtonCircle from './SocialButtonCircle';
 import GithubButtonCircle from './GithubButtonCircle';
+import TwitterButtonCircle from './TwitterButtonCircle';
 
 const SocialLoginButtons = ({ isSignUp = false, redirectPath = '/dashboard' }) => {
   return (
@@ -42,6 +43,17 @@ const SocialLoginButtons = ({ isSignUp = false, redirectPath = '/dashboard' }) =
           transition={{ duration: 0.3, delay: 0.1 }}
         >
           <GithubButtonCircle 
+            isSignUp={isSignUp} 
+            redirectPath={redirectPath}
+          />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <TwitterButtonCircle 
             isSignUp={isSignUp} 
             redirectPath={redirectPath}
           />

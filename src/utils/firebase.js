@@ -4,6 +4,7 @@ import {
   getAuth, 
   GoogleAuthProvider, 
   GithubAuthProvider,
+  TwitterAuthProvider,
   signInWithPopup, 
   signOut,
   onAuthStateChanged,
@@ -30,6 +31,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
+const twitterProvider = new TwitterAuthProvider();
 
 // Configure Google provider (optional settings)
 googleProvider.setCustomParameters({
@@ -39,6 +41,11 @@ googleProvider.setCustomParameters({
 // Configure GitHub provider (optional settings)
 githubProvider.setCustomParameters({
   allow_signup: 'true'
+});
+
+// Configure Twitter provider (optional settings)
+twitterProvider.setCustomParameters({
+  'lang': 'en'
 });
 
 // Add scopes to GitHub provider
@@ -126,6 +133,45 @@ export const signInWithGithub = async () => {
   }
 };
 
+// Twitter sign-in function
+export const signInWithTwitter = async () => {
+  try {
+    const result = await signInWithPopup(auth, twitterProvider);
+    const user = result.user;
+    
+    // Get the Firebase ID token
+    const idToken = await user.getIdToken();
+    
+    // The user info from Twitter
+    return {
+      user,
+      idToken,
+      // The Twitter OAuth access token (can be used to access Twitter APIs)
+      credential: TwitterAuthProvider.credentialFromResult(result)
+    };
+  } catch (error) {
+    // Handle Errors here.
+    console.error("Twitter sign-in error:", error);
+    
+    // If the error is about accounts with different credentials,
+    // store the pending credential for later linking
+    if (error.code === 'auth/account-exists-with-different-credential') {
+      const pendingCred = TwitterAuthProvider.credentialFromError(error);
+      
+      // Store for later use if needed
+      if (pendingCred) {
+        sessionStorage.setItem('pendingCredential', JSON.stringify({
+          providerId: pendingCred.providerId,
+          signInMethod: pendingCred.signInMethod,
+          email: error.customData?.email
+        }));
+      }
+    }
+    
+    throw error;
+  }
+};
+
 // Sign out function
 export const signOutUser = async () => {
   try {
@@ -164,6 +210,8 @@ export const getProviderFromMethod = (method) => {
       return 'Google';
     case 'github.com':
       return 'GitHub';
+    case 'twitter.com':
+      return 'Twitter';
     case 'password':
       return 'Email/Password';
     case 'phone':
@@ -230,4 +278,84 @@ export const linkGoogleToGithubAccount = async (credential) => {
   }
 };
 
-export { auth, googleProvider, githubProvider };
+/**
+ * Link Twitter provider to an existing Google account
+ * @param {Object} credential - The Twitter auth credential
+ * @returns {Promise<Object>} - Promise resolving to the linked user
+ */
+export const linkTwitterToGoogleAccount = async (credential) => {
+  try {
+    if (!auth.currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    // Link the Twitter credential to the current user
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error('Error linking Twitter account:', error);
+    throw error;
+  }
+};
+
+/**
+ * Link Twitter provider to an existing GitHub account
+ * @param {Object} credential - The Twitter auth credential
+ * @returns {Promise<Object>} - Promise resolving to the linked user
+ */
+export const linkTwitterToGithubAccount = async (credential) => {
+  try {
+    if (!auth.currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    // Link the Twitter credential to the current user
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error('Error linking Twitter account:', error);
+    throw error;
+  }
+};
+
+/**
+ * Link Google provider to an existing Twitter account
+ * @param {Object} credential - The Google auth credential
+ * @returns {Promise<Object>} - Promise resolving to the linked user
+ */
+export const linkGoogleToTwitterAccount = async (credential) => {
+  try {
+    if (!auth.currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    // Link the Google credential to the current user
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error('Error linking Google account:', error);
+    throw error;
+  }
+};
+
+/**
+ * Link GitHub provider to an existing Twitter account
+ * @param {Object} credential - The GitHub auth credential
+ * @returns {Promise<Object>} - Promise resolving to the linked user
+ */
+export const linkGithubToTwitterAccount = async (credential) => {
+  try {
+    if (!auth.currentUser) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    // Link the GitHub credential to the current user
+    const result = await linkWithCredential(auth.currentUser, credential);
+    return result.user;
+  } catch (error) {
+    console.error('Error linking GitHub account:', error);
+    throw error;
+  }
+};
+
+export { auth, googleProvider, githubProvider, twitterProvider };

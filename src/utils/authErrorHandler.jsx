@@ -28,7 +28,8 @@ export const handleAuthError = async (error, providerName = 'this') => {
             });
           } else {
             // Fallback if we can't determine the provider
-            const suggestion = providerName.toLowerCase() === 'github' ? 'Google' : 'GitHub';
+            const suggestion = providerName.toLowerCase() === 'github' ? 'Google' : 
+                              providerName.toLowerCase() === 'twitter' ? 'Google' : 'GitHub';
             
             toast.error(`Account already exists with email ${email}`, {
               duration: 8000,
