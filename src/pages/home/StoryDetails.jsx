@@ -23,7 +23,7 @@ const StoryDetails = () => {
     const fetchStory = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://api.travelbook.sahilfolio.live/api/story/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}api/story/${id}`);
         
         if (!response.ok) {
           throw new Error("Unable to fetch story details");
