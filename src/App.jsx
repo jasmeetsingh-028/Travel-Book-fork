@@ -24,6 +24,7 @@ const Profile = lazy(() => import('./pages/profile/Profile.jsx'));
 const PublicProfile = lazy(() => import('./pages/profile/PublicProfile.jsx'));
 const Contributors = lazy(() => import('./pages/Contributors/Contributors.jsx'));
 const ContributorForm = lazy(() => import('./pages/Contributors/ContributorForm.jsx'));
+const AdminContributors = lazy(() => import('./pages/admin/AdminContributors.jsx'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -56,6 +57,7 @@ const App = () => {
                 <Route path="/public-profile/:userId" exact element={<PublicProfile />} />
                 <Route path="/contributors" exact element={<Contributors />} />
                 <Route path="/contribute" exact element={<ContributorForm />} />
+                <Route path="/admin/contributors" exact element={<ProtectedRoute><AdminContributors /></ProtectedRoute>} />
                 <Route path="*" exact element={<Mistake />} />
                 <Route path="/story/:id" element={<StoryDetails />} />
               </Routes>

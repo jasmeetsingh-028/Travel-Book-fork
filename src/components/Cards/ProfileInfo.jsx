@@ -29,6 +29,14 @@ const ProfileInfo = ({ userInfo, onLogout }) => {
                     <Link to="/profile" className="text-sm font-medium hover:text-cyan-600 transition-colors">
                         {userInfo && userInfo.fullName ? userInfo.fullName : ""}
                     </Link>
+                    {userInfo?.email === 'sahilk64555@gmail.com' && (
+                        <Link 
+                            to="/admin/contributors" 
+                            className="block text-xs text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors"
+                        >
+                            Admin Panel
+                        </Link>
+                    )}
                     <button className="block text-sm text-slate-700 dark:text-slate-300 underline" onClick={onLogout}>
                         Logout
                     </button>
