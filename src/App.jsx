@@ -22,6 +22,8 @@ const Terms = lazy(() => import('./pages/legal/Terms.jsx'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy.jsx'));
 const Profile = lazy(() => import('./pages/profile/Profile.jsx'));
 const PublicProfile = lazy(() => import('./pages/profile/PublicProfile.jsx'));
+const Contributors = lazy(() => import('./pages/Contributors/Contributors.jsx'));
+const ContributorForm = lazy(() => import('./pages/Contributors/ContributorForm.jsx'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -52,6 +54,8 @@ const App = () => {
                 <Route path="/privacy-policy" exact element={<PrivacyPolicy />} />
                 <Route path="/profile" exact element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/public-profile/:userId" exact element={<PublicProfile />} />
+                <Route path="/contributors" exact element={<Contributors />} />
+                <Route path="/contribute" exact element={<ContributorForm />} />
                 <Route path="*" exact element={<Mistake />} />
                 <Route path="/story/:id" element={<StoryDetails />} />
               </Routes>
