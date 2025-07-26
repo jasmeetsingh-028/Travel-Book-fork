@@ -13,6 +13,15 @@ import {
   EmailAuthProvider
 } from 'firebase/auth';
 
+import { IS_MOCK_MODE } from './constants';
+import { 
+  signInWithGooglePopup as mockSignInWithGoogle,
+  signInWithGitHubPopup as mockSignInWithGithub,
+  signInWithTwitterPopup as mockSignInWithTwitter,
+  signOutUser as mockSignOutUser,
+  onAuthStateChangedListener as mockOnAuthStateChangedListener
+} from './mockFirebase';
+
 // Your Firebase configuration
 // Replace these values with your actual Firebase project config
 // You'll need to create a Firebase project and get these values from the Firebase console
@@ -26,34 +35,42 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
-const twitterProvider = new TwitterAuthProvider();
+// Initialize Firebase only if not in mock mode and config is available
+let auth, googleProvider, githubProvider, twitterProvider;
 
-// Configure Google provider (optional settings)
-googleProvider.setCustomParameters({
-  prompt: 'select_account'
-});
+if (!IS_MOCK_MODE && firebaseConfig.apiKey) {
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+  githubProvider = new GithubAuthProvider();
+  twitterProvider = new TwitterAuthProvider();
 
-// Configure GitHub provider (optional settings)
-githubProvider.setCustomParameters({
-  allow_signup: 'true'
-});
+  // Configure Google provider (optional settings)
+  googleProvider.setCustomParameters({
+    prompt: 'select_account'
+  });
 
-// Configure Twitter provider (optional settings)
-twitterProvider.setCustomParameters({
-  'lang': 'en'
-});
+  // Configure GitHub provider (optional settings)
+  githubProvider.setCustomParameters({
+    allow_signup: 'true'
+  });
 
-// Add scopes to GitHub provider
-githubProvider.addScope('user:email');
-githubProvider.addScope('read:user');
+  // Configure Twitter provider (optional settings)
+  twitterProvider.setCustomParameters({
+    'lang': 'en'
+  });
+
+  // Add scopes to GitHub provider
+  githubProvider.addScope('user:email');
+  githubProvider.addScope('read:user');
+}
 
 // Google sign-in function
 export const signInWithGoogle = async () => {
+  if (IS_MOCK_MODE) {
+    return await mockSignInWithGoogle();
+  }
+
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
@@ -93,6 +110,10 @@ export const signInWithGoogle = async () => {
 
 // GitHub sign-in function
 export const signInWithGithub = async () => {
+  if (IS_MOCK_MODE) {
+    return await mockSignInWithGithub();
+  }
+
   try {
     // Configure GitHub provider to get email
     githubProvider.addScope('user:email');
@@ -135,6 +156,10 @@ export const signInWithGithub = async () => {
 
 // Twitter sign-in function
 export const signInWithTwitter = async () => {
+  if (IS_MOCK_MODE) {
+    return await mockSignInWithTwitter();
+  }
+
   try {
     const result = await signInWithPopup(auth, twitterProvider);
     const user = result.user;
@@ -174,6 +199,10 @@ export const signInWithTwitter = async () => {
 
 // Sign out function
 export const signOutUser = async () => {
+  if (IS_MOCK_MODE) {
+    return await mockSignOutUser();
+  }
+
   try {
     await signOut(auth);
     return true;
@@ -185,11 +214,20 @@ export const signOutUser = async () => {
 
 // Auth state listener
 export const onAuthStateChangedListener = (callback) => {
+  if (IS_MOCK_MODE) {
+    return mockOnAuthStateChangedListener(callback);
+  }
+
   return onAuthStateChanged(auth, callback);
 };
 
 // Function to check if an email already exists and return sign-in methods
 export const checkExistingAccount = async (email) => {
+  if (IS_MOCK_MODE) {
+    // Mock implementation - return empty array (no existing methods)
+    return [];
+  }
+
   try {
     const methods = await fetchSignInMethodsForEmail(auth, email);
     return methods;
@@ -229,6 +267,11 @@ export const getProviderFromMethod = (method) => {
  * @returns {Promise<object>} The linked user account
  */
 export const linkAccounts = async (currentUser, credential) => {
+  if (IS_MOCK_MODE) {
+    // Mock implementation - just return the current user
+    return currentUser;
+  }
+
   try {
     const result = await linkWithCredential(currentUser, credential);
     return result.user;
@@ -238,18 +281,15 @@ export const linkAccounts = async (currentUser, credential) => {
   }
 };
 
-/**
- * Link GitHub provider to an existing Google account
- * @param {Object} credential - The GitHub auth credential
- * @returns {Promise<Object>} - Promise resolving to the linked user
- */
+// For all the link functions, add mock mode support
 export const linkGithubToGoogleAccount = async (credential) => {
+  if (IS_MOCK_MODE) return null;
+  
   try {
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
     
-    // Link the GitHub credential to the current user
     const result = await linkWithCredential(auth.currentUser, credential);
     return result.user;
   } catch (error) {
@@ -258,18 +298,14 @@ export const linkGithubToGoogleAccount = async (credential) => {
   }
 };
 
-/**
- * Link Google provider to an existing GitHub account
- * @param {Object} credential - The Google auth credential
- * @returns {Promise<Object>} - Promise resolving to the linked user
- */
 export const linkGoogleToGithubAccount = async (credential) => {
+  if (IS_MOCK_MODE) return null;
+  
   try {
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
     
-    // Link the Google credential to the current user
     const result = await linkWithCredential(auth.currentUser, credential);
     return result.user;
   } catch (error) {
@@ -278,18 +314,14 @@ export const linkGoogleToGithubAccount = async (credential) => {
   }
 };
 
-/**
- * Link Twitter provider to an existing Google account
- * @param {Object} credential - The Twitter auth credential
- * @returns {Promise<Object>} - Promise resolving to the linked user
- */
 export const linkTwitterToGoogleAccount = async (credential) => {
+  if (IS_MOCK_MODE) return null;
+  
   try {
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
     
-    // Link the Twitter credential to the current user
     const result = await linkWithCredential(auth.currentUser, credential);
     return result.user;
   } catch (error) {
@@ -298,18 +330,14 @@ export const linkTwitterToGoogleAccount = async (credential) => {
   }
 };
 
-/**
- * Link Twitter provider to an existing GitHub account
- * @param {Object} credential - The Twitter auth credential
- * @returns {Promise<Object>} - Promise resolving to the linked user
- */
 export const linkTwitterToGithubAccount = async (credential) => {
+  if (IS_MOCK_MODE) return null;
+  
   try {
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
     
-    // Link the Twitter credential to the current user
     const result = await linkWithCredential(auth.currentUser, credential);
     return result.user;
   } catch (error) {
@@ -318,18 +346,14 @@ export const linkTwitterToGithubAccount = async (credential) => {
   }
 };
 
-/**
- * Link Google provider to an existing Twitter account
- * @param {Object} credential - The Google auth credential
- * @returns {Promise<Object>} - Promise resolving to the linked user
- */
 export const linkGoogleToTwitterAccount = async (credential) => {
+  if (IS_MOCK_MODE) return null;
+  
   try {
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
     
-    // Link the Google credential to the current user
     const result = await linkWithCredential(auth.currentUser, credential);
     return result.user;
   } catch (error) {
@@ -338,18 +362,14 @@ export const linkGoogleToTwitterAccount = async (credential) => {
   }
 };
 
-/**
- * Link GitHub provider to an existing Twitter account
- * @param {Object} credential - The GitHub auth credential
- * @returns {Promise<Object>} - Promise resolving to the linked user
- */
 export const linkGithubToTwitterAccount = async (credential) => {
+  if (IS_MOCK_MODE) return null;
+  
   try {
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
     
-    // Link the GitHub credential to the current user
     const result = await linkWithCredential(auth.currentUser, credential);
     return result.user;
   } catch (error) {

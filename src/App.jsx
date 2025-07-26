@@ -5,6 +5,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import 'sonner/dist/styles.css'; 
 import { AuthProvider } from './utils/AuthContext';
 import ProtectedRoute from './utils/ProtectedRoute';
+import MockModeNotification from './components/MockModeNotification';
+import MockDataBadge from './components/MockDataBadge';
 
 // Lazy loaded components
 const Login = lazy(() => import('./pages/Auth/login.jsx'));
@@ -32,6 +34,8 @@ const App = () => {
   return (
     <div>
       <Toaster />
+      <MockModeNotification />
+      <MockDataBadge />
       <HelmetProvider>
         <Router>
           <AuthProvider>

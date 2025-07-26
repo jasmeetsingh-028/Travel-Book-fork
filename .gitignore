@@ -23,10 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
-
-# Ignore environment variable files
-.env
-.env.*
-
+# Ignore local environment variable files (keep .env for contributors)
+.env.local
+.env.production
+.env.development
 
 medium.md
+
+.env
