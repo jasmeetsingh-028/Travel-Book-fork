@@ -5,7 +5,7 @@
 
 # Travel Book - Your Digital Travel Journal
 
-## 🚀 Quick Start for Contributors
+## Quick Start for Contributors
 
 **New to contributing?** We've made it super easy to get started with mock data!
 
@@ -32,19 +32,19 @@
    - Password: Any password
    - **That's it!** All features work with realistic mock data.
 
-📖 **[Read the full contributor guide →](CONTRIBUTING.md)**
+**[Read the full contributor guide →](CONTRIBUTING.md)**
 
-## 🎭 Mock Data for Development
+## Mock Data for Development
 
 Travel Book includes a comprehensive mock data system so contributors can test all features without needing backend access:
 
-- ✅ **Authentication**: Login/signup with any credentials
-- ✅ **Travel Stories**: Pre-loaded sample stories with realistic content
-- ✅ **Profile Management**: Complete user profile functionality
-- ✅ **Image Upload**: Mock image uploads with beautiful placeholders
-- ✅ **Search & Filters**: Full search functionality
-- ✅ **Analytics**: Sample travel statistics and charts
-- ✅ **Social Login**: Mock Google, GitHub, and Twitter authentication
+- **Authentication**: Login/signup with any credentials
+- **Travel Stories**: Pre-loaded sample stories with realistic content
+- **Profile Management**: Complete user profile functionality
+- **Image Upload**: Mock image uploads with beautiful placeholders
+- **Search & Filters**: Full search functionality
+- **Analytics**: Sample travel statistics and charts
+- **Social Login**: Mock Google, GitHub, and Twitter authentication
 
 Perfect for UI/UX improvements, component development, and feature testing!
 
@@ -194,9 +194,24 @@ Travel Book is designed with a mobile-first approach, recognizing that many user
 - Text scaling support
 - Color choices that consider color blindness
 
-## Contributing
+## Contributing & Recognition
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started with mock data and development.
+We welcome contributions! Travel Book features a comprehensive contributors recognition system to celebrate the efforts of our community members.
+
+### How to Contribute
+
+1. **Get Started**: Follow our [Contributing Guide](CONTRIBUTING.md) for setup instructions
+2. **Make Your Mark**: Implement features, fix bugs, or improve documentation
+3. **Get Recognition**: Submit your contributions through our [Contributors Application](/contributors) system
+
+### Contributors Recognition System
+
+Once you've made meaningful contributions to the project, you can apply to be featured on our contributors page:
+
+- **Apply Online**: Visit `/contributors` to see current contributors and apply for recognition
+- **Submission Form**: Complete the form at `/contribute` with details about your contributions
+- **Review Process**: Our team reviews applications within 3-5 business days
+- **Featured Display**: Approved contributors are showcased on the main contributors page
 
 ### Quick Contribution Steps:
 1. Fork the repository
@@ -204,42 +219,43 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 3. Make your changes
 4. Test thoroughly with the mock system
 5. Submit a pull request
+6. **New**: Apply for contributor recognition once your PR is merged
 
 ## Frontend Development Roadmap
 
 *Perfect opportunities for contributors to make meaningful impact!*
 
-### 🎨 UI/UX Enhancements
+### UI/UX Enhancements
 - **Enhanced Animations**: Smooth page transitions, micro-interactions, and loading states
 - **Theme Customization**: Multiple color schemes, custom themes, and advanced dark mode
 - **Accessibility Improvements**: Better screen reader support, keyboard navigation, and WCAG compliance
 - **Mobile Experience**: Gesture controls, swipe navigation, and touch optimizations
 
-### 📱 Component Library
+### Component Library
 - **Story Templates**: Pre-designed layouts for different types of travel stories
 - **Interactive Widgets**: Weather displays, travel tips
 - **Advanced Photo Gallery**: Lightbox views, image filters, and slideshow modes
 - **Custom Map Components**: Location pins, route visualization, and travel timeline maps
 
-### 🔍 User Experience Features
+### User Experience Features
 - **Smart Search**: Auto-complete, search suggestions, and advanced filtering UI
 - **Bulk Operations**: Multi-select stories, batch editing, and mass export options
 - **Keyboard Shortcuts**: Power user features and accessibility improvements
 - **Drag & Drop Interface**: Intuitive file uploads and story reordering
 
-### 📊 Data Visualization
+### Data Visualization
 - **Enhanced Analytics**: Interactive charts, travel heatmaps, and journey visualization
 - **Progress Tracking**: Goal setting UI, travel milestones, and achievement badges
 - **Timeline Views**: Calendar integration, trip planning interface, and memory lane browsing
 - **Export Features**: PDF generation, print layouts, and social media templates
 
-### 🚀 Performance & PWA
+### Performance & PWA
 - **Offline Enhancements**: Better caching strategies, offline editing, and sync indicators
 - **Performance Optimization**: Code splitting, lazy loading, and bundle optimization
 - **PWA Features**: Install prompts, push notification UI, and home screen shortcuts
 - **Loading States**: Skeleton screens, progressive loading, and optimistic updates
 
-### 🎯 Contribution-Friendly Areas
+### Contribution-Friendly Areas
 - **Component Testing**: Unit tests, visual regression tests, and accessibility testing
 - **Responsive Design**: Cross-device compatibility and flexible layouts
 - **Internationalization**: Multi-language support and RTL text support
@@ -260,4 +276,4 @@ If you have any questions or need help getting started, please:
 
 ---
 
-**Happy traveling and happy coding!** ✈️✨
+**Happy traveling and happy coding!**

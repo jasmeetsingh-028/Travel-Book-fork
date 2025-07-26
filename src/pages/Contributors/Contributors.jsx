@@ -83,7 +83,10 @@ const Contributors = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
               </button>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Contributors</h1>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Contributors</h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">Meet the talented individuals who help make Travel Book better</p>
+              </div>
             </motion.div>
             
             <motion.button
@@ -102,6 +105,124 @@ const Contributors = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Introduction Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 text-center"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            Our Open Source Community
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            Travel Book is built by passionate developers from around the world. Every feature, bug fix, 
+            and improvement comes from the collaborative efforts of our contributor community. 
+            We believe in recognizing and celebrating the individuals who dedicate their time and skills 
+            to making this project better for everyone.
+          </p>
+        </motion.div>
+
+        {/* How to Contribute Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-12 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-xl p-8"
+        >
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+            How to Contribute to Travel Book
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">
+                Getting Started
+              </h4>
+              <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Fork the Travel Book repository on GitHub
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Clone your fork to your local development environment
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Set up the project following our documentation
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Create a new branch for your feature or bug fix
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">
+                Ways to Contribute
+              </h4>
+              <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Fix bugs and resolve issues
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Implement new features and enhancements
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Improve user interface and user experience
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Write and improve documentation
+                </li>
+                <li className="flex items-start">
+                  <span className="text-cyan-500 mr-2 mt-1.5">•</span>
+                  Create tests and improve code quality
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">
+              Submission Process
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+              <div className="text-center">
+                <div className="w-10 h-10 bg-cyan-100 dark:bg-cyan-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-cyan-600 dark:text-cyan-400 font-semibold">1</span>
+                </div>
+                <h5 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Submit Pull Request</h5>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Create a pull request with your changes and detailed description
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-10 h-10 bg-cyan-100 dark:bg-cyan-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-cyan-600 dark:text-cyan-400 font-semibold">2</span>
+                </div>
+                <h5 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Code Review</h5>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Our team reviews your code and provides feedback if needed
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-10 h-10 bg-cyan-100 dark:bg-cyan-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-cyan-600 dark:text-cyan-400 font-semibold">3</span>
+                </div>
+                <h5 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Apply for Recognition</h5>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Use the form below to have your name added to this contributors page
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Stats Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -301,16 +422,16 @@ const Contributors = () => {
           >
             <BiCode className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              No contributors found
+              No contributors found for this filter
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Be the first to contribute to our project!
+              Try adjusting your filter or check back later as we continue to grow our contributor community.
             </p>
             <button
               onClick={() => navigate('/contribute')}
               className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors"
             >
-              Start Contributing
+              Apply to be a Contributor
             </button>
           </motion.div>
         )}

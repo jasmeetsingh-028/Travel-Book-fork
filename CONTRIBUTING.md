@@ -275,6 +275,45 @@ If you encounter issues not covered in this guide:
    git push origin feature/description-of-feature
    ```
 7. **Submit a pull request** with a detailed description
+8. **Apply for contributor recognition** once your PR is merged (see below)
+
+### Getting Recognition for Your Contributions
+
+Travel Book features a comprehensive contributors recognition system to celebrate community members who make meaningful contributions to the project.
+
+#### How to Apply for Recognition
+
+Once your contributions have been merged into the main repository:
+
+1. **Visit the Contributors Page**: Navigate to `/contributors` to view current contributors and learn about the application process
+2. **Complete the Application**: Fill out the form at `/contribute` with details about your contributions
+3. **Provide Documentation**: Include links to your merged pull requests, issues you've worked on, or documentation you've created
+4. **Wait for Review**: Our team reviews applications within 3-5 business days
+5. **Get Featured**: Approved contributors are showcased on the main contributors page
+
+#### Application Requirements
+
+To be considered for contributor recognition, ensure that:
+- Your contribution has been merged or accepted into the project
+- You provide accurate information about your work
+- You include relevant links to pull requests, issues, or documentation
+- You use a professional profile photo and accurate contact information
+
+#### Types of Contributions Recognized
+
+We recognize various types of contributions including:
+- **Code Contributions**: Features, bug fixes, performance improvements, refactoring, testing
+- **Documentation**: README updates, API docs, tutorials, code comments, user guides  
+- **Design & UX**: UI/UX improvements, design assets, accessibility enhancements
+- **Community Support**: Issue reporting, bug triaging, user support, feature suggestions
+
+#### Review Process
+
+All contributor applications undergo a verification process:
+1. Your submission will be reviewed by our team within 3-5 business days
+2. We verify your contributions against project history and documentation
+3. You will receive an email notification with the review outcome
+4. Approved submissions will appear on the contributors page within 24 hours
 
 ### Pull Request Guidelines
 
