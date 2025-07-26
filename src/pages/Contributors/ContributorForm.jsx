@@ -46,7 +46,7 @@ const ContributorForm = () => {
   };
 
   const validateForm = () => {
-    const required = ['fullName', 'githubUsername', 'contributionDescription', 'contributionType'];
+    const required = ['fullName', 'email', 'githubUsername', 'contributionDescription', 'contributionType'];
     for (let field of required) {
       if (!formData[field].trim()) {
         toast.error(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
@@ -66,8 +66,8 @@ const ContributorForm = () => {
       return false;
     }
 
-    // Validate email if provided
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    // Validate email (now required)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       toast.error('Please enter a valid email address');
       return false;
     }
@@ -88,10 +88,18 @@ const ContributorForm = () => {
         .map(link => link.trim())
         .filter(link => link);
 
+      // Map frontend field names to backend expected names
       const submitData = {
-        ...formData,
-        prLinks: prLinksArray,
-        bio: formData.bio.substring(0, 200) // Ensure max 200 chars
+        name: formData.fullName,
+        email: formData.email,
+        github: formData.githubUsername ? `https://github.com/${formData.githubUsername}` : '',
+        linkedin: formData.linkedinProfile,
+        contributionType: formData.contributionType,
+        description: formData.contributionDescription,
+        experience: 'Intermediate', // Default experience level
+        availability: 'Part-time', // Default availability
+        portfolioUrl: formData.portfolioWebsite,
+        additionalInfo: formData.bio ? `Bio: ${formData.bio}${formData.country ? ` | Country: ${formData.country}` : ''}${formData.issuesWorkedOn ? ` | Issues: ${formData.issuesWorkedOn}` : ''}${prLinksArray.length ? ` | PRs: ${prLinksArray.join(', ')}` : ''}` : ''
       };
 
       const response = await axiosInstance.post('/contributors/submit', submitData);
@@ -199,7 +207,7 @@ const ContributorForm = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email Address
+                    Email Address *
                   </label>
                   <input
                     type="email"
@@ -207,7 +215,8 @@ const ContributorForm = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all duration-200 outline-none text-gray-800 dark:text-white"
-                    placeholder="your@email.com (optional)"
+                    placeholder="your@email.com"
+                    required
                   />
                 </div>
 
