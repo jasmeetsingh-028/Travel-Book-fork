@@ -1,0 +1,97 @@
+name: Documentation Improvement
+description: Suggest improvements to documentation
+title: "[DOCS] "
+labels: ["documentation", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our documentation! Clear documentation is essential for a successful open source project.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation needs improvement?
+      options:
+        - README file
+        - API documentation
+        - Contributing guidelines
+        - Installation guide
+        - User guide
+        - Code comments
+        - Wiki pages
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-issue
+    attributes:
+      label: Current Issue
+      description: What is wrong or missing in the current documentation?
+      placeholder: Describe what's unclear, outdated, or missing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-improvement
+    attributes:
+      label: Proposed Improvement
+      description: How should the documentation be improved?
+      placeholder: Describe your suggested changes or additions...
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-sections
+    attributes:
+      label: Affected Sections
+      description: Which specific files or sections need updates?
+      placeholder: |
+        List the specific files, URLs, or sections that need changes:
+        - README.md - Installation section
+        - docs/api.md - Authentication endpoints
+        - etc.
+
+  - type: dropdown
+    id: user-level
+    attributes:
+      label: Target Audience
+      description: Who is the primary audience for this documentation?
+      options:
+        - New contributors
+        - Experienced developers
+        - End users
+        - Project maintainers
+        - All audiences
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any additional context or examples that would be helpful
+      placeholder: Links to similar documentation, examples from other projects, etc.
+
+  - type: checkboxes
+    id: implementation-offer
+    attributes:
+      label: Implementation
+      description: Are you willing to help implement these documentation improvements?
+      options:
+        - label: I can write the documentation changes myself
+        - label: I can provide review and feedback
+        - label: I prefer to let others handle the implementation
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: By submitting this documentation request, you confirm that
+      options:
+        - label: I have checked that this improvement isn't already covered elsewhere
+          required: true
+        - label: I have searched for existing documentation issues before creating this one
+          required: true

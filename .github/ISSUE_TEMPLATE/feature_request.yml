@@ -1,0 +1,131 @@
+name: Feature Request
+description: Suggest an idea for Travel Book
+title: "[FEATURE] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide as much detail as possible about your idea.
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: Feature Summary
+      description: A brief summary of the feature you'd like to see
+      placeholder: Summarize your feature request in one or two sentences...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: Describe the problem this feature would address...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented
+      placeholder: How would you like this feature to work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered
+      placeholder: What other approaches have you thought about?
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: Feature Category
+      description: What category does this feature fall under?
+      options:
+        - User Interface
+        - User Experience
+        - Performance
+        - Security
+        - Accessibility
+        - API/Backend
+        - Documentation
+        - Development Tools
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would improve experience
+        - High - Important for workflows
+        - Critical - Blocking current usage
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: User Stories
+      description: Describe how users would interact with this feature
+      placeholder: |
+        As a [type of user], I want [feature] so that [benefit].
+        
+        Example:
+        As a travel blogger, I want to add custom tags to my stories so that I can organize them better.
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What conditions must be met for this feature to be considered complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups or Examples
+      description: If applicable, add mockups, wireframes, or examples from other applications
+      placeholder: Drag and drop images here or paste URLs to examples...
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: Technical Considerations
+      description: Any technical details or constraints that should be considered?
+      placeholder: Database changes, API modifications, performance concerns, etc.
+
+  - type: checkboxes
+    id: implementation-willingness
+    attributes:
+      label: Implementation
+      description: Are you willing to help implement this feature?
+      options:
+        - label: I am willing to work on this feature myself
+        - label: I can provide design guidance
+        - label: I can help with testing
+        - label: I prefer to let others implement this
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: By submitting this feature request, you confirm that
+      options:
+        - label: I have searched for existing feature requests before creating this one
+          required: true
+        - label: This feature aligns with the project's goals
+          required: true
