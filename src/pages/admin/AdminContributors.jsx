@@ -5,9 +5,11 @@ import { FaCheck, FaTimes, FaEye, FaGithub, FaLinkedin, FaGlobe, FaEnvelope } fr
 import { BiCalendar, BiUser } from 'react-icons/bi';
 import axiosInstance from '../../utils/axiosInstance';
 import { useAuth } from '../../utils/AuthContext';
+import EnvDebug from '../../components/EnvDebug';
 
 const AdminContributors = () => {
-  const { user } = useAuth();
+  const { currentUser, loading: authLoading } = useAuth();
+  const [userInfo, setUserInfo] = useState(null);
   const [contributors, setContributors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState({});
@@ -15,16 +17,54 @@ const AdminContributors = () => {
   const [adminNotes, setAdminNotes] = useState('');
   const [filter, setFilter] = useState('pending'); // pending, approved, rejected, all
 
-  // Check if user is admin
-  const isAdmin = user?.email === 'sahilk64555@gmail.com';
+  // Function to get user info directly from API (same as Home component)
+  const getUserInfo = async () => {
+    try {
+      const user = await axiosInstance.get('/get-user');
+      setUserInfo(user.data.user);
+      console.log('User info from API:', user.data.user);
+    } catch (error) {
+      console.error('Failed to get user info:', error);
+      return null;
+    }
+  };
+
+  // Check if user is admin - check both currentUser and userInfo
+  const isAdmin = (currentUser?.email === 'sahilk64555@gmail.com') || (userInfo?.email === 'sahilk64555@gmail.com');
 
   useEffect(() => {
-    if (!isAdmin) {
-      toast.error('Access denied. Admin privileges required.');
+    console.log('=== ADMIN DEBUG INFO ===');
+    console.log('Environment mode:', import.meta.env.MODE);
+    console.log('Is development:', import.meta.env.DEV);
+    console.log('Backend URL:', import.meta.env.VITE_BACKEND_URL);
+    console.log('Use mock data setting:', import.meta.env.VITE_USE_MOCK_DATA);
+    console.log('Current user from context:', currentUser);
+    console.log('Auth loading:', authLoading);
+    console.log('User info from API:', userInfo);
+    console.log('Is admin (context):', currentUser?.email === 'sahilk64555@gmail.com');
+    console.log('Is admin (API):', userInfo?.email === 'sahilk64555@gmail.com');
+    console.log('Is admin (combined):', isAdmin);
+    console.log('========================');
+    
+    // Get user info from API for consistency
+    if (!authLoading && !userInfo) {
+      getUserInfo();
+    }
+    
+    // Wait for both auth context and user info
+    if (authLoading || !userInfo) {
       return;
     }
+    
+    if (!isAdmin) {
+      console.log('Access denied for user:', currentUser?.email, userInfo?.email);
+      toast.error('Access denied. Admin privileges required.');
+      setLoading(false);
+      return;
+    }
+    
     fetchContributors();
-  }, [filter, isAdmin]);
+  }, [filter, isAdmin, currentUser, authLoading, userInfo]);
 
   const fetchContributors = async () => {
     try {
@@ -69,14 +109,31 @@ const AdminContributors = () => {
     }
   };
 
+  // Show loading while auth is being checked or user info is being fetched
+  if (authLoading || !userInfo) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             You don't have permission to access this page.
           </p>
+          <div className="text-sm text-gray-500 dark:text-gray-500 space-y-1">
+            <p>Current user (context): {currentUser?.email || 'Not logged in'}</p>
+            <p>Current user (API): {userInfo?.email || 'Not loaded'}</p>
+            <p>Required: sahilk64555@gmail.com</p>
+          </div>
         </div>
       </div>
     );
@@ -320,6 +377,9 @@ const AdminContributors = () => {
           </>
         )}
       </div>
+      
+      {/* Temporary debug component for production troubleshooting */}
+      <EnvDebug />
     </div>
   );
 };

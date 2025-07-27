@@ -285,8 +285,8 @@ Travel Book features a comprehensive contributors recognition system to celebrat
 
 Once your contributions have been merged into the main repository:
 
-1. **Visit the Contributors Page**: Navigate to `/contributors` to view current contributors and learn about the application process
-2. **Complete the Application**: Fill out the form at `/contribute` with details about your contributions
+1. **Visit the Contributors Page**: Navigate to [Contributors](https://travelbook.sahilfolio.live/contributors) to view current contributors and learn about the application process
+2. **Complete the Application**: Fill out the form at [Contributors](https://travelbook.sahilfolio.live/contributors) with details about your contributions
 3. **Provide Documentation**: Include links to your merged pull requests, issues you've worked on, or documentation you've created
 4. **Wait for Review**: Our team reviews applications within 3-5 business days
 5. **Get Featured**: Approved contributors are showcased on the main contributors page

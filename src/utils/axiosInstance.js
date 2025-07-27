@@ -127,6 +127,15 @@ axiosInstance.interceptors.request.use(
                     mockResponse = await mockApiService.deleteImage(params);
                     break;
 
+                // Admin endpoints - only use mock in development
+                case endpoint.startsWith('/admin/contributors') && method === 'get':
+                    mockResponse = await mockApiService.getAdminContributors(params);
+                    break;
+                case endpoint.includes('/contributors/') && endpoint.includes('/status') && method === 'put':
+                    const contributorId = endpoint.split('/')[2];
+                    mockResponse = await mockApiService.updateContributorStatus(contributorId, data);
+                    break;
+
                 default:
                     console.warn(`🎭 Mock API: No mock handler for ${method.toUpperCase()} ${endpoint}`);
                     // If no mock handler found, proceed with real request

@@ -438,6 +438,70 @@ export const mockApiService = {
         message: 'Image deleted successfully'
       }
     };
+  },
+
+  // Admin endpoints for contributors management
+  async getAdminContributors(params) {
+    await simulateDelay(500);
+    
+    // Mock contributors data
+    const mockContributors = [
+      {
+        _id: 'contrib_1',
+        fullName: 'John Doe',
+        githubUsername: 'johndoe',
+        email: 'john@example.com',
+        contributionType: 'Bug Fix',
+        contributionDescription: 'Fixed authentication issue in login flow',
+        status: 'pending',
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        prLinks: ['https://github.com/Sahilll94/Travel-Book/pull/123'],
+        country: 'United States'
+      },
+      {
+        _id: 'contrib_2', 
+        fullName: 'Jane Smith',
+        githubUsername: 'janesmith',
+        email: 'jane@example.com',
+        contributionType: 'Feature',
+        contributionDescription: 'Added dark mode support to the application',
+        status: 'approved',
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        prLinks: ['https://github.com/Sahilll94/Travel-Book/pull/120'],
+        country: 'Canada',
+        adminNotes: 'Great work on the dark mode implementation!'
+      }
+    ];
+
+    const status = params?.status || 'all';
+    const filteredContributors = status === 'all' 
+      ? mockContributors 
+      : mockContributors.filter(c => c.status === status);
+
+    return {
+      data: {
+        success: true,
+        contributors: filteredContributors,
+        total: filteredContributors.length
+      }
+    };
+  },
+
+  async updateContributorStatus(contributorId, data) {
+    await simulateDelay(300);
+    
+    return {
+      data: {
+        success: true,
+        message: `Contributor ${data.status} successfully`,
+        contributor: {
+          _id: contributorId,
+          status: data.status,
+          adminNotes: data.adminNotes,
+          updatedAt: new Date().toISOString()
+        }
+      }
+    };
   }
 };
 
