@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { FaCheck, FaTimes, FaEye, FaGithub, FaLinkedin, FaGlobe, FaEnvelope } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaEye, FaGithub, FaLinkedin, FaGlobe, FaEnvelope, FaTrash } from 'react-icons/fa';
 import { BiCalendar, BiUser } from 'react-icons/bi';
 import axiosInstance from '../../utils/axiosInstance';
 import { useAuth } from '../../utils/AuthContext';
@@ -104,6 +104,29 @@ const AdminContributors = () => {
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error(error.response?.data?.message || 'Failed to update status');
+    } finally {
+      setProcessing({ ...processing, [contributorId]: false });
+    }
+  };
+
+  const handleDeleteContributor = async (contributorId, contributorName) => {
+    // Confirm deletion
+    if (!window.confirm(`Are you sure you want to delete the contribution from ${contributorName}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setProcessing({ ...processing, [contributorId]: true });
+      
+      const response = await axiosInstance.delete(`/contributors/${contributorId}`);
+
+      if (response.data.success) {
+        toast.success('Contributor deleted successfully!');
+        fetchContributors();
+      }
+    } catch (error) {
+      console.error('Error deleting contributor:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete contributor');
     } finally {
       setProcessing({ ...processing, [contributorId]: false });
     }
@@ -349,23 +372,44 @@ const AdminContributors = () => {
                             <FaTimes className="w-4 h-4" />
                             <span>Reject</span>
                           </button>
+
+                          <button
+                            onClick={() => handleDeleteContributor(contributor._id, contributor.fullName)}
+                            disabled={processing[contributor._id]}
+                            className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <FaTrash className="w-4 h-4" />
+                            <span>Delete</span>
+                          </button>
                         </div>
                       </div>
                     )}
 
                     {contributor.status !== 'pending' && contributor.reviewedAt && (
                       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          <span className="font-medium">
-                            {contributor.status === 'approved' ? 'Approved' : 'Rejected'}
-                          </span>
-                          {' on '}{new Date(contributor.reviewedAt).toLocaleDateString()}
-                        </p>
-                        {contributor.adminNotes && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                            <strong>Admin Notes:</strong> {contributor.adminNotes}
-                          </p>
-                        )}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">
+                                {contributor.status === 'approved' ? 'Approved' : 'Rejected'}
+                              </span>
+                              {' on '}{new Date(contributor.reviewedAt).toLocaleDateString()}
+                            </p>
+                            {contributor.adminNotes && (
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                <strong>Admin Notes:</strong> {contributor.adminNotes}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleDeleteContributor(contributor._id, contributor.fullName)}
+                            disabled={processing[contributor._id]}
+                            className="flex items-center space-x-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <FaTrash className="w-3 h-3" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
                       </div>
                     )}
                   </motion.div>

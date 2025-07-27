@@ -502,6 +502,17 @@ export const mockApiService = {
         }
       }
     };
+  },
+
+  async deleteContributor(contributorId) {
+    await simulateDelay(300);
+    
+    return {
+      data: {
+        success: true,
+        message: 'Contributor deleted successfully'
+      }
+    };
   }
 };
 
