@@ -63,7 +63,7 @@ const AdminContributors = () => {
   const fetchContributors = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/contributors');
+      const response = await axiosInstance.get('/admin/contributors');
       console.log('Fetched contributors:', response.data);
       setContributors(response.data.contributors || []);
     } catch (error) {
@@ -94,6 +94,69 @@ const AdminContributors = () => {
       toast.error(error.response?.data?.message || 'Failed to update contributor status');
     } finally {
       setProcessing({ ...processing, [contributorId]: false });
+    }
+  };
+
+  const exportContributors = async () => {
+    try {
+      // Get all contributors for export (no pagination)
+      const response = await axiosInstance.get('/admin/contributors?limit=1000');
+      const data = response.data.contributors || [];
+      
+      if (data.length === 0) {
+        toast.error('No contributors to export');
+        return;
+      }
+
+      // Convert to CSV format
+      const headers = [
+        'ID',
+        'Full Name',
+        'GitHub Username',
+        'Email',
+        'Country',
+        'Contribution Type',
+        'Status',
+        'Submitted Date',
+        'LinkedIn',
+        'Portfolio',
+        'Contribution Description',
+        'Bio'
+      ];
+
+      const csvContent = [
+        headers.join(','),
+        ...data.map(contributor => [
+          contributor._id,
+          `"${contributor.fullName}"`,
+          contributor.githubUsername,
+          contributor.email || '',
+          contributor.country || '',
+          contributor.contributionType,
+          contributor.status,
+          new Date(contributor.submittedAt).toLocaleDateString(),
+          contributor.linkedinProfile || '',
+          contributor.portfolioWebsite || '',
+          `"${contributor.contributionDescription.replace(/"/g, '""')}"`,
+          `"${(contributor.bio || '').replace(/"/g, '""')}"`
+        ].join(','))
+      ].join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `contributors-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success('Contributors exported successfully!');
+    } catch (error) {
+      console.error('Error exporting contributors:', error);
+      toast.error('Failed to export contributors');
     }
   };
 
@@ -237,7 +300,10 @@ const AdminContributors = () => {
                 <span>Refresh</span>
               </button>
               
-              <button className="flex items-center space-x-2 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors">
+              <button 
+                onClick={exportContributors}
+                className="flex items-center space-x-2 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
+              >
                 <BiDownload className="w-4 h-4" />
                 <span>Export</span>
               </button>
