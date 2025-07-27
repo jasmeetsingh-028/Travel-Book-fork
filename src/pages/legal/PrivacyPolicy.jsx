@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
         </Helmet>
         
         {/* Simple Navbar */}
-        <div className='bg-white dark:bg-gray-800 flex items-center justify-between px-4 sm:px-6 py-2 drop-shadow sticky top-0 z-30'>
+        <div className='bg-white dark:bg-gray-900 flex items-center justify-between px-4 sm:px-6 py-2 drop-shadow sticky top-0 z-30'>
           <motion.a 
             href="/"
             whileHover={{ scale: 1.05 }}
@@ -162,7 +162,7 @@ const PrivacyPolicy = () => {
         </motion.div>
         
         {/* New Footer */}
-        <footer className="mt-auto py-8 bg-white dark:bg-gray-800">
+        <footer className="mt-auto py-8 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="md:col-span-1">

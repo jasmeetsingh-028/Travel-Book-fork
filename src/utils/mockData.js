@@ -5,9 +5,9 @@
 export const mockUsers = [
   {
     _id: "user_1",
-    fullName: "Alex Johnson",
-    email: "alex@travelbook.com",
-    profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    fullName: "Sahil",
+    email: "contact@sahilfolio.live",
+    profileImage: "https://github.com/Sahilll94.png",
     bio: "Travel enthusiast exploring the world one adventure at a time. Love capturing moments and sharing stories.",
     location: "San Francisco, CA",
     phone: "+1 (555) 123-4567",
