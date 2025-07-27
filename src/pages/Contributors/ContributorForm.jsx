@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { FaGithub, FaLinkedin, FaGlobe, FaUser, FaEnvelope, FaCode, FaMapMarkerAlt } from 'react-icons/fa';
 import { BiCheckCircle, BiArrowBack } from 'react-icons/bi';
 import axiosInstance from '../../utils/axiosInstance';
+import ContributorsFooter from '../../components/Footer/ContributorsFooter';
+import ContributorsNavbar from '../../components/Navbar/ContributorsNavbar';
 
 const ContributorForm = () => {
   const navigate = useNavigate();
@@ -130,26 +132,22 @@ const ContributorForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+      <ContributorsNavbar />
+
       {/* Header */}
       <header className="py-6 px-4 sm:px-6 lg:px-8 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-4"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
           >
-            <button
-              onClick={() => navigate('/contributors')}
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-            >
-              <BiArrowBack className="w-6 h-6" />
-            </button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Apply for Contributor Recognition</h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Have you contributed to Travel Book? Apply to have your name featured on our contributors page
-              </p>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Apply for Contributor Recognition
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Have you contributed to Travel Book? Apply to have your name featured on our contributors page
+            </p>
           </motion.div>
         </div>
       </header>
@@ -526,6 +524,8 @@ const ContributorForm = () => {
           </form>
         </motion.div>
       </div>
+
+      <ContributorsFooter />
     </div>
   );
 };
