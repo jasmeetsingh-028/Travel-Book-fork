@@ -66,7 +66,7 @@ Add any other context about the pull request here:
 ---
 
 ## Contributor Checklist
-- [ ] I have read and followed the [Contributing Guidelines](CONTRIBUTING.md)
+- [ ] I have read and followed the [Contributing Guidelines](https://github.com/Sahilll94/Travel-Book/blob/main/CONTRIBUTING.md)
 - [ ] I have checked that this PR doesn't duplicate an existing PR
 - [ ] I have assigned appropriate labels to this PR
 - [ ] I have requested review from relevant team members
