@@ -230,7 +230,7 @@ const Login = () => {
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="hidden md:flex md:w-1/2 min-h-[600px] items-end bg-signup-bg-img bg-cover bg-center rounded-tl-xl rounded-bl-xl p-10 overflow-hidden"
+          className="hidden md:flex md:w-1/2 min-h-[600px] items-end bg-login-bg-img bg-cover bg-center rounded-tl-xl rounded-bl-xl p-10 overflow-hidden"
         >
           <motion.div
             initial={{ y: 30, opacity: 0 }}
