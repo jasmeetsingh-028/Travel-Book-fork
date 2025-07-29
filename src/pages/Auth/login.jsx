@@ -215,26 +215,22 @@ const Login = () => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden relative flex items-center justify-center"
-    >
+        <div className=" flex items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+
       <HelmetProvider>
         <Helmet>
           <title>Login | Travel Book</title>
         </Helmet>
       </HelmetProvider>
       
-      <div className="container min-h-screen flex flex-col sm:flex-row items-center justify-center px-5 sm:px-10 lg:px-20 mx-auto">
+        <div className="flex shadow-2xl rounded-xl overflow-hidden w-full max-w-5xl mx-auto my-8">        
         
         {/* Image section with animation */}
         <motion.div 
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="image-section w-full sm:w-2/4 lg:w-2/4 h-[90vh] flex items-end bg-login-bg-img bg-cover bg-center rounded-xl p-10 z-50 overflow-hidden shadow-lg"
+          className="hidden md:flex md:w-1/2 min-h-[600px] items-end bg-signup-bg-img bg-cover bg-center rounded-tl-xl rounded-bl-xl p-10 overflow-hidden"
         >
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -256,7 +252,7 @@ const Login = () => {
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="w-full sm:w-2/4 lg:w-2/4 rounded-xl p-5 sm:p-10 lg:p-16 bg-white dark:bg-gray-800 shadow-xl dark:shadow-gray-900/20"
+          className="w-full md:w-1/2 rounded-tr-xl rounded-br-xl p-5 sm:p-10 lg:p-16 bg-white dark:bg-gray-800 dark:shadow-gray-900/20"
         >
           {/* Show OTP verification or login form */}
           {showOtpVerification ? (
@@ -456,18 +452,8 @@ const Login = () => {
         </motion.div>
       </div>
 
-      {/* CSS for responsive design */}
-      <style>{`
-        @media (max-width: 640px) {
-          .image-section {
-            display: none;
-          }
-          .container {
-            flex-direction: column;
-          }
-        }
-      `}</style>
-    </motion.div>
+      </div>
+    
   );
 };
 
