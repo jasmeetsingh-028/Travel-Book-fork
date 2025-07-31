@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthContext";
 import { motion } from "framer-motion";
 import logo from "../../assets/images/logo.png";
-import preview from "../../assets/images/preview.png";
+import heroimg from "../../assets/images/heroimg.png";
 import HowItWorks from "./HowItWorks";
 import Stats from "./Stats";
 import About from "./About";
@@ -281,7 +281,7 @@ const Hero = () => {
                         <div>
                             <img
                                 className="w-4/4 mx-auto no-drag"
-                                src={preview}
+                                src={heroimg}
                                 alt="Preview of the Travel-Book"
                                 draggable="false"
                             />
