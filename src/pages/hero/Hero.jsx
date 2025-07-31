@@ -146,7 +146,7 @@ const Hero = () => {
                                                 <motion.button
                                                     onClick={goToDashboard}
                                                     className="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3.5 text-lg font-bold 
-                                                    bg-transparent hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-600 text-white
+                                                    bg-transparent hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-600 dark:text-white
                                                     border-2 border-cyan-500 hover:border-transparent
                                                     rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2
                                                     font-pj transition-all duration-300"
