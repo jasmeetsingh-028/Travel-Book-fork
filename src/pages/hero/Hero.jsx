@@ -19,7 +19,7 @@ const Hero = () => {
 
     // Function to handle navigation to dashboard
     const goToDashboard = () => {
-        navigate('/dashboard');
+        navigate("/dashboard");
     };
 
     return (
@@ -36,11 +36,11 @@ const Hero = () => {
                                 className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 dark:focus:ring-gray-100 focus:ring-offset-2"
                             >
                                 {/* Replaced nested <a> with direct image to prevent nesting error */}
-                                <img 
-                                    className="w-auto h-12 cursor-pointer" 
-                                    src={logo} 
-                                    alt="logo" 
-                                    onClick={() => navigate('/')}
+                                <img
+                                    className="w-auto h-12 cursor-pointer"
+                                    src={logo}
+                                    alt="logo"
+                                    onClick={() => navigate("/")}
                                 />
                             </Link>
                         </div>
@@ -104,7 +104,6 @@ const Hero = () => {
                             >
                                 <i className="bi bi-journal-code"></i>
                             </a>
-
                             <a
                                 href="http://medium.travelbook.sahilfolio.live/"
                                 target="_blank"
@@ -113,7 +112,6 @@ const Hero = () => {
                             >
                                 <i className="bi bi-journal-richtext"></i>
                             </a>
-
                             <a
                                 href="https://github.com/Sahilll94/Travel-Book"
                                 target="_blank"
@@ -147,27 +145,40 @@ const Hero = () => {
                                             <div className="w-full sm:w-auto sm:flex sm:items-center">
                                                 <motion.button
                                                     onClick={goToDashboard}
-                                                    className="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3.5 text-lg font-bold text-white 
-                                                    bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700
-                                                    rounded-lg shadow-lg shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2
+                                                    className="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3.5 text-lg font-bold 
+                                                    bg-transparent hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-600 dark:text-white
+                                                    border-2 border-cyan-500 hover:border-transparent
+                                                    rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2
                                                     font-pj transition-all duration-300"
                                                     whileHover={{ scale: 1.03 }}
                                                     whileTap={{ scale: 0.98 }}
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ 
-                                                        type: "spring", 
-                                                        stiffness: 400, 
-                                                        damping: 10 
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: 20,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                    transition={{
+                                                        type: "spring",
+                                                        stiffness: 400,
+                                                        damping: 10,
                                                     }}
                                                 >
-                                                    <motion.div 
+                                                    <motion.div
                                                         className="flex items-center"
-                                                        initial={{ gap: "0.5rem" }}
-                                                        whileHover={{ gap: "0.75rem" }}
+                                                        initial={{
+                                                            gap: "0.5rem",
+                                                        }}
+                                                        whileHover={{
+                                                            gap: "0.75rem",
+                                                        }}
                                                     >
                                                         <i className="bi bi-speedometer2 text-xl"></i>
-                                                        <span>Go to Your Dashboard</span>
+                                                        <span>
+                                                            Go to Your Dashboard
+                                                        </span>
                                                         <FiArrowRight className="ml-1" />
                                                     </motion.div>
                                                 </motion.button>
