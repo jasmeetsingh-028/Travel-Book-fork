@@ -87,39 +87,71 @@ const Hero = () => {
 
                         <div className="flex items-center">
                             <ThemeToggle /> {/* Added ThemeToggle component */}
-                            <a
-                                href="https://stats.uptimerobot.com/4klrGTjcP6"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="Server Status"
-                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
-                            >
-                                <AiOutlineCloudServer className="w-8 h-8" />
-                            </a>
+                           <div className="relative group ml-6">
+                        <a
+                            href="https://stats.uptimerobot.com/4klrGTjcP6"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Check Service Status"
+                            className="text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+                        >
+                            <AiOutlineCloudServer className="w-8 h-8" />
+                        </a>
+
+                        {/* Tooltip below the icon, no background */}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-xs font-medium text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                           Server Status
+                            </div>
+                        </div>
+
+                           {/* API Docs Icon */}
+                            <div className="relative group ml-6">
                             <a
                                 href="http://docs.travelbook.sahilfolio.live/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+                                className="text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <i className="bi bi-journal-code"></i>
                             </a>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-xs font-medium text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                           API Docs
+                            </div>
+
+                            </div>
+
+                            {/* Medium Blog Icon */}
+                            <div className="relative group ml-6">
                             <a
                                 href="http://medium.travelbook.sahilfolio.live/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+                                className="text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <i className="bi bi-journal-richtext"></i>
                             </a>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-xs font-medium text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            Blog
+                            </div>
+
+                            </div>
+
+                          {/* GitHub Icon with Tooltip */}
+                            <div className="relative group ml-6">
                             <a
                                 href="https://github.com/Sahilll94/Travel-Book"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="ml-6 text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+                                className="text-gray-900 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
                             >
                                 <i className="bi bi-github"></i>
                             </a>
+                           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-xs font-medium text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            GitHub
+                            </div>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
