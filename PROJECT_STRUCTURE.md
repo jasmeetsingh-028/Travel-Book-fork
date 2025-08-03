@@ -47,7 +47,7 @@ Travel-Book-Backend/            # Backend API Server
 
 ### Backend
 - **Runtime**: Node.js with Express.js
-- **Database**: MongoDB with Mongoose ODM
+- **Database**:  with Mongoose ODM
 - **Authentication**: JWT tokens with Firebase integration
 - **File Upload**: Multer for image handling
 - **Email Service**: Nodemailer with Gmail SMTP

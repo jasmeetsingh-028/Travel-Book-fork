@@ -59,7 +59,8 @@ const ThemeToggle = () => {
     }
   };
 
-  return (
+return (
+  <div className="relative group">
     <button
       onClick={toggleTheme}
       className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
@@ -67,7 +68,14 @@ const ThemeToggle = () => {
     >
       {renderThemeIcon()}
     </button>
-  );
+
+    {/* Clean tooltip shown on hover */}
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-xs font-medium text-gray-700 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      {theme === 'light' ? 'Light Mode' : theme === 'dark' ? 'Dark Mode' : 'System Default'}
+    </div>
+  </div>
+);
+
 };
 
 export default ThemeToggle;
