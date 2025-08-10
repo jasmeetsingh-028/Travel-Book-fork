@@ -10,25 +10,45 @@
 
 **New to contributing?** We've made it super easy to get started with mock data!
 
-1. **Clone and install:**
+
+
+
+
+
+1. **Fork the project:** 
+
+   Fork this repo on GitHub
+
+
+   <img src="src/assets/images/fork eg.jpeg" alt="Fork Button" width="400">
+   
+
+2. **Cpoy fork's link:**
+
+   Copy your fork’s link, e.g.:  
+   For example: (https://github.com/*your-github-id*/Travel-Book.git)  
+
+   <img src="src/assets/images/clone link.jpeg" alt="Fork Button" width="400">
+
+3. **Clone and install:**
    ```bash
-   git clone https://github.com/Sahilll94/Travel-Book.git
+   git clone git clone https://github.com/<your-github-id>/Travel-Book.git # Copied link
    cd Travel-Book
    npm install
    ```
 
-2. **Set up environment:**
+4. **Set up environment:**
    ```bash
    cp .env.example .env
    # The default settings in .env.example enable mock mode
    ```
 
-3. **Start developing:**
+5. **Start developing:**
    ```bash
    npm run dev
    ```
 
-4. **Login with any credentials:**
+6. **Login with any credentials:**
    - Email: Any valid email format
    - Password: Any password
    - **That's it!** All features work with realistic mock data.
