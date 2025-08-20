@@ -220,7 +220,9 @@ const Hero = () => {
                                                 <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:left-0 sm:flex sm:items-center sm:pl-2 z-20">
                                                     <a
                                                         href="/signUp"
-                                                        className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                                        className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 
+             bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600
+             dark:bg-cyan-500 dark:hover:bg-cyan-800 dark:focus:bg-cyan-500"
                                                     >
                                                         Create Free Account
                                                     </a>
@@ -233,7 +235,9 @@ const Hero = () => {
                                                 <div className="w-full sm:w-auto sm:absolute sm:inset-y-0 sm:right-0 sm:flex sm:items-center sm:pr-36 z-20">
                                                     <a
                                                         href="/login"
-                                                        className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600"
+                                                        className="w-full sm:w-auto inline-flex justify-center px-6 py-3 text-lg font-bold text-white transition-all duration-200 
+             bg-gray-900 rounded-lg focus:outline-none focus:bg-gray-600 font-pj hover:bg-gray-600
+             dark:bg-cyan-500 dark:hover:bg-cyan-800 dark:focus:bg-cyan-500"
                                                     >
                                                         Log In
                                                     </a>
