@@ -16,6 +16,11 @@ import SocialLoginButtons from "../../components/Auth/SocialLoginButtons";
 // Import useAuth hook
 import { useAuth } from "../../utils/AuthContext";
 
+
+//THIS IS MY EDIT
+
+
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

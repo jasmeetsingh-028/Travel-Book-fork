@@ -1,5 +1,7 @@
 # ✨ Contributor Covenant Code of Conduct — GSSoC ✨
 
+
+this is the text i added to CODE_OF_CONDUCT
 ---
 
 ## 🌟 Our Pledge
