@@ -20,7 +20,7 @@ const Footer = () => {
             </div>
 
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-              The Travel-Book was developed by{" "}
+              Here is my edit{" "}
               <span className="font-semibold text-gray-900 dark:text-white">
                 SAHIL
               </span>
